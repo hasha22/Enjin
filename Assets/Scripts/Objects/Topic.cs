@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Topic")]
+[CreateAssetMenu(menuName = "Objects/Topic")]
 public class Topic : ScriptableObject
 {
     public string topicName;

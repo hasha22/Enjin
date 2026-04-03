@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
     [SerializeField] private string playerName;
     [SerializeField] private int firstOpinion; //made serializable for visualization purposes
     [SerializeField] private int secondOpinion;
+    public Character selectedCharacter;
 
     public string GetPlayerName()
     {
