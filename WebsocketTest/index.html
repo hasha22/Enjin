@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Simple Client</h2>
+
+<button onclick="join()">Join</button>
+<button onclick="press()">Press Button</button>
+
+<div id="log"></div>
+
+<script>
+const ws = new WebSocket("ws://localhost:5085");
+
+ws.onmessage = (event) => {
+  const msg = JSON.parse(event.data);
+
+  if (msg.type === "message") {
+    log("Unity says: " + msg.text);
+  }
+};
+
+function join() {
+  ws.send(JSON.stringify({ type: "join" }));
+}
+
+function press() {
+  ws.send(JSON.stringify({ type: "button" }));
+}
+
+function log(text) {
+  document.getElementById("log").innerHTML += "<p>" + text + "</p>";
+}
+</script>
+
+</body>
+</html>
