@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager instance {get; private set;}
+    public static GameManager instance { get; private set; }
 
     [Header("Variables")]
     public List<Topic> allTopics = new List<Topic>();
@@ -13,7 +12,15 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        if (instance == null){instance = this;}
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
 }

@@ -1,9 +1,8 @@
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class OutcomeManager : MonoBehaviour
 {
-    public static OutcomeManager instance {get; private set;}
+    public static OutcomeManager instance { get; private set; }
 
     [Header("Outcome Variables")]
     public float productivity;
@@ -13,7 +12,15 @@ public class OutcomeManager : MonoBehaviour
 
     void Awake()
     {
-        if (instance == null) {instance = this;}
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void SetValues(float prod, float sustain, float AI, float priv)
@@ -42,6 +49,6 @@ public class OutcomeManager : MonoBehaviour
 
     public void DetermineOutcome()
     {
-        
+
     }
 }
