@@ -1,6 +1,6 @@
 const WebSocket = require('ws')
-const wss = new WebSocket.Server({port: 5085}, () =>{
-    console.log('server running on ws://localhost:5085')
+const wss = new WebSocket.Server({port: 5040}, () =>{
+    console.log('server running on ws://localhost:5040')
 })
 
 let host = null;
@@ -52,7 +52,31 @@ wss.on("connection", (ws) => {
         }));
       });
     }
+
+    else if (msg.type === "slider_submit") {
+  console.log("Slider submitted:", msg.value, msg.label);
+
+  // send to Unity (host)
+  if (host) {
+    host.send(JSON.stringify({
+      type: "slider_submit",
+      value: msg.value,
+      label: msg.label
+    }));
+  }
+
+  // optionally send to all players too
+  players.forEach(p => {
+    p.send(JSON.stringify({
+      type: "slider_submit",
+      value: msg.value,
+      label: msg.label
+    }));
   });
+}
+  });
+
+  
 
   ws.on("close", () => {
     console.log("Disconnected");

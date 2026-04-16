@@ -34,7 +34,7 @@ public class NetworkManager : MonoBehaviour
     {
         Application.runInBackground = true;
 
-        websocket = new WebSocket("ws://localhost:5085");
+        websocket = new WebSocket("ws://localhost:5040");
 
         websocket.OnOpen += () =>
         {
@@ -55,10 +55,20 @@ public class NetworkManager : MonoBehaviour
 
                 SendWebSocketMessage("{\"type\":\"message\",\"text\":\"Hello from Unity!\"}");
             }
+
+            /*if (msg.type == "slider_submit")
+            {
+                Debug.Log("Slider submitted: " + msg.value + " " + msg.label);
+
+                // Example usage:
+                // update UI, store vote, etc.
+            }*/
         };
 
         await websocket.Connect();
     }
+
+   
     async void SendWebSocketMessage(string json)
     {
         await websocket.SendText(json);
@@ -66,6 +76,12 @@ public class NetworkManager : MonoBehaviour
     private async void OnApplicationQuit()
     {
         await websocket.Close();
+    }
+
+    public void SendButtonClick()
+    {
+        Debug.Log("Sending click to server...");
+        SendWebSocketMessage("{\"type\":\"button\"}");
     }
     public void ConnectPlayer()
     {

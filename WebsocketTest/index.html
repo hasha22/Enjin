@@ -7,27 +7,80 @@
 <button onclick="join()">Join</button>
 <button onclick="press()">Press Button</button>
 
+<br><br>
+
+<!-- 🎚️ SNAP SLIDER -->
+<input type="range" min="0" max="4" value="2" step="1" id="slider">
+
+<!-- ONLY dynamic text -->
+<p id="sliderValue">Neutral</p>
+
+<button onclick="submitSlider()">Submit</button>
+
 <div id="log"></div>
 
 <script>
-const ws = new WebSocket("ws://localhost:5085");
+const ws = new WebSocket("ws://localhost:5040");
 
+const labels = [
+  "Disagree",
+  "Somewhat Disagree",
+  "Neutral",
+  "Somewhat Agree",
+  "Agree"
+];
+
+// RECEIVE
 ws.onmessage = (event) => {
   const msg = JSON.parse(event.data);
 
   if (msg.type === "message") {
     log("Unity says: " + msg.text);
   }
+
+  if (msg.type === "button") {
+    log("Unity says: " + msg.text);
+  }
+  
 };
 
+// JOIN
 function join() {
   ws.send(JSON.stringify({ type: "join" }));
 }
 
+// BUTTON
 function press() {
   ws.send(JSON.stringify({ type: "button" }));
 }
 
+// 🎚️ SLIDER
+const slider = document.getElementById("slider");
+const sliderValue = document.getElementById("sliderValue");
+
+slider.oninput = function () {
+  const value = parseInt(this.value);
+
+  sliderValue.innerText = labels[value];
+
+  ws.send(JSON.stringify({
+    type: "slider",
+    value: value,
+    label: labels[value]
+  }));
+};
+
+function submitSlider() {
+  const value = parseInt(slider.value);
+
+  ws.send(JSON.stringify({
+    type: "slider_submit",
+    value: value,
+    label: labels[value]
+  }));
+}
+
+// LOG
 function log(text) {
   document.getElementById("log").innerHTML += "<p>" + text + "</p>";
 }
