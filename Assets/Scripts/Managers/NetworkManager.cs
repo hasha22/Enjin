@@ -1,16 +1,20 @@
 using NativeWebSocket;
-using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
 public class NetworkManager : MonoBehaviour
 {
     public static NetworkManager instance { get; private set; }
+    
+    [System.Serializable]
+    public class WSMessage
+    {
+        public string type;
+        public int value;
+        public string label;
+    }
 
-    [Header("Variables")]
     WebSocket websocket;
-    public string roomCode;
-    List<Player> allPlayers = new List<Player>();
 
     void Awake()
     {
@@ -24,12 +28,7 @@ public class NetworkManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    void Update()
-    {
-#if !UNITY_WEBGL || UNITY_EDITOR
-        websocket.DispatchMessageQueue();
-#endif
-    }
+
     async void Start()
     {
         Application.runInBackground = true;
@@ -38,58 +37,58 @@ public class NetworkManager : MonoBehaviour
 
         websocket.OnOpen += () =>
         {
-            SendWebSocketMessage("{\"type\":\"host\"}");
-            Debug.Log("Connected as Host!");
+            Debug.Log("Connected to server");
+            Send("{\"type\":\"host\"}");
         };
-        websocket.OnError += (e) => Debug.Log("Error! " + e);
-        websocket.OnClose += (code) => Debug.Log("Connection closed!");
 
         websocket.OnMessage += (bytes) =>
         {
-            string message = Encoding.UTF8.GetString(bytes);
-            Debug.Log("Received: " + message);
+            string msg = Encoding.UTF8.GetString(bytes);
+            Debug.Log("Received: " + msg);
 
-            if (message.Contains("button_pressed"))
+            WSMessage data = JsonUtility.FromJson<WSMessage>(msg);
+
+            if (data == null) return;
+
+            if (data.type == "button_pressed")
             {
-                Debug.Log("Player pressed button!");
-
-                SendWebSocketMessage("{\"type\":\"message\",\"text\":\"Hello from Unity!\"}");
+                Debug.Log("Button event received in Unity");
             }
 
-            /*if (msg.type == "slider_submit")
+            if (data.type == "slider_submit")
             {
-                Debug.Log("Slider submitted: " + msg.value + " " + msg.label);
-
-                // Example usage:
-                // update UI, store vote, etc.
-            }*/
+                Debug.Log("Slider event received in Unity: " + data.value);
+            }
         };
+
+        websocket.OnError += (e) => Debug.Log("Error: " + e);
+        websocket.OnClose += (e) => Debug.Log("Closed");
 
         await websocket.Connect();
     }
 
-   
-    async void SendWebSocketMessage(string json)
+    public void SendButtonClick()
     {
-        await websocket.SendText(json);
+        Send("{\"type\":\"button_pressed\"}");
     }
+
+    public void Send(string json)
+    {
+        if (websocket != null && websocket.State == WebSocketState.Open)
+        {
+            websocket.SendText(json);
+        }
+    }
+
+    void Update()
+    {
+#if !UNITY_WEBGL || UNITY_EDITOR
+        websocket?.DispatchMessageQueue();
+#endif
+    }
+
     private async void OnApplicationQuit()
     {
         await websocket.Close();
-    }
-
-    public void SendButtonClick()
-    {
-        Debug.Log("Sending click to server...");
-        SendWebSocketMessage("{\"type\":\"button\"}");
-    }
-    public void ConnectPlayer()
-    {
-
-    }
-
-    public void DisconnectPlayer()
-    {
-
     }
 }
