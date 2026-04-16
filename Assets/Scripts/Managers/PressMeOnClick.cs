@@ -8,6 +8,6 @@ public class ButtonHandler : MonoBehaviour
     {
         Debug.Log("Button clicked!");
 
-        networkManager.SendButtonClick();
+        NetworkManager.instance.SendButtonClick();
     }
 }
