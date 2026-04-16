@@ -38,9 +38,9 @@ ws.onmessage = (event) => {
     log("Unity says: " + msg.text);
   }
 
-  if (msg.type === "button") {
-    log("Unity says: " + msg.text);
-  }
+  if (msg.type === "button_pressed") {
+  log("Button was pressed!");
+}
   
 };
 
