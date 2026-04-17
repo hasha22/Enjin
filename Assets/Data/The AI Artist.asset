@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfbb24d7071b4ad459a7ae40510e8f2a, type: 3}
+  m_Name: The AI Artist
+  m_EditorClassIdentifier: Assembly-CSharp::Character
+  characterName: AI Artist
+  characterDescription: "You think Enjin shouldn\u2019t be discussed, it should be
+    used. Moreover, you think that if Enjin isn\u2019t used, the sector will fall
+    behind. You care more about what you create, than that you created it.\n\nThink
+    about how you're going to push for Enjin implementation within the company. 
+    How can Enjin boost productivity? How can it make people's lives more efficient?
+    Get in character! \r\n"
+  characterImage: {fileID: 21300000, guid: d8b2e9199f3d8b34aa4e216438bb0d2a, type: 3}
+  policyKeywords: 0000000003000000
+  characterKeywords: 0300000002000000
+  isCharacterAssigned: 0

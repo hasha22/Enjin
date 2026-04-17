@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfbb24d7071b4ad459a7ae40510e8f2a, type: 3}
+  m_Name: The Cultural Organizer
+  m_EditorClassIdentifier: Assembly-CSharp::Character
+  characterName: Cultural Organizer
+  characterDescription: "You don't trust Enjin. You believe your own voice is more
+    important than Enjin's voice. If Enjin is used, you want to understand why -
+    Enjin needs to be a transparent tool.  \n\nThink about how you can maintain the
+    identity of the company's employees. How can AI be made more transparent in the
+    company? How much do you value data privacy? Get in character! \r\n"
+  characterImage: {fileID: -1769506802097752776, guid: 2d24d4ce11da30d40b902eabaeddc95e, type: 3}
+  policyKeywords: 0100000005000000
+  characterKeywords: 0200000001000000
+  isCharacterAssigned: 0

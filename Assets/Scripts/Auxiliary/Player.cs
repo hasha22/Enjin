@@ -16,4 +16,9 @@ public class Player : MonoBehaviour
     {
         return (firstOpinion, secondOpinion);
     }
+    public void InitializePlayerData(string playerName)
+    {
+        selectedCharacter = CharacterDatabase.instance.GetRandomCharacter();
+        this.playerName = playerName;
+    }
 }

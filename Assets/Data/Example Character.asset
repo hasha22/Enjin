@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfbb24d7071b4ad459a7ae40510e8f2a, type: 3}
   m_Name: Example Character
   m_EditorClassIdentifier: Assembly-CSharp::Character
-  characterName: The Gay Man
-  characterDescription: He likes men
-  characterImage: {fileID: 21300000, guid: d8b2e9199f3d8b34aa4e216438bb0d2a, type: 3}
-  policyKeywords: 00000000
-  characterKeywords: 0200000003000000
+  characterName: Example Character
+  characterDescription: Idk
+  characterImage: {fileID: 5102722682164517081, guid: aed23546facf507478918fb428bf90f4, type: 3}
+  policyKeywords: 0000000003000000
+  characterKeywords: 0300000002000000

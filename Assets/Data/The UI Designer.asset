@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfbb24d7071b4ad459a7ae40510e8f2a, type: 3}
+  m_Name: The UI Designer
+  m_EditorClassIdentifier: Assembly-CSharp::Character
+  characterName: The UI Designer
+  characterDescription: "You believe Enjin shouldn\u2019t replace any work. You think
+    Enjin only has a negative influence on creativity, and that by using it artists
+    sell their creativity to big corporations You believe Enjin can be used for administrative
+    work, but in no way should replace creative work.\r\n"
+  characterImage: {fileID: -4315248950563333976, guid: cf321ff330faacd43b713d4221386dcd, type: 3}
+  policyKeywords: 0100000004000000
+  characterKeywords: 0400000002000000
