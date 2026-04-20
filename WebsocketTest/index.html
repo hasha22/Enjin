@@ -2,25 +2,34 @@
 <html>
 <body>
 
-<h2>Simple Client</h2>
+<h2>Room Player Client</h2>
 
-<button onclick="join()">Join</button>
-<button onclick="press()">Press Button</button>
-
+<label>
+  Player name:
+  <input id="playerName" value="" maxlength="24" placeholder="Your name">
+</label>
 <br><br>
+<label>
+  Room code:
+  <input id="roomCode" value="ABCD" maxlength="10">
+</label>
+<button onclick="joinRoom()">Join Room</button>
+<p id="status">Not joined</p>
 
-<!-- 🎚️ SNAP SLIDER -->
+<hr>
+
 <input type="range" min="0" max="4" value="2" step="1" id="slider">
-
-<!-- ONLY dynamic text -->
 <p id="sliderValue">Neutral</p>
 
-<button onclick="submitSlider()">Submit</button>
+<button onclick="submitSlider()">Send Slider</button>
+<button onclick="sendButton()">Send Button</button>
 
 <div id="log"></div>
 
 <script>
 const ws = new WebSocket("ws://localhost:5040");
+let joinedRoomCode = null;
+const clientId = "browser-" + Math.random().toString(36).slice(2, 8);
 
 const labels = [
   "Disagree",
@@ -30,59 +39,121 @@ const labels = [
   "Agree"
 ];
 
-// RECEIVE
 ws.onmessage = (event) => {
   const msg = JSON.parse(event.data);
 
-  if (msg.type === "message") {
-    log("Unity says: " + msg.text);
+  if (msg.type === "join_room_success" || msg.type === "joined_room") {
+    joinedRoomCode = msg.room || msg.roomCode;
+    const state = msg.gameState || msg.state || "unknown";
+    setStatus("Joined room " + joinedRoomCode + " (state: " + state + ")");
+    log("Joined room " + joinedRoomCode + " as " + (msg.playerName || "unknown"));
   }
 
-  if (msg.type === "button_pressed") {
-  log("Button was pressed!");
-}
-  
+  if (msg.type === "join_room_failed") {
+    joinedRoomCode = null;
+    log("Join failed: " + (msg.reason || "Unknown reason"));
+  }
+
+  if (msg.type === "room_info") {
+    const names = Array.isArray(msg.playerNames) && msg.playerNames.length > 0
+      ? msg.playerNames.join(", ")
+      : "(none)";
+    log("Room " + (msg.room || msg.roomCode) + " | host: " + (msg.hasHost ? "yes" : "no") + " | players: " + msg.playerCount + " | names: " + names + " | state: " + (msg.gameState || msg.state));
+  }
+
+  if (msg.type === "host_broadcast") {
+    log("Host broadcast [" + msg.eventType + "]: " + JSON.stringify(msg.payload));
+  }
+
+  if (msg.type === "state_update") {
+    const room = msg.room || msg.roomCode;
+    const state = msg.gameState || msg.state;
+    setStatus("Joined room " + room + " (state: " + state + ")");
+    log("State changed to: " + state);
+  }
+
+  if (msg.type === "host_disconnected") {
+    log("Host disconnected from room " + msg.roomCode);
+  }
+
+  if (msg.type === "error") {
+    log("Server error: " + msg.message);
+  }
 };
 
-// JOIN
-function join() {
-  ws.send(JSON.stringify({ type: "join" }));
-}
+ws.onopen = () => {
+  setStatus("Connected. Enter room code and click Join Room.");
+};
 
-// BUTTON
-function press() {
-  ws.send(JSON.stringify({ type: "button" }));
-}
+ws.onclose = () => {
+  setStatus("Disconnected from server");
+};
 
-// 🎚️ SLIDER
+// SLIDER UI
 const slider = document.getElementById("slider");
 const sliderValue = document.getElementById("sliderValue");
 
 slider.oninput = function () {
-  const value = parseInt(this.value);
-
-  sliderValue.innerText = labels[value];
-
-  ws.send(JSON.stringify({
-    type: "slider",
-    value: value,
-    label: labels[value]
-  }));
+  sliderValue.innerText = labels[this.value];
 };
 
-function submitSlider() {
-  const value = parseInt(slider.value);
+function joinRoom() {
+  const roomCode = document.getElementById("roomCode").value.trim().toUpperCase();
+  const playerName = document.getElementById("playerName").value.trim();
+  if (!roomCode) {
+    log("Room code is required");
+    return;
+  }
+  if (!playerName) {
+    log("Player name is required");
+    return;
+  }
 
   ws.send(JSON.stringify({
-    type: "slider_submit",
-    value: value,
-    label: labels[value]
+    type: "join_room_request",
+    room: roomCode,
+    clientId,
+    playerName
   }));
 }
 
-// LOG
+function submitSlider() {
+  if (!joinedRoomCode) {
+    log("Join a room first");
+    return;
+  }
+
+  ws.send(JSON.stringify({
+    type: "player_input",
+    eventType: "slider_submit",
+    payload: {
+      value: parseInt(slider.value, 10),
+      label: labels[slider.value]
+    }
+  }));
+}
+
+function sendButton() {
+  if (!joinedRoomCode) {
+    log("Join a room first");
+    return;
+  }
+
+  ws.send(JSON.stringify({
+    type: "player_input",
+    eventType: "button_pressed",
+    payload: {
+      pressed: true
+    }
+  }));
+}
+
 function log(text) {
   document.getElementById("log").innerHTML += "<p>" + text + "</p>";
+}
+
+function setStatus(text) {
+  document.getElementById("status").innerText = text;
 }
 </script>
 
