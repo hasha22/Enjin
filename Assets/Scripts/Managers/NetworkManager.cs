@@ -13,16 +13,22 @@ public class NetworkManager : MonoBehaviour
     [SerializeField] private string roomCode = "ABCD";
     [SerializeField] private string hostClientId = "unity-host-1";
 
+    [Header("Players")]
+    public List<GameObject> allPlayers = new List<GameObject>();
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private Transform playerContainer;
+
     [Serializable]
     public class Envelope
     {
         public string type;
-        public string roomCode;
-        public string clientId;
-        public string eventType;
-        public string state;
-        public string message;
-        public string payloadJson;
+        public string data;
+    }
+
+    [Serializable]
+    public class PlayerJoinPayload
+    {
+        public string playerName;
     }
 
     [Serializable]
@@ -124,13 +130,31 @@ public class NetworkManager : MonoBehaviour
         switch (msg.type)
         {
             case "host_registered":
-                Debug.Log($"Host registered in room {msg.roomCode}");
-                // Optional initial state broadcast:
+                Debug.Log($"Host registered");
                 SendStateUpdate("lobby");
                 break;
 
             case "player_joined":
-                Debug.Log($"Player joined room {msg.roomCode}");
+                PlayerJoinPayload data = null;
+                try
+                {
+                    data = JsonUtility.FromJson<PlayerJoinPayload>(msg.data);
+                }
+                catch
+                {
+                    Debug.LogWarning("Failed to parse player_joined payload");
+                    return;
+                }
+
+                if (data == null)
+                {
+                    Debug.LogWarning("player_joined payload was null");
+                    return;
+                }
+
+                Debug.Log($"Player joined: {data.playerName}");
+
+                ConnectPlayer(data.playerName);
                 break;
 
             case "player_input":
@@ -138,11 +162,11 @@ public class NetworkManager : MonoBehaviour
                 break;
 
             case "room_info":
-                Debug.Log($"Room info update for {msg.roomCode}");
+                Debug.Log($"Room info update");
                 break;
 
             case "error":
-                Debug.LogWarning("Server error: " + (msg.message ?? "(no message)"));
+                Debug.LogWarning("Server error");
                 break;
 
             case "host_replaced":
@@ -153,6 +177,7 @@ public class NetworkManager : MonoBehaviour
 
     private void HandlePlayerInput(Envelope msg)
     {
+        /*
         if (msg.eventType == "slider_submit")
         {
             var payload = SafeParse<SliderPayload>(msg.payloadJson);
@@ -173,6 +198,7 @@ public class NetworkManager : MonoBehaviour
         }
 
         Debug.Log($"Unknown player eventType: {msg.eventType}");
+        */
     }
 
     public void SendHostRegister()
@@ -186,6 +212,24 @@ public class NetworkManager : MonoBehaviour
             + "}";
         Debug.Log("Sending host_register: " + json);
         Send(json);
+    }
+    public void ConnectPlayer(string playerName)
+    {
+        if (allPlayers.Count >= 6)
+        {
+            Debug.Log("Error: Only 6 players allowed.");
+            return;
+        }
+
+        GameObject newPlayer = Instantiate(playerPrefab, playerContainer);
+        allPlayers.Add(newPlayer);
+        Player player = newPlayer.GetComponent<Player>();
+        player.InitializePlayerData(playerName);
+
+        //Instantiate & Update UI elements
+        //Register player in a list of active players
+        UIManager.instance.IncreaseDisplayedPlayerCount();
+        UIManager.instance.UpdatePlayerCard(allPlayers.Count - 1, player);
     }
 
     public void SendStateUpdate(string state)
@@ -250,8 +294,8 @@ public class NetworkManager : MonoBehaviour
     {
         return (s ?? "").Replace("\\", "\\\\").Replace("\"", "\\\"");
     }
-    public List<Player> GetPlayerList()
+    public List<GameObject> GetPlayerList()
     {
-        return null;
+        return allPlayers;
     }
 }

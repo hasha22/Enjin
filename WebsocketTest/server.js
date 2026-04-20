@@ -234,16 +234,13 @@ function joinRoom(ws, roomCode, clientId, playerName) {
   send(ws, successPayload);
   send(ws, { ...successPayload, type: "joined_room", state: room.gameState }); // legacy alias
 
-  if (room.host) {
-    send(room.host, {
-      type: isReconnect ? "player_reconnected" : "player_joined",
-      room: roomCode,
-      roomCode,
-      playerCount: room.players.size,
-      clientId: clientId || null,
-      playerName
-    });
-  }
+ send(room.host, {
+  type: "player_joined",
+  data: JSON.stringify({
+    playerName
+  })
+});
+  
 
   publishRoomInfo(room);
   console.log(`[room:${roomCode}] player ${isReconnect ? "reconnected" : "joined"} (${room.players.size} active) name=${playerName}`);
@@ -259,7 +256,7 @@ function forwardPlayerToHost(ws, room, meta, msg) {
     type: msg.type || "player_input",
     room: room.roomCode,
     roomCode: room.roomCode,
-    clientId: meta.clientId || null,
+    clientId: meta.clientId,
     playerName: meta.playerName || null,
     payload: msg.payload || {},
     eventType: msg.eventType || msg.type || "unknown"

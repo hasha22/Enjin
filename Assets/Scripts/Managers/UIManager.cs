@@ -33,12 +33,9 @@ public class UIManager : MonoBehaviour
     }
     public void IncreaseDisplayedPlayerCount()
     {
-        if (NetworkManager.instance.GetPlayerList() != null)
-        {
-            float currentIndex = NetworkManager.instance.GetPlayerList().Count;
-            float indexToDisplay = currentIndex++;
-            displayedPlayerCount.text = indexToDisplay.ToString();
-        }
+        float currentIndex = NetworkManager.instance.GetPlayerList().Count;
+        float indexToDisplay = currentIndex++;
+        displayedPlayerCount.text = indexToDisplay.ToString();
     }
     public void UpdatePlayerCard(int index, Player player)
     {
