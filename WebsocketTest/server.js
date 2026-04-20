@@ -122,6 +122,7 @@ function upsertSocketMeta(ws, meta) {
   socketMeta.set(ws, meta);
 }
 
+
 function removeSocketFromRoom(ws) {
   const meta = socketMeta.get(ws);
   if (!meta || !meta.roomCode) return;
@@ -170,6 +171,7 @@ function removeSocketFromRoom(ws) {
 
   publishRoomInfo(room);
 }
+
 
 function registerHost(ws, roomCode, clientId) {
   removeSocketFromRoom(ws);
