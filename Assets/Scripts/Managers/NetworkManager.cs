@@ -1,5 +1,6 @@
 using NativeWebSocket;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
@@ -58,7 +59,12 @@ public class NetworkManager : MonoBehaviour
         Application.runInBackground = true;
         await Connect();
     }
-
+    void Update()
+    {
+#if !UNITY_WEBGL || UNITY_EDITOR
+        websocket?.DispatchMessageQueue();
+#endif
+    }
     public async System.Threading.Tasks.Task Connect()
     {
         if (isConnecting) return;
@@ -216,13 +222,6 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-#if !UNITY_WEBGL || UNITY_EDITOR
-        websocket?.DispatchMessageQueue();
-#endif
-    }
-
     private async void OnApplicationQuit()
     {
         if (websocket != null && websocket.State == WebSocketState.Open)
@@ -250,5 +249,9 @@ public class NetworkManager : MonoBehaviour
     private string Escape(string s)
     {
         return (s ?? "").Replace("\\", "\\\\").Replace("\"", "\\\"");
+    }
+    public List<Player> GetPlayerList()
+    {
+        return null;
     }
 }
