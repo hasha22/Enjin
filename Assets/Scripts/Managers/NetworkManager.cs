@@ -40,6 +40,7 @@ public class NetworkManager : MonoBehaviour
         Application.runInBackground = true;
         await Connect();
     }
+    
     void Update()
     {
 #if !UNITY_WEBGL || UNITY_EDITOR
