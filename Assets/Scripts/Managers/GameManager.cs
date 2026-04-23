@@ -11,22 +11,24 @@ public class GameManager : MonoBehaviour
     public List<Topic> allTopics = new List<Topic>();
     [SerializeField] private Topic currentTopic;
     [SerializeField] private Policy currentPolicy;
+    [SerializeField] private int currentScreen;
 
     [Header("Main references")]
     public List<GameObject> allScreens = new List<GameObject>();
     public GameObject timer;
     public TextMeshProUGUI timerText;
 
+    [Header("UI references")]
+    public TextMeshProUGUI titleText;
+    public TextMeshProUGUI topText;
+    public GameObject headers;
+    public GameObject keywordContainers;
+    public GameObject posContainer;
+    public GameObject negContainer;
 
-    [Header("Situation Explanation Screen References")]
-    public TextMeshProUGUI scenarioNameText;
-    public TextMeshProUGUI scenarioDescriptionText;
-
-    [Header("Policy Voting 1 Screen References")]
-    public TextMeshProUGUI policyText1;
+    [Header("Prefab references")]
     public GameObject keywordCardPrefab;
-    public GameObject posKeywordContainer;
-    public GameObject negKeywordContainer;
+    public GameObject playerIcon;
 
     void Awake()
     {
@@ -39,5 +41,26 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public void NextScreen()
+    {
+        currentScreen++;
+        if (currentScreen >= 5)
+        {
+            currentScreen = 1;
+        }
+        for (int i = 0; i < allScreens.Count; i++){
+            if (i == currentScreen)
+            {
+                allScreens[i].SetActive(true);
+            }
+            else
+            {
+                allScreens[i].SetActive(false);
+            }
+        }
+        if (currentScreen != 0){headers.SetActive(true);} else {headers.SetActive(false);}
+        if (currentScreen == 2 || currentScreen == 3){keywordContainers.SetActive(true);} else {keywordContainers.SetActive(false);}
     }
 }
