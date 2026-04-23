@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -10,13 +11,12 @@ public class GameManager : MonoBehaviour
     [Header("Variables")]
     public List<Topic> allTopics = new List<Topic>();
     [SerializeField] private Topic currentTopic;
-    [SerializeField] private Policy currentPolicy;
+    [SerializeField] private Policy currentPolicy; //Discuss with daniel if this is necessary, since you can just access it from currenttopic anyway
     [SerializeField] private int currentScreen;
+    [SerializeField] private int currentRound;
 
     [Header("Main references")]
     public List<GameObject> allScreens = new List<GameObject>();
-    public GameObject timer;
-    public TextMeshProUGUI timerText;
 
     [Header("UI references")]
     public TextMeshProUGUI titleText;
@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
     public GameObject keywordContainers;
     public GameObject posContainer;
     public GameObject negContainer;
+    public GameObject timer;
 
     [Header("Prefab references")]
     public GameObject keywordCardPrefab;
@@ -41,6 +42,11 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    void Start()
+    {
+        TimerScript.instance.StartTimer(62);
     }
 
     public void NextScreen()
@@ -61,6 +67,16 @@ public class GameManager : MonoBehaviour
             }
         }
         if (currentScreen != 0){headers.SetActive(true);} else {headers.SetActive(false);}
-        if (currentScreen == 2 || currentScreen == 3){keywordContainers.SetActive(true);} else {keywordContainers.SetActive(false);}
+        if (currentScreen == 2 || currentScreen == 3){
+            keywordContainers.SetActive(true); 
+            timer.SetActive(true); 
+            TimerScript.instance.StartTimer(10);
+        }
+        else {keywordContainers.SetActive(false); timer.SetActive(false);}
+    }
+
+    public void TimesUp()
+    {
+       NextScreen();
     }
 }
