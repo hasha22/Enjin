@@ -44,5 +44,11 @@ TagManager:
   - name: UI
     uniqueID: 2049297105
     locked: 0
+  - name: Front
+    uniqueID: 1424603539
+    locked: 0
+  - name: Back
+    uniqueID: 2536044569
+    locked: 0
   m_RenderingLayers:
   - Default

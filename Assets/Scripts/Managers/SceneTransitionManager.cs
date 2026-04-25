@@ -13,23 +13,6 @@ public class SceneTransitionManager : MonoBehaviour
     [SerializeField] private Animator waitingSceneTransition;
     [SerializeField] private float animationDelay = 1f;
 
-    private void Awake()
-    {
-        /*
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-        
-        crossfade.SetActive(false);
-        */
-    }
-
     public void LoadNextScene()
     {
         StartCoroutine(LoadSceneWithAnimation(SceneManager.GetActiveScene().buildIndex + 1));
@@ -37,18 +20,6 @@ public class SceneTransitionManager : MonoBehaviour
     private IEnumerator LoadSceneWithAnimation(int index)
     {
         waitingSceneTransition.SetTrigger("Start");
-        /*
-        switch (index)
-        {
-            case 0:
-                Debug.Log("Wrong Scene Index");
-                break;
-            case 1:
-                crossfade.SetActive(true);
-                waitingSceneTransition.SetTrigger("Start");
-                break;
-        }
-        */
         yield return new WaitForSeconds(animationDelay);
 
         SceneManager.LoadScene(index);

@@ -39,8 +39,10 @@ public class NetworkManager : MonoBehaviour
     {
         Application.runInBackground = true;
         await Connect();
+
+        UIManager.instance.SetRoomCode(roomCode);
     }
-    
+
     void Update()
     {
 #if !UNITY_WEBGL || UNITY_EDITOR

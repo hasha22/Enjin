@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -46,7 +44,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        TimerScript.instance.StartTimer(62);
+        //TimerScript.instance.StartTimer(62);
     }
 
     public void NextScreen()
@@ -56,7 +54,8 @@ public class GameManager : MonoBehaviour
         {
             currentScreen = 1;
         }
-        for (int i = 0; i < allScreens.Count; i++){
+        for (int i = 0; i < allScreens.Count; i++)
+        {
             if (i == currentScreen)
             {
                 allScreens[i].SetActive(true);
@@ -66,17 +65,18 @@ public class GameManager : MonoBehaviour
                 allScreens[i].SetActive(false);
             }
         }
-        if (currentScreen != 0){headers.SetActive(true);} else {headers.SetActive(false);}
-        if (currentScreen == 2 || currentScreen == 3){
-            keywordContainers.SetActive(true); 
-            timer.SetActive(true); 
+        if (currentScreen != 0) { headers.SetActive(true); } else { headers.SetActive(false); }
+        if (currentScreen == 2 || currentScreen == 3)
+        {
+            keywordContainers.SetActive(true);
+            timer.SetActive(true);
             TimerScript.instance.StartTimer(10);
         }
-        else {keywordContainers.SetActive(false); timer.SetActive(false);}
+        else { keywordContainers.SetActive(false); timer.SetActive(false); }
     }
 
     public void TimesUp()
     {
-       NextScreen();
+        NextScreen();
     }
 }
