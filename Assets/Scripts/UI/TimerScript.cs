@@ -14,10 +14,10 @@ public class TimerScript : MonoBehaviour
 
     public void StartTimer(int seconds)
     {
-        StartCoroutine(TimerCoroutine(seconds));
+        StartCoroutine(TimerCoroutine(seconds, false));
     }
 
-    IEnumerator TimerCoroutine(int seconds)
+    IEnumerator TimerCoroutine(int seconds, bool isDiscussionRound)
     {
         int timeLeft = seconds;
         while (timeLeft > 0)
@@ -29,6 +29,6 @@ public class TimerScript : MonoBehaviour
             timeLeft--;
         }
         timerText.text = "00:00";
-        GameManager.instance.TimesUp();
+        if (!isDiscussionRound){GameManager.instance.TimesUp();}
     }
 }

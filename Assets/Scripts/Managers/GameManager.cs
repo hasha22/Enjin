@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using Mono.Cecil.Cil;
 using TMPro;
 using UnityEngine;
 
@@ -16,18 +18,31 @@ public class GameManager : MonoBehaviour
     [Header("Main references")]
     public List<GameObject> allScreens = new List<GameObject>();
 
-    [Header("UI references")]
+    [Header("Text References")]
     public TextMeshProUGUI titleText;
     public TextMeshProUGUI topText;
+    public TextMeshProUGUI scenarioDescText;
+    public TextMeshProUGUI enjinDescText;
+
+    [Header("Visuals to turn off and on references")]
     public GameObject headers;
     public GameObject keywordContainers;
+    public GameObject timer;
+    public GameObject continueButton;
+
+    [Header("Container references")]
     public GameObject posContainer;
     public GameObject negContainer;
-    public GameObject timer;
+    public GameObject posVotes;
+    public GameObject negVotes;
 
     [Header("Prefab references")]
     public GameObject keywordCardPrefab;
     public GameObject playerIcon;
+
+    [Header("Settings")]
+    public int votingTime;
+    public int discussionTime;
 
     void Awake()
     {
@@ -44,13 +59,13 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        //TimerScript.instance.StartTimer(62);
+        //kill yourself stupid git
     }
 
     public void NextScreen()
     {
         currentScreen++;
-        if (currentScreen >= 5)
+        if (currentScreen >= 6)
         {
             currentScreen = 1;
         }
@@ -65,14 +80,22 @@ public class GameManager : MonoBehaviour
                 allScreens[i].SetActive(false);
             }
         }
-        if (currentScreen != 0) { headers.SetActive(true); } else { headers.SetActive(false); }
-        if (currentScreen == 2 || currentScreen == 3)
-        {
-            keywordContainers.SetActive(true);
-            timer.SetActive(true);
-            TimerScript.instance.StartTimer(10);
+        //Turns headers off or on
+        if (currentScreen != 0){headers.SetActive(true);} else {headers.SetActive(false);}
+        //Turns timer & continue button off or on
+        if (currentScreen == 2 || currentScreen == 5){
+            keywordContainers.SetActive(true); 
+            timer.SetActive(true); 
+            continueButton.SetActive(false);
+            TimerScript.instance.StartTimer(votingTime);
         }
-        else { keywordContainers.SetActive(false); timer.SetActive(false); }
+        else if (currentScreen == 3)
+        {
+            keywordContainers.SetActive(true); 
+            timer.SetActive(true); 
+            continueButton.SetActive(false);
+        }
+        else {keywordContainers.SetActive(false); timer.SetActive(false); continueButton.SetActive(true);}
     }
 
     public void TimesUp()

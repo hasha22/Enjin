@@ -21,3 +21,12 @@ public enum PolicyKeywords
     Organization,
     Privacy,
 }
+public enum VoteTypes
+{
+    MostlyDisagree,
+    Disagree,
+    Neutral,
+    Agree,
+    MostlyAgree 
+    //this enum has been made because using an enum would make more sense from a unity perspective
+}
