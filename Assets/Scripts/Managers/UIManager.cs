@@ -1,8 +1,6 @@
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Video;
 
 public class UIManager : MonoBehaviour
 {
@@ -21,14 +19,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Color player4OutlineColor = new Color(0.872f, 0.612f, 0.064f, 1.000f);
     [SerializeField] private Color player5OutlineColor = new Color(0.507f, 0.226f, 0.736f, 1.000f);
     [SerializeField] private Color player6OutlineColor = new Color(0.995f, 1.000f, 0.036f, 1.000f);
-
-    [Space]
-    public GameObject fraud;
-    [SerializeField] private GameObject v1;
-    [SerializeField] KnockOverEffect knockOverScript;
-    [SerializeField] private GameObject everything;
-    [SerializeField] private VideoPlayer player;
-    [SerializeField] private GameObject stuff;
     private void Awake()
     {
         displayedPlayerCount.text = "0";
@@ -41,10 +31,6 @@ public class UIManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-    private void Start()
-    {
-        StartCoroutine(fraudDelay());
     }
     public void IncreaseDisplayedPlayerCount()
     {
@@ -90,26 +76,5 @@ public class UIManager : MonoBehaviour
     public void SetRoomCode(string code)
     {
         roomCode.text = code;
-    }
-    private IEnumerator fraudDelay()
-    {
-        yield return new WaitForSeconds(3f);
-        knockOverScript.Fall();
-        everything.SetActive(false);
-        yield return new WaitForSeconds(1.5f);
-
-        v1.SetActive(true);
-        StartCoroutine(fraudCoroutine());
-    }
-    private IEnumerator fraudCoroutine()
-    {
-        fraud.SetActive(true);
-        //AudioManager.instance.PlayBGM();
-        AudioManager.instance.StopBGM();
-        stuff.SetActive(true);
-        player.Play();
-        player.SetDirectAudioVolume(0, 2f);
-        yield return new WaitForSeconds(4f);
-        fraud.SetActive(false);
     }
 }

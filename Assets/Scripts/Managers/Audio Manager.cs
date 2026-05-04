@@ -13,7 +13,6 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource gameSceneSource;
     public AudioClip waitingSceneBGM;
     public AudioClip gameSceneBGM;
-    public AudioClip fraud;
     [SerializeField][Range(0, 1f)] private float bgmVolume = 1f;
     [Header("SFX")]
     public AudioClip startGameSFX;
@@ -66,14 +65,7 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayBGM()
     {
-        if (UIManager.instance != null && UIManager.instance.fraud.activeSelf)
-        {
-            waitingSceneSource.clip = fraud;
-            waitingSceneSource.volume = bgmVolume;
-            waitingSceneSource.Play();
-            waitingSceneSource.loop = true;
-        }
-        else if (waitingSceneSource != null)
+        if (waitingSceneSource != null)
         {
             waitingSceneSource.clip = waitingSceneBGM;
             waitingSceneSource.volume = bgmVolume;
