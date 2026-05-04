@@ -1,7 +1,7 @@
 // Setup
 const WebSocket = require("ws");
-const wss = new WebSocket.Server({ port: 5040 });
-console.log("Server running on ws://localhost:5040");
+const wss = new WebSocket.Server({ port: 5085 });
+console.log("Server running on ws://localhost:5085");
 
 const rooms = new Map();
 
@@ -42,6 +42,7 @@ function joinRoom(ws, roomCode, playerName, clientId)
     clientId: clientId
   };
   room.players.add(player);
+  console.log(`Player joined: ${playerName} (total: ${room.players.size})`);
 
   send(ws, "join_room_success", {
     room: roomCode,
@@ -64,7 +65,7 @@ function joinRoom(ws, roomCode, playerName, clientId)
 
 //Connection Handling
 wss.on("connection", (ws) => {
-  console.log("Client connected");
+  console.log("New client connected");
 
   ws.on("message", (raw) => {
     let msg;
@@ -111,6 +112,7 @@ wss.on("connection", (ws) => {
     for (const room of rooms.values()) {
       if (room.host === ws) {
         room.host = null;
+        console.log(`Host disconnected`);
       }
 
       for (const player of room.players) 
@@ -118,6 +120,7 @@ wss.on("connection", (ws) => {
         if (player.ws === ws) 
         {
           room.players.delete(player);
+          console.log(`Player disconnected: ${player.playerName}`);
         }
       }
     }

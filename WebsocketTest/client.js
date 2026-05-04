@@ -1,5 +1,5 @@
 //Setup & Connection
-const ws = new WebSocket("ws://localhost:5040");
+const ws = new WebSocket("ws://localhost:5085");
 let joinedRoomCode = null;
 const clientId = getClientId();
 
