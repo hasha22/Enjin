@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using Mono.Cecil.Cil;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -23,6 +24,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI topText;
     public TextMeshProUGUI scenarioDescText;
     public TextMeshProUGUI enjinDescText;
+    public TextMeshProUGUI roundIndicator;
 
     [Header("Visuals to turn off and on references")]
     public GameObject headers;
@@ -43,6 +45,7 @@ public class GameManager : MonoBehaviour
     [Header("Settings")]
     public int votingTime;
     public int discussionTime;
+    public int totalRounds;
 
     void Awake()
     {
@@ -59,16 +62,20 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        //kill yourself stupid git
+        roundIndicator.text = $"{currentRound}/{totalRounds}";
     }
 
     public void NextScreen()
     {
         currentScreen++;
-        if (currentScreen >= 6)
+        if (currentScreen >= 7)
         {
             currentScreen = 1;
+            currentRound++;
+            if (currentRound > totalRounds) {SceneManager.LoadScene("OutcomeScene"); return;}
+            roundIndicator.text = $"{currentRound}/{totalRounds}";
         }
+        //Turns the correct screen on and the rest off
         for (int i = 0; i < allScreens.Count; i++)
         {
             if (i == currentScreen)
@@ -81,10 +88,10 @@ public class GameManager : MonoBehaviour
             }
         }
         //Turns headers off or on
-        if (currentScreen != 0){headers.SetActive(true);} else {headers.SetActive(false);}
+        if (currentScreen == 0 || currentScreen == 6){headers.SetActive(false);} else {headers.SetActive(true);}
         //Turns timer & continue button off or on
         if (currentScreen == 2 || currentScreen == 5){
-            keywordContainers.SetActive(true); 
+            keywordContainers.SetActive(true);
             timer.SetActive(true); 
             continueButton.SetActive(false);
             TimerScript.instance.StartTimer(votingTime);
@@ -94,8 +101,10 @@ public class GameManager : MonoBehaviour
             keywordContainers.SetActive(true); 
             timer.SetActive(true); 
             continueButton.SetActive(false);
+            TimerScript.instance.StartTimer(discussionTime);
         }
         else {keywordContainers.SetActive(false); timer.SetActive(false); continueButton.SetActive(true);}
+        if (currentScreen == 6){ValueManager.instance.MakeBig();}else{ValueManager.instance.MakeSmall();}
     }
 
     public void TimesUp()
