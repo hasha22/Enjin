@@ -17,7 +17,6 @@ public enum PolicyKeywords
     Productivity,
     Reliability,
     Sustainability,
-    AIUsage,
     Organization,
     Privacy,
     EmployeeSatisfaction
