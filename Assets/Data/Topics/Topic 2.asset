@@ -12,14 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5be028ba93737df409e7a198304f8a7c, type: 3}
   m_Name: Topic 2
   m_EditorClassIdentifier: Assembly-CSharp::Topic
-  topicName: Enjin for art
-  topicDescription: Employees use AI to generate art, advertisements, and write texts.
-    Over time, they begin to feel like their own voice fades.
+  topicName: Enjin for customer support
+  topicDescription: Our company wishes to implement the new Enjin model to handle
+    all customer support related tasks. This would cut costs and provide 24/7 availability.
   formulatedPolicy:
-    policyName: 
-    policyDescription: 
-    keywords: 
+    policyName: Formulated Policy
+    policyDescription: Customer support should be operated by employees in the company
+      because they understand how to treat the customers best.
+    keywords: 0000000003000000
   enjinPolicy:
-    policyName: 
-    policyDescription: 
-    keywords: 
+    policyName: Enjin V2.0
+    policyDescription: 'Meet Enjin 2.0 - our new model is capable of delivering hyper-personalized
+      interactions at scale. This means Enjin can now help increase efficency and
+      scaleability of all companies by handling all customer interactions. Even across
+      multiple languages, Enjin can provide consistent and immediate support. So
+      what are you waiting for? Make your customers happy!
+
+'
+    keywords: 0100000002000000

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be028ba93737df409e7a198304f8a7c, type: 3}
+  m_Name: Topic 5
+  m_EditorClassIdentifier: Assembly-CSharp::Topic
+  topicName: Enjin usage & transparency
+  topicDescription: 'As Enjin is becoming more and more popular, employees within
+    the organization are using Enjin for a wide variety of different tasks, without
+    informing their colleagues or management. '
+  formulatedPolicy:
+    policyName: Formulated Policy
+    policyDescription: All Enjin usage should be documented within the company, and
+      inputting sensitive company data or personal employee data is forbidden unless
+      approved by management.
+    keywords: 0500000001000000
+  enjinPolicy:
+    policyName: Enjin V4.0
+    policyDescription: Enjin 4.0, our newest, most advanced model is now capable
+      of handling advanced tasks, such as creating data charts and even writing entire
+      software systems! Do you need your company sale data summarized and analysed
+      quickly for a meeting? Need a new website design, or maybe you want to make
+      a new phone app? There is nothing Enjin cannot do for you!
+    keywords: 0300000004000000

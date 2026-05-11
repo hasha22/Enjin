@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be028ba93737df409e7a198304f8a7c, type: 3}
+  m_Name: Topic 3
+  m_EditorClassIdentifier: Assembly-CSharp::Topic
+  topicName: Enjin for art
+  topicDescription: Employees use AI to generate art, advertisements, and write texts.
+    Over time, they begin to feel like their own voice fades.
+  formulatedPolicy:
+    policyName: Formulated Policy
+    policyDescription: AI should not be used to generate art or assets of any kind
+      because it takes away from people's ability to express themselves.
+    keywords: 0100000005000000
+  enjinPolicy:
+    policyName: Enjin V3.0
+    policyDescription: Our brand new model, Enjin 3.0, has now become an artist capable
+      of creating anything you can imagine. Do you need assets and images for a new
+      website? Stock images for a presentation? Promotional images for an advertisement?
+      Enjin 3.0 has got you covered!
+    keywords: 0200000000000000
