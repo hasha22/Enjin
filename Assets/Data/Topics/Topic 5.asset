@@ -12,21 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5be028ba93737df409e7a198304f8a7c, type: 3}
   m_Name: Topic 5
   m_EditorClassIdentifier: Assembly-CSharp::Topic
-  topicName: Enjin usage & transparency
-  topicDescription: 'As Enjin is becoming more and more popular, employees within
-    the organization are using Enjin for a wide variety of different tasks, without
-    informing their colleagues or management. '
+  topicName: Enjin for management
+  topicDescription: Enjin has become advanced enough that it can propose business
+    strategies and understand complex company problems. Teams follow the advice because
+    it seems logical.
   formulatedPolicy:
     policyName: Formulated Policy
-    policyDescription: All Enjin usage should be documented within the company, and
-      inputting sensitive company data or personal employee data is forbidden unless
-      approved by management.
-    keywords: 0500000001000000
+    policyDescription: Enjin should not take part in advising people on company decisions
+      because it is still capable of making mistakes and its advice is not foolproof.
+    keywords: 0300000004000000
   enjinPolicy:
-    policyName: Enjin V4.0
-    policyDescription: Enjin 4.0, our newest, most advanced model is now capable
-      of handling advanced tasks, such as creating data charts and even writing entire
-      software systems! Do you need your company sale data summarized and analysed
-      quickly for a meeting? Need a new website design, or maybe you want to make
-      a new phone app? There is nothing Enjin cannot do for you!
+    policyName: Enjin V5.0
+    policyDescription: 'The new Enjin 5.0 is more than just a tool - it''s an indispensable
+      asset to any competent manager. Enjin is now able to understand complex topics
+      and propose strategies and priorities for your team. Enjin can be your fellow
+      buisness partner, advising you every step of the way towards your next success.
+      We''ve trained our new model on thousands of different comapanies and situations,
+      so you can be sure it will understand you and your team''s needs!
+
+'
     keywords: 0300000004000000

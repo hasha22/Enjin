@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Topic 3
   m_EditorClassIdentifier: Assembly-CSharp::Topic
   topicName: Enjin for art
-  topicDescription: Employees use AI to generate art, advertisements, and write texts.
-    Over time, they begin to feel like their own voice fades.
+  topicDescription: Employees use Enjin to generate art, advertisements, and write
+    texts. Over time, they begin to feel like their own voice fades.
   formulatedPolicy:
     policyName: Formulated Policy
-    policyDescription: AI should not be used to generate art or assets of any kind
-      because it takes away from people's ability to express themselves.
+    policyDescription: Enjin should not be used to generate art or assets of any
+      kind because it takes away from people's ability to express themselves.
     keywords: 0100000005000000
   enjinPolicy:
     policyName: Enjin V3.0
