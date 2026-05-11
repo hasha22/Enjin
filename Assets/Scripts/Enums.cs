@@ -20,6 +20,7 @@ public enum PolicyKeywords
     AIUsage,
     Organization,
     Privacy,
+    EmployeeSatisfaction
 }
 public enum VoteTypes
 {
@@ -27,6 +28,6 @@ public enum VoteTypes
     Disagree,
     Neutral,
     Agree,
-    MostlyAgree 
+    MostlyAgree
     //this enum has been made because using an enum would make more sense from a unity perspective
 }

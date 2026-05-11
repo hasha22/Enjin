@@ -22,11 +22,11 @@ MonoBehaviour:
     policyName: Formulated Policy
     policyDescription: Workers should be able to decide for themselves when and how
       they use Enjin.
-    keywords: 0300000001000000
+    keywords: 0600000004000000
   enjinPolicy:
     policyName: Enjin V1.0
     policyDescription: Our first commerical model, Enjin 1.0 is now your new best
       friend! It can do all of your mundane and boring tasks for you. Say goodbye
       to writing tedious meeting summaries and documents, Enjin can handle it for
       you with just a simple prompt!
-    keywords: 0300000001000000
+    keywords: 0000000005000000
