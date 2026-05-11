@@ -29,6 +29,6 @@ public class TimerScript : MonoBehaviour
             timeLeft--;
         }
         timerText.text = "00:00";
-        if (!isDiscussionRound){GameManager.instance.TimesUp();}
+        if (!isDiscussionRound){}
     }
 }
