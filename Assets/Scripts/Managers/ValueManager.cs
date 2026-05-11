@@ -1,5 +1,4 @@
 using System.Collections;
-using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,22 +12,21 @@ public class ValueManager : MonoBehaviour
     public Slider profitSlider;
 
     [Header("Values")]
-    public float enjinValue {get; private set;}
-    public float competitiveValue {get; private set;}
-    public float ethicValue {get; private set;}
-    public float profitValue {get; private set;}
+    public float enjinValue { get; private set; }
+    public float competitiveValue { get; private set; }
+    public float ethicValue { get; private set; }
+    public float profitValue { get; private set; }
 
     [Header("Settings")]
     public float barDelay;
 
-    public static ValueManager instance {get; private set;}
+    public static ValueManager instance { get; private set; }
 
     public void Awake()
     {
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -81,7 +79,7 @@ public class ValueManager : MonoBehaviour
 
     public void daboton()
     {
-        SetValues(Random.Range(1,10), Random.Range(1,10),Random.Range(1,10),Random.Range(1,10));
+        SetValues(Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10));
     }
 
 }

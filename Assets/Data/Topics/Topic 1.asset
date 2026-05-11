@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be028ba93737df409e7a198304f8a7c, type: 3}
+  m_Name: Topic 1
+  m_EditorClassIdentifier: Assembly-CSharp::Topic
+  topicName: Enjin across the company
+  topicDescription: 'Our organization wishes to roll out Enjin across the organization
+    for everyday tasks, such as document creation and brainstorming, and expects
+    employees to use them.
+
+'
+  formulatedPolicy:
+    policyName: Formulated Policy
+    policyDescription: Workers should be able to decide for themselves when and how
+      they use Enjin.
+    keywords: 0300000001000000
+  enjinPolicy:
+    policyName: Enjin V1.0
+    policyDescription: Our first commerical model, Enjin V1.0 is now your new best
+      friend! It can do all of your mundane and boring tasks for you. Say goodbye
+      to writing tedious meeting summaries and documents, Enjin can handle it for
+      you with just a simple prompt!
+    keywords: 0300000001000000

@@ -5,23 +5,17 @@ using UnityEngine;
 public class Topic : ScriptableObject
 {
     public string topicName;
+    [TextArea(3, 10)]
     public string topicDescription;
-    public List<Policy> policies;
-
-    public Policy GetRandomPolicy()
-    {
-        if (policies.Count > 0)
-        {
-            return policies[Random.Range(0, policies.Count)];
-        }
-        return null;
-    }
+    public Policy formulatedPolicy;
+    public Policy enjinPolicy;
 }
 
 [System.Serializable]
 public class Policy
 {
     public string policyName;
+    [TextArea(3, 10)]
     public string policyDescription;
     public List<PolicyKeywords> keywords;
 }

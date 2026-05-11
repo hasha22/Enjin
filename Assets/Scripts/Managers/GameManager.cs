@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Mono.Cecil.Cil;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -52,7 +50,6 @@ public class GameManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -72,7 +69,7 @@ public class GameManager : MonoBehaviour
         {
             currentScreen = 1;
             currentRound++;
-            if (currentRound > totalRounds) {SceneManager.LoadScene("OutcomeScene"); return;}
+            if (currentRound > totalRounds) { SceneManager.LoadScene("OutcomeScene"); return; }
             roundIndicator.text = $"{currentRound}/{totalRounds}";
         }
         //Turns the correct screen on and the rest off
@@ -88,23 +85,24 @@ public class GameManager : MonoBehaviour
             }
         }
         //Turns headers off or on
-        if (currentScreen == 0 || currentScreen == 6){headers.SetActive(false);} else {headers.SetActive(true);}
+        if (currentScreen == 0 || currentScreen == 6) { headers.SetActive(false); } else { headers.SetActive(true); }
         //Turns timer & continue button off or on
-        if (currentScreen == 2 || currentScreen == 5){
+        if (currentScreen == 2 || currentScreen == 5)
+        {
             keywordContainers.SetActive(true);
-            timer.SetActive(true); 
+            timer.SetActive(true);
             continueButton.SetActive(false);
             TimerScript.instance.StartTimer(votingTime);
         }
         else if (currentScreen == 3)
         {
-            keywordContainers.SetActive(true); 
-            timer.SetActive(true); 
+            keywordContainers.SetActive(true);
+            timer.SetActive(true);
             continueButton.SetActive(false);
             TimerScript.instance.StartTimer(discussionTime);
         }
-        else {keywordContainers.SetActive(false); timer.SetActive(false); continueButton.SetActive(true);}
-        if (currentScreen == 6){ValueManager.instance.MakeBig();}else{ValueManager.instance.MakeSmall();}
+        else { keywordContainers.SetActive(false); timer.SetActive(false); continueButton.SetActive(true); }
+        if (currentScreen == 6) { ValueManager.instance.MakeBig(); } else { ValueManager.instance.MakeSmall(); }
     }
 
     public void TimesUp()

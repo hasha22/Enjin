@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1223628141881733813
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 522489463399445266}
+  - component: {fileID: 6442077175652075276}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &522489463399445266
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1223628141881733813}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 191.87456, y: 122.82426, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6442077175652075276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1223628141881733813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3600ddda99eb6f740bc1db2739b6b3be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  allTopics: []
+  currentTopic: {fileID: 0}
+  currentPolicy:
+    policyName: 
+    policyDescription: 
+    keywords: 
+  currentScreen: 0
+  currentRound: 1
+  allScreens:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  titleText: {fileID: 0}
+  topText: {fileID: 0}
+  scenarioDescText: {fileID: 0}
+  enjinDescText: {fileID: 0}
+  roundIndicator: {fileID: 0}
+  headers: {fileID: 0}
+  keywordContainers: {fileID: 0}
+  timer: {fileID: 0}
+  continueButton: {fileID: 0}
+  posContainer: {fileID: 0}
+  negContainer: {fileID: 0}
+  posVotes: {fileID: 0}
+  negVotes: {fileID: 0}
+  keywordCardPrefab: {fileID: 7568251476671847451, guid: 4479a2803cb777f42b518a23d43aaece, type: 3}
+  playerIcon: {fileID: 1181081628008052491, guid: 08026487ce2227142a95bd9ea456d814, type: 3}
+  votingTime: 2
+  discussionTime: 1
+  totalRounds: 2
