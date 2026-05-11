@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8722153205527290143
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3591904000348395726}
+  - component: {fileID: 8915941698501405197}
+  m_Layer: 0
+  m_Name: UIManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3591904000348395726
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8722153205527290143}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 172.7462, y: 103.82494, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8915941698501405197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8722153205527290143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e89431aded4da11488e73577ce71edea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIManager
+  emptyPlayerCardPrefab: {fileID: 0}
+  playerCardTransform: {fileID: 0}
+  displayedPlayerCount: {fileID: 0}
+  roomCode: {fileID: 0}
+  player1OutlineColor: {r: 0.811, g: 0.066, b: 0.066, a: 1}
+  player2OutlineColor: {r: 0.067, g: 0.812, b: 0.771, a: 1}
+  player3OutlineColor: {r: 0.102, g: 1, b: 0.036, a: 1}
+  player4OutlineColor: {r: 0.872, g: 0.612, b: 0.064, a: 1}
+  player5OutlineColor: {r: 0.507, g: 0.226, b: 0.736, a: 1}
+  player6OutlineColor: {r: 0.995, g: 1, b: 0.036, a: 1}
