@@ -18,5 +18,4 @@ MonoBehaviour:
     sell their creativity to big corporations You believe Enjin can be used for administrative
     work, but in no way should replace creative work.\r\n"
   characterImage: {fileID: -4315248950563333976, guid: cf321ff330faacd43b713d4221386dcd, type: 3}
-  policyKeywords: 0100000004000000
-  characterKeywords: 0400000002000000
+  characterKeywords: 0200000000000000

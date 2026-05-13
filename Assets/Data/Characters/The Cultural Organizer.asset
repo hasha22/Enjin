@@ -19,6 +19,4 @@ MonoBehaviour:
     identity of the company's employees. How can AI be made more transparent in the
     company? How much do you value data privacy? Get in character! \r\n"
   characterImage: {fileID: -1769506802097752776, guid: 2d24d4ce11da30d40b902eabaeddc95e, type: 3}
-  policyKeywords: 0100000005000000
-  characterKeywords: 0200000001000000
-  isCharacterAssigned: 0
+  characterKeywords: 0200000005000000

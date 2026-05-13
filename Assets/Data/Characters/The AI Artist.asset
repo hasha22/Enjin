@@ -20,6 +20,4 @@ MonoBehaviour:
     How can Enjin boost productivity? How can it make people's lives more efficient?
     Get in character! \r\n"
   characterImage: {fileID: 21300000, guid: d8b2e9199f3d8b34aa4e216438bb0d2a, type: 3}
-  policyKeywords: 0000000003000000
-  characterKeywords: 0300000002000000
-  isCharacterAssigned: 0
+  characterKeywords: 0100000007000000

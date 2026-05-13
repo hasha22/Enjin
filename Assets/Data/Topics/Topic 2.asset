@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5be028ba93737df409e7a198304f8a7c, type: 3}
   m_Name: Topic 2
   m_EditorClassIdentifier: Assembly-CSharp::Topic
-  topicName: Enjin for customer support
+  topicName: Enjin's capabilities are evolving, we should have it handle customer
+    support and interactions!
   topicDescription: Our company wishes to implement the new Enjin model to handle
     all customer support related tasks. This would cut costs and provide 24/7 availability.
   formulatedPolicy:

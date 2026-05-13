@@ -81,12 +81,14 @@ public class GameUIManager : MonoBehaviour
         {
             keywordContainers.SetActive(true);
             timer.SetActive(true);
+            TimerScript.instance.StartTimer(5);
             continueButton.SetActive(false);
         }
         else if (currentScreen == 3)
         {
             keywordContainers.SetActive(true);
             timer.SetActive(true);
+            TimerScript.instance.StartTimer(10);
             continueButton.SetActive(false);
         }
         else { keywordContainers.SetActive(false); timer.SetActive(false); continueButton.SetActive(true); }

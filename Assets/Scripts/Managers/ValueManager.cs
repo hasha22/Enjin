@@ -7,13 +7,13 @@ public class ValueManager : MonoBehaviour
     [Header("Slider References")]
     public GameObject sliderContainer;
     public Slider enjinSlider;
-    public Slider competitiveSlider;
+    public Slider workerMoraleSlider;
     public Slider ethicSlider;
     public Slider profitSlider;
 
     [Header("Values")]
     public float enjinValue { get; private set; }
-    public float competitiveValue { get; private set; }
+    public float workerMoraleValue { get; private set; }
     public float ethicValue { get; private set; }
     public float profitValue { get; private set; }
 
@@ -34,19 +34,19 @@ public class ValueManager : MonoBehaviour
         }
     }
 
-    public void SetValues(float enj, float comp, float ethic, float profit)
+    public void SetValues(float enj, float morale, float ethic, float profit)
     {
         enjinValue = enj;
-        competitiveValue = comp;
+        workerMoraleValue = morale;
         ethicValue = ethic;
         profitValue = profit;
         StartCoroutine(UpdateSliderCoroutine());
     }
 
-    public void ChangeValue(float enj, float comp, float ethic, float profit)
+    public void ChangeValue(float enj, float morale, float ethic, float profit)
     {
         enjinValue += enj;
-        competitiveValue += comp;
+        workerMoraleValue += morale;
         ethicValue += ethic;
         profitValue += profit;
         StartCoroutine(UpdateSliderCoroutine());
@@ -70,7 +70,7 @@ public class ValueManager : MonoBehaviour
     {
         enjinSlider.value = enjinValue;
         yield return new WaitForSeconds(barDelay);
-        competitiveSlider.value = competitiveValue;
+        workerMoraleSlider.value = workerMoraleValue;
         yield return new WaitForSeconds(barDelay);
         ethicSlider.value = ethicValue;
         yield return new WaitForSeconds(barDelay);

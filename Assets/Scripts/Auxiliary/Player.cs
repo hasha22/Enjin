@@ -4,17 +4,17 @@ public class Player : MonoBehaviour
 {
     [Header("Player Data")]
     [SerializeField] private string playerName;
-    [SerializeField] private int firstOpinion; //made serializable for visualization purposes
-    [SerializeField] private int secondOpinion;
+    [SerializeField] private VoteTypes firstVote; //made serializable for visualization purposes
+    [SerializeField] private bool secondVote;
     public Character selectedCharacter;
 
     public string GetPlayerName()
     {
         return playerName;
     }
-    public (int, int) GetPlayerOpinions()
+    public (VoteTypes, bool) GetPlayerVotes()
     {
-        return (firstOpinion, secondOpinion);
+        return (firstVote, secondVote);
     }
     public void InitializePlayerData(string playerName)
     {

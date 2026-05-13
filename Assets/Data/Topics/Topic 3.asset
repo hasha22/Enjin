@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5be028ba93737df409e7a198304f8a7c, type: 3}
   m_Name: Topic 3
   m_EditorClassIdentifier: Assembly-CSharp::Topic
-  topicName: Enjin for art
-  topicDescription: Employees use Enjin to generate art, advertisements, and write
-    texts. Over time, they begin to feel like their own voice fades.
+  topicName: Employees use Enjin to generate art, advertisements, and write texts.
+    Over time, their own voice fades.
+  topicDescription: 'As Enjin is evolving more and more, people have started using
+    it for creative purposes as well, not just mundane tasks. However, this '
   formulatedPolicy:
     policyName: Formulated Policy
     policyDescription: Enjin should not be used to generate art or assets of any

@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5be028ba93737df409e7a198304f8a7c, type: 3}
   m_Name: Topic 1
   m_EditorClassIdentifier: Assembly-CSharp::Topic
-  topicName: Enjin across the company
+  topicName: Everyone has to use Enjin, it's more efficient!
   topicDescription: 'Management wishes to roll out Enjin across the organization
     for everyday tasks, such as document creation and brainstorming, and expects
-    employees to use them.
+    employees to use it.
 
 '
   formulatedPolicy:
     policyName: Formulated Policy
-    policyDescription: Workers should be able to decide for themselves when and how
+    policyDescription: Workers should be able to decide for themselves if and how
       they use Enjin.
     keywords: 0500000004000000
   enjinPolicy:

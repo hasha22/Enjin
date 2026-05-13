@@ -8,6 +8,5 @@ public class Character : ScriptableObject
     [TextArea(3, 10)]
     public string characterDescription;
     public Sprite characterImage;
-    public List<PolicyKeywords> policyKeywords;
     public List<CharacterKeywords> characterKeywords;
 }
