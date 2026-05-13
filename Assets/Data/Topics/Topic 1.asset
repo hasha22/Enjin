@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Topic 1
   m_EditorClassIdentifier: Assembly-CSharp::Topic
   topicName: Enjin across the company
-  topicDescription: 'Our organization wishes to roll out Enjin across the organization
+  topicDescription: 'Management wishes to roll out Enjin across the organization
     for everyday tasks, such as document creation and brainstorming, and expects
     employees to use them.
 

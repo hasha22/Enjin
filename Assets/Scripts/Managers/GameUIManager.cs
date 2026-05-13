@@ -1,6 +1,6 @@
-using UnityEngine;
-using TMPro;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameUIManager : MonoBehaviour
@@ -36,21 +36,20 @@ public class GameUIManager : MonoBehaviour
 
     public void Awake()
     {
-        if(instance == null){instance = this;}
+        if (instance == null) { instance = this; }
 
-    } 
-
+    }
     void Start()
     {
         roundIndicator.text = $"{GameManager.instance.currentRound}/{GameManager.instance.totalRounds}";
     }
-
     public void NextScreen()
     {
         GameManager.instance.currentScreen++;
         int currentScreen = GameManager.instance.currentScreen;
         int currentRound = GameManager.instance.currentRound;
         int totalRounds = GameManager.instance.totalRounds;
+
         if (currentScreen >= 7)
         {
             GameManager.instance.currentScreen = 1;
@@ -59,14 +58,16 @@ public class GameUIManager : MonoBehaviour
             currentRound = GameManager.instance.currentRound;
             if (currentRound > totalRounds) { SceneManager.LoadScene("OutcomeScene"); return; }
             roundIndicator.text = $"{currentRound}/{totalRounds}";
-            
+
         }
+
         //Turns the correct screen on and the rest off
         for (int i = 0; i < allScreens.Count; i++)
         {
             if (i == currentScreen)
             {
                 allScreens[i].SetActive(true);
+                GameManager.instance.UpdateData();
             }
             else
             {
@@ -94,7 +95,7 @@ public class GameUIManager : MonoBehaviour
 
     public void SetLocalVariables()
     {
-        
+
     }
 
 }
