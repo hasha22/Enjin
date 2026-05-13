@@ -14,17 +14,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Topic
   topicName: Employees use Enjin to generate art, advertisements, and write texts.
     Over time, their own voice fades.
-  topicDescription: 'As Enjin is evolving more and more, people have started using
-    it for creative purposes as well, not just mundane tasks. However, this '
+  topicDescription: As Enjin is evolving more and more, people have started using
+    it for creative purposes as well, not just mundane tasks. However, this has led
+    employees to question their own creative abilities and raise concerns about the
+    authenticity of their work.
   formulatedPolicy:
     policyName: Formulated Policy
     policyDescription: Enjin should not be used to generate art or assets of any
       kind because it takes away from people's ability to express themselves.
-    keywords: 0100000005000000
+    keywords: 02000000
+    enjinPosValue: 0
+    moralePosValue: 0
+    ethicPosValue: 0
+    profitPosValue: 0
+    enjinNegValue: 0
+    moraleNegValue: 0
+    ethicNegValue: 0
+    profitNegValue: 0
   enjinPolicy:
     policyName: Enjin V3.0
     policyDescription: Our brand new model, Enjin 3.0, has now become an artist capable
       of creating anything you can imagine. Do you need assets and images for a new
       website? Stock images for a presentation? Promotional images for an advertisement?
       Enjin 3.0 has got you covered!
-    keywords: 0200000000000000
+    keywords: 0000000003000000
+    enjinPosValue: 0
+    moralePosValue: 0
+    ethicPosValue: 0
+    profitPosValue: 0
+    enjinNegValue: 0
+    moraleNegValue: 0
+    ethicNegValue: 0
+    profitNegValue: 0

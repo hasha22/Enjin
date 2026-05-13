@@ -20,7 +20,15 @@ MonoBehaviour:
     policyName: Formulated Policy
     policyDescription: Customer support should be operated by employees in the company
       because they understand how to treat the customers best.
-    keywords: 0100000002000000
+    keywords: 01000000
+    enjinPosValue: 0
+    moralePosValue: 0
+    ethicPosValue: 0
+    profitPosValue: 0
+    enjinNegValue: 0
+    moraleNegValue: 0
+    ethicNegValue: 0
+    profitNegValue: 0
   enjinPolicy:
     policyName: Enjin V2.0
     policyDescription: 'Meet Enjin 2.0 - our new model is capable of delivering hyper-personalized
@@ -30,4 +38,12 @@ MonoBehaviour:
       what are you waiting for? Make your customers happy!
 
 '
-    keywords: 0300000000000000
+    keywords: 03000000
+    enjinPosValue: 0
+    moralePosValue: 0
+    ethicPosValue: 0
+    profitPosValue: 0
+    enjinNegValue: 0
+    moraleNegValue: 0
+    ethicNegValue: 0
+    profitNegValue: 0

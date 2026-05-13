@@ -7,7 +7,7 @@ public class Enums : MonoBehaviour
 public enum CharacterKeywords
 {
     TechLiteracy,
-    Modernization,
+    EnjinIntegration,
     Organization,
     Stability,
     Sustainability,
@@ -17,9 +17,9 @@ public enum CharacterKeywords
 }
 public enum PolicyKeywords
 {
-    EnjinIntegration,
+    Innovation,
+    RiskManagement,
     WorkerMorale,
-    Ethicality,
     Profit
 }
 public enum VoteTypes

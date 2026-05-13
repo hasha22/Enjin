@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5be028ba93737df409e7a198304f8a7c, type: 3}
   m_Name: Topic 5
   m_EditorClassIdentifier: Assembly-CSharp::Topic
-  topicName: Enjin for management
+  topicName: We just follow the suggestions, they make sense!
   topicDescription: Enjin has become advanced enough that it can propose business
     strategies and understand complex company problems. Teams follow the advice because
     it seems logical.
@@ -20,7 +20,15 @@ MonoBehaviour:
     policyName: Formulated Policy
     policyDescription: Enjin should not take part in advising people on company decisions
       because it is still capable of making mistakes and its advice is not foolproof.
-    keywords: 0300000004000000
+    keywords: 01000000
+    enjinPosValue: 0
+    moralePosValue: 0
+    ethicPosValue: 0
+    profitPosValue: 0
+    enjinNegValue: 0
+    moraleNegValue: 0
+    ethicNegValue: 0
+    profitNegValue: 0
   enjinPolicy:
     policyName: Enjin V5.0
     policyDescription: 'The new Enjin 5.0 is more than just a tool - it''s an indispensable
@@ -31,4 +39,12 @@ MonoBehaviour:
       so you can be sure it will understand you and your team''s needs!
 
 '
-    keywords: 0300000004000000
+    keywords: 00000000
+    enjinPosValue: 0
+    moralePosValue: 0
+    ethicPosValue: 0
+    profitPosValue: 0
+    enjinNegValue: 0
+    moraleNegValue: 0
+    ethicNegValue: 0
+    profitNegValue: 0
