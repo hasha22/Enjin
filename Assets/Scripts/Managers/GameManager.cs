@@ -11,8 +11,9 @@ public class GameManager : MonoBehaviour
     [Header("Variables")]
     public List<Topic> allTopics = new List<Topic>();
     [SerializeField] private Topic currentTopic;
-    [SerializeField] private Policy currentPolicy; //Discuss with daniel if this is necessary, since you can just access it from currenttopic anyway
-    [SerializeField] public int currentScreen;
+    [SerializeField] private Policy currentPolicy; 
+    [SerializeField] public GameScreens currentScreen;
+    [SerializeField] public int currentScreenNumber;
     [SerializeField] public int currentRound;
     [Header("Settings")]
     public int votingTime;
@@ -34,13 +35,13 @@ public class GameManager : MonoBehaviour
     {
         switch (currentScreen)
         {
-            case 1:
+            case GameScreens.SituationExplanationScreen:
                 DetermineTopic();
                 GameUIManager.instance.topText.text = "Current Situation";
                 GameUIManager.instance.titleText.text = currentTopic.topicName;
                 GameUIManager.instance.scenarioDescText.text = currentTopic.topicDescription;
                 break;
-            case 2:
+            case GameScreens.FirstPolicyVotingScreen:
                 GameUIManager.instance.topText.text = "Proposed Policy";
                 //GameUIManager.instance.titleText.text
                 break;
@@ -80,7 +81,7 @@ public class GameManager : MonoBehaviour
 
     public void AssignVote(string playerId, VoteTypes vote = new VoteTypes(), bool voteTwo = false)
     {
-        if (currentScreen == 2)
+        if (currentScreen == GameScreens.FirstPolicyVotingScreen)
         {
             foreach(GameObject g in NetworkManager.instance.allPlayers)
             {
@@ -91,7 +92,7 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-        else if (currentScreen == 5)
+        else if (currentScreen == GameScreens.SecondPolicyVotingScreen)
         {
             foreach(GameObject g in NetworkManager.instance.allPlayers)
             {

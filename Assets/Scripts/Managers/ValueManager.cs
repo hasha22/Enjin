@@ -77,7 +77,7 @@ public class ValueManager : MonoBehaviour
         profitSlider.value = profitValue;
     }
 
-    public void daboton()
+    public void testSliders()
     {
         SetValues(Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10));
     }
