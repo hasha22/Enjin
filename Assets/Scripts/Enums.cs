@@ -19,7 +19,7 @@ public enum PolicyKeywords
 {
     Innovation,
     RiskManagement,
-    WorkerMorale,
+    WorkerSatisfaction,
     Profit
 }
 public enum VoteTypes

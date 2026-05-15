@@ -20,13 +20,13 @@ public class GameUIManager : MonoBehaviour
 
     [Header("Visuals to turn off and on references")]
     public GameObject headers;
-    public GameObject keywordContainers;
+    public GameObject voting1Keywords;
+    public GameObject voting2Keywords;
     public GameObject timer;
     public GameObject continueButton;
 
     [Header("Container references")]
     public GameObject posContainer;
-    public GameObject negContainer;
     public GameObject posVotes;
     public GameObject negVotes;
 
@@ -94,20 +94,38 @@ public class GameUIManager : MonoBehaviour
         //Turns timer & continue button off or on
         if ((int)currentScreen == 2 || (int)currentScreen == 5)
         {
-            keywordContainers.SetActive(true);
+            if ((int)currentScreen == 2)
+            {
+                voting1Keywords.SetActive(true);
+                voting2Keywords.SetActive(false);
+            }
+            else
+            {
+                voting1Keywords.SetActive(false);
+                voting2Keywords.SetActive(true);
+            }
+
             timer.SetActive(true);
             TimerScript.instance.StartTimer(5);
             continueButton.SetActive(false);
         }
         else if ((int)currentScreen == 3)
         {
-            keywordContainers.SetActive(true);
+            voting1Keywords.SetActive(true);
+            voting2Keywords.SetActive(false);
+
             timer.SetActive(true);
             TimerScript.instance.StartTimer(10);
             continueButton.SetActive(false);
             InstantiatePlayerVoteIcons();
         }
-        else { keywordContainers.SetActive(false); timer.SetActive(false); continueButton.SetActive(true); }
+        else
+        {
+            voting1Keywords.SetActive(false);
+            voting2Keywords.SetActive(false);
+            timer.SetActive(false);
+            continueButton.SetActive(true);
+        }
         if ((int)currentScreen == 6) { ValueManager.instance.MakeBig(); } else { ValueManager.instance.MakeSmall(); }
     }
 
@@ -120,9 +138,21 @@ public class GameUIManager : MonoBehaviour
     {
         GameManager.instance.currentScreenNumber = (int)scrin;
     }
+    public void InstantiateKeywordCards()
+    {
+        if (GameManager.instance.currentScreenNumber == 2)
+        {
+            //just policy keywords
+
+        }
+        else if (GameManager.instance.currentScreenNumber == 5)
+        {
+            //both formulated and enjin keywords
+        }
+    }
     public void InstantiatePlayerVoteIcons()
     {
-        if (NetworkManager.instance.allPlayers.Count == 0) return;
+        if (NetworkManager.instance == null || NetworkManager.instance.allPlayers.Count == 0) return;
 
         foreach (GameObject playerObject in NetworkManager.instance.allPlayers)
         {
