@@ -34,8 +34,13 @@ public class GameManager : MonoBehaviour
         {
             case 1:
                 DetermineTopic();
-                GameUIManager.instance.titleText.text = currentTopic.topicDescription;
-                //change text
+                GameUIManager.instance.topText.text = "Current Situation";
+                GameUIManager.instance.titleText.text = currentTopic.topicName;
+                GameUIManager.instance.scenarioDescText.text = currentTopic.topicDescription;
+                break;
+            case 2:
+                GameUIManager.instance.topText.text = "Proposed Policy";
+                //GameUIManager.instance.titleText.text
                 break;
 
         }
