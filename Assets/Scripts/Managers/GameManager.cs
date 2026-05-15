@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
                 break;
             case 2:
                 GameUIManager.instance.topText.text = "Proposed Policy";
-                //GameUIManager.instance.titleText.text
+                GameUIManager.instance.titleText.text = currentTopic.formulatedPolicy.policyDescription;
                 break;
 
         }
