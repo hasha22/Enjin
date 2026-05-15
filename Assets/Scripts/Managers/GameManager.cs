@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 
 public class GameManager : MonoBehaviour
@@ -73,6 +75,37 @@ public class GameManager : MonoBehaviour
                 currentTopic = allTopics[5];
                 currentPolicy = currentTopic.formulatedPolicy;
                 break;
+        }
+    }
+
+    public void AssignVote(string playerId, VoteTypes vote = new VoteTypes(), bool voteTwo = false)
+    {
+        if (currentScreen == 2)
+        {
+            foreach(GameObject g in NetworkManager.instance.allPlayers)
+            {
+                Player thisPlayer = g.GetComponent<Player>();
+                if (playerId == thisPlayer.playerId)
+                {
+                    thisPlayer.SetFirstVote(vote);
+                }
+            }
+        }
+        else if (currentScreen == 5)
+        {
+            foreach(GameObject g in NetworkManager.instance.allPlayers)
+            {
+                Player thisPlayer = g.GetComponent<Player>();
+                if (playerId == thisPlayer.playerId)
+                {
+                    thisPlayer.SetSecondVote(voteTwo);
+                    //CALL DISPLAY SECOND VOTE HERE!!!!!
+                }
+            }
+        }
+        else
+        {
+            Debug.Log($"You can't call this in screen {currentScreen}, you need to call it in screen 2 or 5");
         }
     }
 }
