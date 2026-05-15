@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameUIManager : MonoBehaviour
 {
@@ -34,6 +34,19 @@ public class GameUIManager : MonoBehaviour
     public GameObject keywordCardPrefab;
     public GameObject discussionPlayerIcon;
     public GameObject votingPlayerIcon;
+
+    [Header("Layout Group References")]
+    [SerializeField] private Transform agreeGroup1;
+    [SerializeField] private Transform agreeGroup2;
+    [SerializeField] private Transform mostlyAgreeGroup1;
+    [SerializeField] private Transform mostlyAgreeGroup2;
+    [SerializeField] private Transform neutralGroup1;
+    [SerializeField] private Transform neutralGroup2;
+    [SerializeField] private Transform mostlyDisagreeGroup1;
+    [SerializeField] private Transform mostlyDisagreeGroup2;
+    [SerializeField] private Transform disagreeGroup1;
+    [SerializeField] private Transform disagreeGroup2;
+
 
     public void Awake()
     {
@@ -92,6 +105,7 @@ public class GameUIManager : MonoBehaviour
             timer.SetActive(true);
             TimerScript.instance.StartTimer(10);
             continueButton.SetActive(false);
+            InstantiatePlayerVoteIcons();
         }
         else { keywordContainers.SetActive(false); timer.SetActive(false); continueButton.SetActive(true); }
         if ((int)currentScreen == 6) { ValueManager.instance.MakeBig(); } else { ValueManager.instance.MakeSmall(); }
@@ -105,6 +119,90 @@ public class GameUIManager : MonoBehaviour
     public void UpdateCurrentScreenNumber(GameScreens scrin)
     {
         GameManager.instance.currentScreenNumber = (int)scrin;
+    }
+    public void InstantiatePlayerVoteIcons()
+    {
+        if (NetworkManager.instance.allPlayers.Count == 0) return;
+
+        foreach (GameObject playerObject in NetworkManager.instance.allPlayers)
+        {
+            Player playerScript = playerObject.GetComponent<Player>();
+            VoteTypes playerVote = playerScript.GetFirstVote();
+
+            switch (playerVote)
+            {
+                case VoteTypes.Agree:
+                    if ((agreeGroup1.childCount + agreeGroup2.childCount) % 2 == 0)
+                    {
+                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, agreeGroup1);
+                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
+                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                    }
+                    else
+                    {
+                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, agreeGroup2);
+                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
+                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                    }
+                    break;
+                case VoteTypes.MostlyAgree:
+                    if ((mostlyAgreeGroup1.childCount + mostlyAgreeGroup2.childCount) % 2 == 0)
+                    {
+                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, mostlyAgreeGroup1);
+                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
+                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                    }
+                    else
+                    {
+                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, mostlyAgreeGroup2);
+                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
+                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                    }
+                    break;
+                case VoteTypes.Neutral:
+                    if ((neutralGroup1.childCount + neutralGroup2.childCount) % 2 == 0)
+                    {
+                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, neutralGroup1);
+                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
+                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                    }
+                    else
+                    {
+                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, neutralGroup2);
+                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
+                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                    }
+                    break;
+                case VoteTypes.MostlyDisagree:
+                    if ((mostlyDisagreeGroup1.childCount + mostlyAgreeGroup2.childCount) % 2 == 0)
+                    {
+                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, mostlyDisagreeGroup1);
+                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
+                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                    }
+                    else
+                    {
+                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, mostlyDisagreeGroup2);
+                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
+                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                    }
+                    break;
+                case VoteTypes.Disagree:
+                    if ((disagreeGroup1.childCount + disagreeGroup2.childCount) % 2 == 0)
+                    {
+                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, disagreeGroup1);
+                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
+                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                    }
+                    else
+                    {
+                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, disagreeGroup2);
+                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
+                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                    }
+                    break;
+            }
+        }
     }
 
 }

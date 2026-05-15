@@ -155,6 +155,7 @@ public class NetworkManager : MonoBehaviour
         allPlayers.Add(newPlayer);
         Player player = newPlayer.GetComponent<Player>();
         player.InitializePlayerData(playerName);
+        player.SetFirstVote(VoteTypes.Agree);
 
         //Instantiate & Update UI elements
         //Register player in a list of active players

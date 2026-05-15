@@ -30,7 +30,6 @@ public enum VoteTypes
     Neutral = 3,
     Agree = 4,
     MostlyAgree = 5
-    //this enum has been made because using an enum would make more sense from a unity perspective
 }
 
 public enum GameScreens

@@ -13,9 +13,18 @@ public class Player : MonoBehaviour
     {
         return playerName;
     }
+    /*
     public (VoteTypes, bool) GetPlayerVotes()
     {
         return (firstVote, secondVote);
+    }*/
+    public VoteTypes GetFirstVote()
+    {
+        return firstVote;
+    }
+    public bool GetSecondVote()
+    {
+        return secondVote;
     }
     public void InitializePlayerData(string playerName)
     {
