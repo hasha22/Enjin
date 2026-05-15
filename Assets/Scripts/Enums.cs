@@ -32,3 +32,14 @@ public enum VoteTypes
     MostlyAgree = 5
     //this enum has been made because using an enum would make more sense from a unity perspective
 }
+
+public enum GameScreens
+{
+    CharacterIntroScreen = 0,
+    SituationExplanationScreen = 1,
+    FirstPolicyVotingScreen = 2,
+    DiscussionScreen = 3,
+    EnjinUpdateScreen = 4,
+    SecondPolicyVotingScreen = 5,
+    ResultsScreen = 6
+}

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 
 public class GameManager : MonoBehaviour
@@ -9,8 +11,9 @@ public class GameManager : MonoBehaviour
     [Header("Variables")]
     public List<Topic> allTopics = new List<Topic>();
     [SerializeField] private Topic currentTopic;
-    [SerializeField] private Policy currentPolicy; //Discuss with daniel if this is necessary, since you can just access it from currenttopic anyway
-    [SerializeField] public int currentScreen;
+    [SerializeField] private Policy currentPolicy; 
+    [SerializeField] public GameScreens currentScreen;
+    [SerializeField] public int currentScreenNumber;
     [SerializeField] public int currentRound;
     [Header("Settings")]
     public int votingTime;
@@ -32,13 +35,13 @@ public class GameManager : MonoBehaviour
     {
         switch (currentScreen)
         {
-            case 1:
+            case GameScreens.SituationExplanationScreen:
                 DetermineTopic();
                 GameUIManager.instance.topText.text = "Current Situation";
                 GameUIManager.instance.titleText.text = currentTopic.topicName;
                 GameUIManager.instance.scenarioDescText.text = currentTopic.topicDescription;
                 break;
-            case 2:
+            case GameScreens.FirstPolicyVotingScreen:
                 GameUIManager.instance.topText.text = "Proposed Policy";
                 GameUIManager.instance.titleText.text = currentTopic.formulatedPolicy.policyDescription;
                 break;
@@ -73,6 +76,37 @@ public class GameManager : MonoBehaviour
                 currentTopic = allTopics[5];
                 currentPolicy = currentTopic.formulatedPolicy;
                 break;
+        }
+    }
+
+    public void AssignVote(string playerId, VoteTypes vote = new VoteTypes(), bool voteTwo = false)
+    {
+        if (currentScreen == GameScreens.FirstPolicyVotingScreen)
+        {
+            foreach(GameObject g in NetworkManager.instance.allPlayers)
+            {
+                Player thisPlayer = g.GetComponent<Player>();
+                if (playerId == thisPlayer.playerId)
+                {
+                    thisPlayer.SetFirstVote(vote);
+                }
+            }
+        }
+        else if (currentScreen == GameScreens.SecondPolicyVotingScreen)
+        {
+            foreach(GameObject g in NetworkManager.instance.allPlayers)
+            {
+                Player thisPlayer = g.GetComponent<Player>();
+                if (playerId == thisPlayer.playerId)
+                {
+                    thisPlayer.SetSecondVote(voteTwo);
+                    //CALL DISPLAY SECOND VOTE HERE!!!!!
+                }
+            }
+        }
+        else
+        {
+            Debug.Log($"You can't call this in screen {currentScreen}, you need to call it in screen 2 or 5");
         }
     }
 }
