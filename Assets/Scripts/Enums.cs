@@ -17,10 +17,10 @@ public enum CharacterKeywords
 }
 public enum PolicyKeywords
 {
-    Innovation,
-    RiskManagement,
-    WorkerSatisfaction,
-    Profit
+    Innovation = 1,
+    RiskManagement = 2,
+    WorkerSatisfaction = 3,
+    Profit = 4
 }
 public enum VoteTypes
 {

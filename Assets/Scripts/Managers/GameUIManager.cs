@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem.OnScreen;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -8,34 +9,45 @@ public class GameUIManager : MonoBehaviour
 {
     public static GameUIManager instance;
 
-    [Header("Main references")]
+    [Header("Screeb References")]
     public List<GameObject> allScreens = new List<GameObject>();
 
     [Header("Text References")]
     public TextMeshProUGUI titleText;
     public TextMeshProUGUI topText;
     public TextMeshProUGUI scenarioDescText;
-    public TextMeshProUGUI enjinDescText;
-    public TextMeshProUGUI roundIndicator;
+    [SerializeField] private TextMeshProUGUI enjinDescText;
+    [SerializeField] private TextMeshProUGUI roundIndicator;
+    [SerializeField] private TextMeshProUGUI voting1Title;
+    [SerializeField] private TextMeshProUGUI enjinVersionText;
+    [SerializeField] private TextMeshProUGUI enjinVersionDescriptionText;
 
-    [Header("Visuals to turn off and on references")]
-    public GameObject headers;
-    public GameObject voting1Keywords;
-    public GameObject voting2Keywords;
-    public GameObject timer;
-    public GameObject continueButton;
+    [Header("Keyword References")]
+    [SerializeField] private GameObject voting1Screen;
+    [SerializeField] private GameObject voting2Screen;
+    [SerializeField] private Transform discussionKeywordContainer;
+    [SerializeField] private Color32 innovation = new Color32(0, 255, 181, 255);
+    [SerializeField] private Color32 riskManagement = new Color32(255, 0, 111, 255);
+    [SerializeField] private Color32 workerSatisfaction = new Color32(155, 0, 243, 255);
+    [SerializeField] private Color32 profit = new Color32(255, 241, 0, 255);
 
-    [Header("Container references")]
-    public GameObject posContainer;
-    public GameObject posVotes;
-    public GameObject negVotes;
+    [Header("Enjin Update References")]
+    [SerializeField] private GameObject enjinTitle;
+    [SerializeField] private GameObject backgroundImage;
+    private string enjinVersion;
 
-    [Header("Prefab references")]
-    public GameObject keywordCardPrefab;
-    public GameObject discussionPlayerIcon;
-    public GameObject votingPlayerIcon;
+    [Header("Nonscreen References")]
+    [SerializeField] private GameObject headers;
+    [SerializeField] private GameObject timer;
+    [SerializeField] private GameObject continueButton;
 
-    [Header("Layout Group References")]
+    [Header("Prefab References")]
+    [SerializeField] private GameObject discussionKeywordCard;
+    [SerializeField] private GameObject votingKeywordCard;
+    [SerializeField] private GameObject discussionPlayerIcon;
+    [SerializeField] private GameObject votingPlayerIcon;
+
+    [Header("Discussion Round Layout Group References")]
     [SerializeField] private Transform agreeGroup1;
     [SerializeField] private Transform agreeGroup2;
     [SerializeField] private Transform mostlyAgreeGroup1;
@@ -47,15 +59,29 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private Transform disagreeGroup1;
     [SerializeField] private Transform disagreeGroup2;
 
+    [Header("Voting Round Layout Group References")]
+    [SerializeField] private Transform votingPosKeywordContainer;
+    [SerializeField] private Transform votingNegKeywordContainer;
 
-    public void Awake()
+
+    private void Awake()
     {
         if (instance == null) { instance = this; }
 
     }
-    void Start()
+    private void Start()
     {
         roundIndicator.text = $"{GameManager.instance.currentRound}/{GameManager.instance.totalRounds}";
+
+        //resetting automatically to screen 0 (character intro)
+        foreach (GameObject screen in allScreens)
+        {
+            screen.SetActive(false);
+        }
+        allScreens[0].SetActive(true);
+        headers.SetActive(false);
+        timer.SetActive(false);
+        continueButton.SetActive(true);
     }
     public void NextScreen()
     {
@@ -64,6 +90,7 @@ public class GameUIManager : MonoBehaviour
         int currentRound = GameManager.instance.currentRound;
         int totalRounds = GameManager.instance.totalRounds;
         UpdateCurrentScreenNumber(currentScreen);
+        enjinVersion = $"{currentRound}.0";
 
         if ((int)currentScreen >= 7)
         {
@@ -90,19 +117,23 @@ public class GameUIManager : MonoBehaviour
             }
         }
         //Turns headers off or on
-        if ((int)currentScreen == 0 || (int)currentScreen == 6) { headers.SetActive(false); } else { headers.SetActive(true); }
+        if ((int)currentScreen == 0 || (int)currentScreen == 6 || (int)currentScreen == 4) { headers.SetActive(false); } else { headers.SetActive(true); }
         //Turns timer & continue button off or on
         if ((int)currentScreen == 2 || (int)currentScreen == 5)
         {
             if ((int)currentScreen == 2)
             {
-                voting1Keywords.SetActive(true);
-                voting2Keywords.SetActive(false);
+                voting1Screen.SetActive(true);
+                voting1Title.gameObject.SetActive(true);
+                voting2Screen.SetActive(false);
+                InstantiateKeywordCards();
             }
             else
             {
-                voting1Keywords.SetActive(false);
-                voting2Keywords.SetActive(true);
+                voting1Screen.SetActive(false);
+                voting1Title.gameObject.SetActive(false);
+                voting2Screen.SetActive(true);
+                InstantiateKeywordCards();
             }
 
             timer.SetActive(true);
@@ -111,27 +142,29 @@ public class GameUIManager : MonoBehaviour
         }
         else if ((int)currentScreen == 3)
         {
-            voting1Keywords.SetActive(true);
-            voting2Keywords.SetActive(false);
+            voting1Screen.SetActive(true);
+            voting2Screen.SetActive(false);
+            voting1Title.gameObject.SetActive(false);
 
             timer.SetActive(true);
             TimerScript.instance.StartTimer(10);
             continueButton.SetActive(false);
             InstantiatePlayerVoteIcons();
         }
+        else if((int)currentScreen == 4)
+        {
+            enjinTitle.SetActive(true);
+            enjinVersionText.text = enjinVersion;
+            enjinVersionDescriptionText.text = GameManager.instance.GetCurrentTopic().enjinPolicy.policyDescription;
+        }
         else
         {
-            voting1Keywords.SetActive(false);
-            voting2Keywords.SetActive(false);
+            voting1Screen.SetActive(false);
+            voting2Screen.SetActive(false);
             timer.SetActive(false);
             continueButton.SetActive(true);
         }
         if ((int)currentScreen == 6) { ValueManager.instance.MakeBig(); } else { ValueManager.instance.MakeSmall(); }
-    }
-
-    public void SetLocalVariables()
-    {
-
     }
 
     public void UpdateCurrentScreenNumber(GameScreens scrin)
@@ -140,14 +173,36 @@ public class GameUIManager : MonoBehaviour
     }
     public void InstantiateKeywordCards()
     {
+        Topic currentTopic = GameManager.instance.GetCurrentTopic();
         if (GameManager.instance.currentScreenNumber == 2)
         {
-            //just policy keywords
+            foreach(PolicyKeywords keyword in currentTopic.formulatedPolicy.keywords)
+            {
+                GameObject newKeyword = Instantiate(discussionKeywordCard, discussionKeywordContainer);
+                TextMeshProUGUI text = newKeyword.GetComponentInChildren<TextMeshProUGUI>();
+                Image image = newKeyword.GetComponent<Image>();
 
+                (image.color, text.text) = DetermineKeywordCardColorAndName((int)keyword);
+            }
         }
         else if (GameManager.instance.currentScreenNumber == 5)
         {
-            //both formulated and enjin keywords
+            foreach(PolicyKeywords keyword in currentTopic.formulatedPolicy.keywords)
+            {
+                GameObject newKeyword = Instantiate(votingKeywordCard, votingPosKeywordContainer);
+                TextMeshProUGUI text = newKeyword.GetComponentInChildren<TextMeshProUGUI>();
+                Image image = newKeyword.GetComponent<Image>();
+
+                (image.color, text.text) = DetermineKeywordCardColorAndName((int)keyword);
+            }
+            foreach (PolicyKeywords keyword in currentTopic.enjinPolicy.keywords)
+            {
+                GameObject newKeyword = Instantiate(votingKeywordCard, votingNegKeywordContainer);
+                TextMeshProUGUI text = newKeyword.GetComponentInChildren<TextMeshProUGUI>();
+                Image image = newKeyword.GetComponent<Image>();
+
+                (image.color, text.text) = DetermineKeywordCardColorAndName((int)keyword);
+            }
         }
     }
     public void InstantiatePlayerVoteIcons()
@@ -233,6 +288,21 @@ public class GameUIManager : MonoBehaviour
                     break;
             }
         }
+    }
+    private (Color32, string) DetermineKeywordCardColorAndName(int value)
+    {
+        switch(value)
+        {
+            case 1:
+                return (innovation, "Innovation");
+            case 2:
+                return (riskManagement, "Risk Management");
+            case 3:
+                return (workerSatisfaction, "Worker Satisfaction");
+            case 4:
+                return (profit, "Profit");
+        }
+        return (Color.white, "Error"); //no match
     }
 
 }

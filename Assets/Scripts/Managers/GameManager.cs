@@ -109,4 +109,8 @@ public class GameManager : MonoBehaviour
             Debug.Log($"You can't call this in screen {currentScreen}, you need to call it in screen 2 or 5");
         }
     }
+    public Topic GetCurrentTopic()
+    {
+        return currentTopic;
+    }
 }
