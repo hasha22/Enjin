@@ -13,7 +13,7 @@ public class NetworkManager : MonoBehaviour
     private bool isConnecting;
 
     [Header("Room Settings")]
-    [SerializeField] private string serverUrl = "ws://localhost:5040";
+    [SerializeField] private string serverUrl = "wss://enjin--enjin--qpbmsj2bcc7n.code.run/";
     [SerializeField] private string roomCode = "ABCD";
     [SerializeField] private string hostClientId = "unity-host-1";
 
