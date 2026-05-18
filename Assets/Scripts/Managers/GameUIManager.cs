@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -40,6 +41,7 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private GameObject headers;
     [SerializeField] private GameObject timer;
     [SerializeField] private GameObject continueButton;
+    [SerializeField] private GameObject iconCircle;
 
     [Header("Prefab References")]
     [SerializeField] private GameObject discussionKeywordCard;
@@ -67,6 +69,9 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private Transform yesGroup2;
     [SerializeField] private Transform noGroup1;
     [SerializeField] private Transform noGroup2;
+
+    [Header("List of players")]
+    [SerializeField] public List<GameObject> allPlayerIcons = new List<GameObject>();
 
 
     private void Awake()
@@ -129,12 +134,16 @@ public class GameUIManager : MonoBehaviour
                 allScreens[i].SetActive(false);
             }
         }
+
         //Turns headers off or on
-        if ((int)currentScreen == 0 || (int)currentScreen == 6 || (int)currentScreen == 4) { headers.SetActive(false); } else { headers.SetActive(true); }
+        if (currentScreen == GameScreens.CharacterIntroScreen || currentScreen == GameScreens.ResultsScreen || currentScreen == GameScreens.EnjinUpdateScreen)
+        { headers.SetActive(false); }
+        else { headers.SetActive(true); }
+
         //Turns timer & continue button off or on
-        if ((int)currentScreen == 2 || (int)currentScreen == 5)
+        if (currentScreen == GameScreens.FirstPolicyVotingScreen || currentScreen == GameScreens.SecondPolicyVotingScreen)
         {
-            if ((int)currentScreen == 2)
+            if (currentScreen == GameScreens.FirstPolicyVotingScreen)
             {
                 voting1Screen.SetActive(true);
                 voting1Title.gameObject.SetActive(true);
@@ -148,24 +157,25 @@ public class GameUIManager : MonoBehaviour
                 voting2Screen.SetActive(true);
                 InstantiateKeywordCards();
             }
-
             timer.SetActive(true);
-            TimerScript.instance.StartTimer(5);
+            TimerScript.instance.StartTimer(GameManager.instance.votingTime);
             continueButton.SetActive(false);
         }
-        else if ((int)currentScreen == 3)
+        else if (currentScreen == GameScreens.DiscussionScreen)
         {
             voting1Screen.SetActive(true);
             voting2Screen.SetActive(false);
             voting1Title.gameObject.SetActive(false);
 
             timer.SetActive(true);
-            TimerScript.instance.StartTimer(10);
             continueButton.SetActive(false);
             InstantiatePlayerDiscussionIcons();
+            StartCoroutine(Discussion());
         }
-        else if ((int)currentScreen == 4)
+        else if (currentScreen == GameScreens.EnjinUpdateScreen)
         {
+            timer.SetActive(false);
+            continueButton.SetActive(true);
             enjinTitle.SetActive(true);
             enjinVersionText.text = enjinVersion;
             enjinVersionDescriptionText.text = GameManager.instance.GetCurrentTopic().enjinPolicy.policyDescription;
@@ -177,7 +187,7 @@ public class GameUIManager : MonoBehaviour
             timer.SetActive(false);
             continueButton.SetActive(true);
         }
-        if ((int)currentScreen == 6) { ValueManager.instance.MakeBig(); } else { ValueManager.instance.MakeSmall(); }
+        if (currentScreen == GameScreens.ResultsScreen) { ValueManager.instance.MakeBig(); } else { ValueManager.instance.MakeSmall(); }
     }
 
     public void UpdateCurrentScreenNumber(GameScreens scrin)
@@ -191,7 +201,7 @@ public class GameUIManager : MonoBehaviour
         {
             foreach (PolicyKeywords keyword in currentTopic.formulatedPolicy.keywords)
             {
-                InstantiateKeywordInContainer(discussionKeywordContainer, keyword, true);
+                InstantiateKeywordInContainer(discussionKeywordContainer, keyword);
             }
         }
         else if (GameManager.instance.currentScreenNumber == 5)
@@ -233,13 +243,14 @@ public class GameUIManager : MonoBehaviour
         {
             bool useFirstGroup = (yesGroup1.childCount < 3);
             Transform group = useFirstGroup ? yesGroup1 : yesGroup2;
-            InstantiateIconInGroup(group, playerScript.selectedCharacter.characterImage);
+            InstantiateIconInGroup(group, playerScript.selectedCharacter.characterImage, false);
         }
         else if (!playerVote)
         {
             bool useFirstGroup = (noGroup1.childCount < 3);
             Transform group = useFirstGroup ? noGroup1 : noGroup2;
-            InstantiateIconInGroup(group, playerScript.selectedCharacter.characterImage);
+            InstantiateIconInGroup(group, playerScript.selectedCharacter.characterImage, false);
+
         }
     }
     private (Color32, string) DetermineKeywordCardColorAndName(int value)
@@ -257,13 +268,18 @@ public class GameUIManager : MonoBehaviour
         }
         return (Color.white, "Error"); //no match
     }
-    private void InstantiateIconInGroup(Transform group, Sprite sprite)
+    private void InstantiateIconInGroup(Transform group, Sprite sprite, bool isVoting1 = true)
     {
-        GameObject prefab = Instantiate(discussionPlayerIcon, group);
+        GameObject prefab = null;
+
+        if (isVoting1) prefab = Instantiate(discussionPlayerIcon, group);
+        else prefab = Instantiate(votingPlayerIcon, group);
+
         Image icon = prefab.transform.Find("Icon").GetComponent<Image>();
         if (icon != null) icon.sprite = sprite;
 
         trashCan.Add(prefab);
+        allPlayerIcons.Add(prefab);
     }
     private void InstantiateKeywordInContainer(Transform container, PolicyKeywords keyword, bool isVoting1 = true)
     {
@@ -285,6 +301,60 @@ public class GameUIManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        foreach (GameObject gameObject1 in allPlayerIcons)
+        {
+            Destroy(gameObject1);
+        }
     }
 
+    private IEnumerator Discussion()
+    {
+        iconCircle.SetActive(true);
+        yield return null;
+        int playerAmount = 0;
+
+        if (NetworkManager.instance != null)
+        { playerAmount = NetworkManager.instance.allPlayers.Count; }
+        else
+        {
+            TimerDone();
+            iconCircle.SetActive(false);
+            yield break;
+        }
+
+        Debug.Log(playerAmount);
+        if (allPlayerIcons.Count != 0) iconCircle.transform.position = allPlayerIcons[0].transform.position;
+        for (int i = 0; i < playerAmount; i++)
+        {
+            GameObject speaker = allPlayerIcons[i];
+            StartCoroutine(MoveIcon(iconCircle.transform, speaker.transform.position, 0.35f));
+            TimerScript.instance.StartTimer(GameManager.instance.discussionTime);
+            yield return new WaitForSeconds(GameManager.instance.discussionTime);
+        }
+        TimerDone();
+        iconCircle.SetActive(false);
+    }
+
+    private IEnumerator MoveIcon(Transform obj, Vector3 targetPos, float duration)
+    {
+        Vector3 startPos = obj.position;
+        float time = 0f;
+
+        while (time < duration)
+        {
+            float t = time / duration;
+            t = t * t * (3f - 2f * t);
+            obj.position = Vector3.Lerp(startPos, targetPos, t);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        obj.position = targetPos;
+    }
+
+    public void TimerDone()
+    {
+        timer.SetActive(false);
+        continueButton.SetActive(true);
+    }
 }

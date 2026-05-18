@@ -48,6 +48,10 @@ public class NetworkManager : MonoBehaviour
 #if !UNITY_WEBGL || UNITY_EDITOR
         websocket?.DispatchMessageQueue();
 #endif
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            RegisterSecondPlayerVote("1", "yes");
+        }
     }
     public async System.Threading.Tasks.Task Connect()
     {
@@ -227,6 +231,7 @@ public class NetworkManager : MonoBehaviour
     }
     public void RegisterSecondPlayerVote(string playerID, string playerVote)
     {
+        Debug.Log("meow");
         foreach (GameObject player in allPlayers)
         {
             Player playerScript = player.GetComponent<Player>();

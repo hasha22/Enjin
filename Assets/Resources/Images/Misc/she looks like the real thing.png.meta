@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 526a129948545ee4ebff5e231d46c12d
+guid: aa4eedcc4b272984b9689eb18d0639fd
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6246342365496317763
-    second: i-couldnt-find-the-original-image-online-anywhere-so-ive-v0-fg8u4w809p171_0
+      213: -1379879164157151243
+    second: she looks like the real thing_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,30 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: i-couldnt-find-the-original-image-online-anywhere-so-ive-v0-fg8u4w809p171_0
+      name: she looks like the real thing_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 860
-        height: 809
+        width: 186
+        height: 186
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: db86e1f86b88059a0800000000000000
-      internalID: -6246342365496317763
+      spriteID: 5f7337b063fa9dce0800000000000000
+      internalID: -1379879164157151243
       vertices: []
       indices: 
       edges: []
@@ -148,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      i-couldnt-find-the-original-image-online-anywhere-so-ive-v0-fg8u4w809p171_0: -6246342365496317763
+      she looks like the real thing_0: -1379879164157151243
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

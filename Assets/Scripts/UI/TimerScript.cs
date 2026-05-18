@@ -1,5 +1,6 @@
 using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TimerScript : MonoBehaviour
@@ -14,10 +15,11 @@ public class TimerScript : MonoBehaviour
 
     public void StartTimer(int seconds)
     {
-        StartCoroutine(TimerCoroutine(seconds, false));
+        StopAllCoroutines();
+        StartCoroutine(TimerCoroutine(seconds));
     }
 
-    IEnumerator TimerCoroutine(int seconds, bool isDiscussionRound)
+    IEnumerator TimerCoroutine(int seconds)
     {
         int timeLeft = seconds;
         while (timeLeft > 0)
@@ -29,6 +31,13 @@ public class TimerScript : MonoBehaviour
             timeLeft--;
         }
         timerText.text = "00:00";
-        if (!isDiscussionRound){}
+        if (GameManager.instance.currentScreen == GameScreens.FirstPolicyVotingScreen || GameManager.instance.currentScreen == GameScreens.SecondPolicyVotingScreen)
+        {
+            GameUIManager.instance.TimerDone();
+        }
+        else if (GameManager.instance.currentScreen == GameScreens.DiscussionScreen)
+        {
+            
+        }
     }
 }
