@@ -71,6 +71,7 @@ Assets/Scripts/
  Serializable Classes.cs
  UI/
   KnockOver Effect.cs
+  Spin.cs
   TimerScript.cs
   Typing Effect.cs
 Temp/obj/Assembly-CSharp/.NETStandard,Version=v2.1.AssemblyAttributes.cs

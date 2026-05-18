@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.OnScreen;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -40,6 +43,7 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private GameObject headers;
     [SerializeField] private GameObject timer;
     [SerializeField] private GameObject continueButton;
+    [SerializeField] private GameObject iconCircle;
 
     [Header("Prefab References")]
     [SerializeField] private GameObject discussionKeywordCard;
@@ -62,6 +66,9 @@ public class GameUIManager : MonoBehaviour
     [Header("Voting Round Layout Group References")]
     [SerializeField] private Transform votingPosKeywordContainer;
     [SerializeField] private Transform votingNegKeywordContainer;
+
+    [Header("List of players")]
+    [SerializeField] public List<GameObject> allPlayerIcons = new List<GameObject>();
 
 
     private void Awake()
@@ -116,12 +123,15 @@ public class GameUIManager : MonoBehaviour
                 allScreens[i].SetActive(false);
             }
         }
+
         //Turns headers off or on
-        if ((int)currentScreen == 0 || (int)currentScreen == 6 || (int)currentScreen == 4) { headers.SetActive(false); } else { headers.SetActive(true); }
+        if (currentScreen == GameScreens.CharacterIntroScreen || currentScreen == GameScreens.ResultsScreen || currentScreen == GameScreens.EnjinUpdateScreen) 
+        { headers.SetActive(false); } else { headers.SetActive(true); }
+
         //Turns timer & continue button off or on
-        if ((int)currentScreen == 2 || (int)currentScreen == 5)
+        if (currentScreen == GameScreens.FirstPolicyVotingScreen || currentScreen == GameScreens.SecondPolicyVotingScreen)
         {
-            if ((int)currentScreen == 2)
+            if (currentScreen == GameScreens.FirstPolicyVotingScreen)
             {
                 voting1Screen.SetActive(true);
                 voting1Title.gameObject.SetActive(true);
@@ -135,24 +145,25 @@ public class GameUIManager : MonoBehaviour
                 voting2Screen.SetActive(true);
                 InstantiateKeywordCards();
             }
-
             timer.SetActive(true);
-            TimerScript.instance.StartTimer(5);
+            TimerScript.instance.StartTimer(GameManager.instance.votingTime);
             continueButton.SetActive(false);
         }
-        else if ((int)currentScreen == 3)
+        else if (currentScreen == GameScreens.DiscussionScreen)
         {
             voting1Screen.SetActive(true);
             voting2Screen.SetActive(false);
             voting1Title.gameObject.SetActive(false);
 
             timer.SetActive(true);
-            TimerScript.instance.StartTimer(10);
             continueButton.SetActive(false);
             InstantiatePlayerVoteIcons();
+            StartCoroutine(Discussion());
         }
-        else if((int)currentScreen == 4)
+        else if(currentScreen == GameScreens.EnjinUpdateScreen)
         {
+            timer.SetActive(false);
+            continueButton.SetActive(true);
             enjinTitle.SetActive(true);
             enjinVersionText.text = enjinVersion;
             enjinVersionDescriptionText.text = GameManager.instance.GetCurrentTopic().enjinPolicy.policyDescription;
@@ -164,7 +175,7 @@ public class GameUIManager : MonoBehaviour
             timer.SetActive(false);
             continueButton.SetActive(true);
         }
-        if ((int)currentScreen == 6) { ValueManager.instance.MakeBig(); } else { ValueManager.instance.MakeSmall(); }
+        if (currentScreen == GameScreens.ResultsScreen) { ValueManager.instance.MakeBig(); } else { ValueManager.instance.MakeSmall(); }
     }
 
     public void UpdateCurrentScreenNumber(GameScreens scrin)
@@ -222,12 +233,14 @@ public class GameUIManager : MonoBehaviour
                         GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, agreeGroup1);
                         Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
                         if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                        allPlayerIcons.Add(playerIconPrefab);
                     }
                     else
                     {
                         GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, agreeGroup2);
                         Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
                         if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                        allPlayerIcons.Add(playerIconPrefab);
                     }
                     break;
                 case VoteTypes.MostlyAgree:
@@ -236,12 +249,14 @@ public class GameUIManager : MonoBehaviour
                         GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, mostlyAgreeGroup1);
                         Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
                         if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                        allPlayerIcons.Add(playerIconPrefab);
                     }
                     else
                     {
                         GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, mostlyAgreeGroup2);
                         Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
                         if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                        allPlayerIcons.Add(playerIconPrefab);
                     }
                     break;
                 case VoteTypes.Neutral:
@@ -250,12 +265,14 @@ public class GameUIManager : MonoBehaviour
                         GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, neutralGroup1);
                         Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
                         if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                        allPlayerIcons.Add(playerIconPrefab);
                     }
                     else
                     {
                         GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, neutralGroup2);
                         Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
                         if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                        allPlayerIcons.Add(playerIconPrefab);
                     }
                     break;
                 case VoteTypes.MostlyDisagree:
@@ -264,12 +281,14 @@ public class GameUIManager : MonoBehaviour
                         GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, mostlyDisagreeGroup1);
                         Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
                         if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                        allPlayerIcons.Add(playerIconPrefab);
                     }
                     else
                     {
                         GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, mostlyDisagreeGroup2);
                         Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
                         if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                        allPlayerIcons.Add(playerIconPrefab);
                     }
                     break;
                 case VoteTypes.Disagree:
@@ -278,12 +297,14 @@ public class GameUIManager : MonoBehaviour
                         GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, disagreeGroup1);
                         Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
                         if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                        allPlayerIcons.Add(playerIconPrefab);
                     }
                     else
                     {
                         GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, disagreeGroup2);
                         Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
                         if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
+                        allPlayerIcons.Add(playerIconPrefab);
                     }
                     break;
             }
@@ -304,5 +325,45 @@ public class GameUIManager : MonoBehaviour
         }
         return (Color.white, "Error"); //no match
     }
+        
+    private IEnumerator Discussion()
+    {
+        iconCircle.SetActive(true);
+        yield return null;
+        int playerAmount = NetworkManager.instance.allPlayers.Count;
+        Debug.Log(playerAmount);
+        iconCircle.transform.position = allPlayerIcons[0].transform.position;
+        for (int i = 0; i < playerAmount; i++)
+        {
+            GameObject speaker = allPlayerIcons[i];
+            StartCoroutine(MoveIcon(iconCircle.transform, speaker.transform.position, 0.35f));
+            TimerScript.instance.StartTimer(GameManager.instance.discussionTime);
+            yield return new WaitForSeconds(GameManager.instance.discussionTime);
+        }
+        TimerDone();
+        iconCircle.SetActive(false);
+    }
 
+    private IEnumerator MoveIcon(Transform obj, Vector3 targetPos, float duration)
+    {
+        Vector3 startPos = obj.position;
+        float time = 0f;
+
+        while (time < duration)
+        {
+            float t = time / duration;
+            t = t * t * (3f - 2f * t);
+            obj.position = Vector3.Lerp(startPos, targetPos, t);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        obj.position = targetPos;
+    }
+
+    public void TimerDone()
+    {
+        timer.SetActive(false);
+        continueButton.SetActive(true);
+    }
 }
