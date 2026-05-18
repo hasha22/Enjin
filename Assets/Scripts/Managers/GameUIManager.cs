@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem.OnScreen;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -9,8 +8,9 @@ public class GameUIManager : MonoBehaviour
 {
     public static GameUIManager instance;
 
-    [Header("Screeb References")]
+    [Header("Screen References")]
     public List<GameObject> allScreens = new List<GameObject>();
+    private List<GameObject> trashCan = new List<GameObject>();
 
     [Header("Text References")]
     public TextMeshProUGUI titleText;
@@ -48,6 +48,7 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private GameObject votingPlayerIcon;
 
     [Header("Discussion Round Layout Group References")]
+    private Dictionary<VoteTypes, (Transform group1, Transform group2)> voteGroups;
     [SerializeField] private Transform agreeGroup1;
     [SerializeField] private Transform agreeGroup2;
     [SerializeField] private Transform mostlyAgreeGroup1;
@@ -62,12 +63,23 @@ public class GameUIManager : MonoBehaviour
     [Header("Voting Round Layout Group References")]
     [SerializeField] private Transform votingPosKeywordContainer;
     [SerializeField] private Transform votingNegKeywordContainer;
+    [SerializeField] private Transform yesGroup1;
+    [SerializeField] private Transform yesGroup2;
+    [SerializeField] private Transform noGroup1;
+    [SerializeField] private Transform noGroup2;
 
 
     private void Awake()
     {
         if (instance == null) { instance = this; }
-
+        voteGroups = new Dictionary<VoteTypes, (Transform, Transform)>
+        {
+            { VoteTypes.Agree,          (agreeGroup1,         agreeGroup2)         },
+            { VoteTypes.MostlyAgree,    (mostlyAgreeGroup1,   mostlyAgreeGroup2)   },
+            { VoteTypes.Neutral,        (neutralGroup1,       neutralGroup2)       },
+            { VoteTypes.MostlyDisagree, (mostlyDisagreeGroup1, mostlyDisagreeGroup2) },
+            { VoteTypes.Disagree,       (disagreeGroup1,      disagreeGroup2)      },
+        };
     }
     private void Start()
     {
@@ -96,6 +108,7 @@ public class GameUIManager : MonoBehaviour
         {
             GameManager.instance.currentScreen = GameScreens.SituationExplanationScreen;
             GameManager.instance.currentRound++;
+            ResetUI();
             currentScreen = GameManager.instance.currentScreen;
             currentRound = GameManager.instance.currentRound;
             UpdateCurrentScreenNumber(currentScreen);
@@ -149,9 +162,9 @@ public class GameUIManager : MonoBehaviour
             timer.SetActive(true);
             TimerScript.instance.StartTimer(10);
             continueButton.SetActive(false);
-            InstantiatePlayerVoteIcons();
+            InstantiatePlayerDiscussionIcons();
         }
-        else if((int)currentScreen == 4)
+        else if ((int)currentScreen == 4)
         {
             enjinTitle.SetActive(true);
             enjinVersionText.text = enjinVersion;
@@ -176,36 +189,24 @@ public class GameUIManager : MonoBehaviour
         Topic currentTopic = GameManager.instance.GetCurrentTopic();
         if (GameManager.instance.currentScreenNumber == 2)
         {
-            foreach(PolicyKeywords keyword in currentTopic.formulatedPolicy.keywords)
+            foreach (PolicyKeywords keyword in currentTopic.formulatedPolicy.keywords)
             {
-                GameObject newKeyword = Instantiate(discussionKeywordCard, discussionKeywordContainer);
-                TextMeshProUGUI text = newKeyword.GetComponentInChildren<TextMeshProUGUI>();
-                Image image = newKeyword.GetComponent<Image>();
-
-                (image.color, text.text) = DetermineKeywordCardColorAndName((int)keyword);
+                InstantiateKeywordInContainer(discussionKeywordContainer, keyword, true);
             }
         }
         else if (GameManager.instance.currentScreenNumber == 5)
         {
-            foreach(PolicyKeywords keyword in currentTopic.formulatedPolicy.keywords)
+            foreach (PolicyKeywords keyword in currentTopic.formulatedPolicy.keywords)
             {
-                GameObject newKeyword = Instantiate(votingKeywordCard, votingPosKeywordContainer);
-                TextMeshProUGUI text = newKeyword.GetComponentInChildren<TextMeshProUGUI>();
-                Image image = newKeyword.GetComponent<Image>();
-
-                (image.color, text.text) = DetermineKeywordCardColorAndName((int)keyword);
+                InstantiateKeywordInContainer(votingPosKeywordContainer, keyword, false);
             }
             foreach (PolicyKeywords keyword in currentTopic.enjinPolicy.keywords)
             {
-                GameObject newKeyword = Instantiate(votingKeywordCard, votingNegKeywordContainer);
-                TextMeshProUGUI text = newKeyword.GetComponentInChildren<TextMeshProUGUI>();
-                Image image = newKeyword.GetComponent<Image>();
-
-                (image.color, text.text) = DetermineKeywordCardColorAndName((int)keyword);
+                InstantiateKeywordInContainer(votingNegKeywordContainer, keyword, false);
             }
         }
     }
-    public void InstantiatePlayerVoteIcons()
+    public void InstantiatePlayerDiscussionIcons()
     {
         if (NetworkManager.instance == null || NetworkManager.instance.allPlayers.Count == 0) return;
 
@@ -214,84 +215,36 @@ public class GameUIManager : MonoBehaviour
             Player playerScript = playerObject.GetComponent<Player>();
             VoteTypes playerVote = playerScript.GetFirstVote();
 
-            switch (playerVote)
-            {
-                case VoteTypes.Agree:
-                    if ((agreeGroup1.childCount + agreeGroup2.childCount) % 2 == 0)
-                    {
-                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, agreeGroup1);
-                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
-                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
-                    }
-                    else
-                    {
-                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, agreeGroup2);
-                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
-                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
-                    }
-                    break;
-                case VoteTypes.MostlyAgree:
-                    if ((mostlyAgreeGroup1.childCount + mostlyAgreeGroup2.childCount) % 2 == 0)
-                    {
-                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, mostlyAgreeGroup1);
-                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
-                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
-                    }
-                    else
-                    {
-                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, mostlyAgreeGroup2);
-                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
-                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
-                    }
-                    break;
-                case VoteTypes.Neutral:
-                    if ((neutralGroup1.childCount + neutralGroup2.childCount) % 2 == 0)
-                    {
-                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, neutralGroup1);
-                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
-                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
-                    }
-                    else
-                    {
-                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, neutralGroup2);
-                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
-                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
-                    }
-                    break;
-                case VoteTypes.MostlyDisagree:
-                    if ((mostlyDisagreeGroup1.childCount + mostlyAgreeGroup2.childCount) % 2 == 0)
-                    {
-                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, mostlyDisagreeGroup1);
-                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
-                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
-                    }
-                    else
-                    {
-                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, mostlyDisagreeGroup2);
-                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
-                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
-                    }
-                    break;
-                case VoteTypes.Disagree:
-                    if ((disagreeGroup1.childCount + disagreeGroup2.childCount) % 2 == 0)
-                    {
-                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, disagreeGroup1);
-                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
-                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
-                    }
-                    else
-                    {
-                        GameObject playerIconPrefab = Instantiate(discussionPlayerIcon, disagreeGroup2);
-                        Image playerIcon = playerIconPrefab.transform.Find("Icon").GetComponent<Image>();
-                        if (playerIcon != null) playerIcon.sprite = playerScript.selectedCharacter.characterImage;
-                    }
-                    break;
-            }
+            if (!voteGroups.TryGetValue(playerVote, out var groups)) continue;
+
+            bool useSecondGroup = (groups.group1.childCount + groups.group2.childCount) % 2 != 0;
+            Transform group = useSecondGroup ? groups.group2 : groups.group1;
+
+            InstantiateIconInGroup(group, playerScript.selectedCharacter.characterImage);
+        }
+    }
+    public void InstantiateVotePlayerIcon(Player playerScript)
+    {
+        if (NetworkManager.instance == null || NetworkManager.instance.allPlayers.Count == 0) return;
+
+        bool playerVote = playerScript.GetSecondVote();
+
+        if (playerVote)
+        {
+            bool useFirstGroup = (yesGroup1.childCount < 3);
+            Transform group = useFirstGroup ? yesGroup1 : yesGroup2;
+            InstantiateIconInGroup(group, playerScript.selectedCharacter.characterImage);
+        }
+        else if (!playerVote)
+        {
+            bool useFirstGroup = (noGroup1.childCount < 3);
+            Transform group = useFirstGroup ? noGroup1 : noGroup2;
+            InstantiateIconInGroup(group, playerScript.selectedCharacter.characterImage);
         }
     }
     private (Color32, string) DetermineKeywordCardColorAndName(int value)
     {
-        switch(value)
+        switch (value)
         {
             case 1:
                 return (innovation, "Innovation");
@@ -303,6 +256,35 @@ public class GameUIManager : MonoBehaviour
                 return (profit, "Profit");
         }
         return (Color.white, "Error"); //no match
+    }
+    private void InstantiateIconInGroup(Transform group, Sprite sprite)
+    {
+        GameObject prefab = Instantiate(discussionPlayerIcon, group);
+        Image icon = prefab.transform.Find("Icon").GetComponent<Image>();
+        if (icon != null) icon.sprite = sprite;
+
+        trashCan.Add(prefab);
+    }
+    private void InstantiateKeywordInContainer(Transform container, PolicyKeywords keyword, bool isVoting1 = true)
+    {
+        GameObject newKeyword = null;
+
+        if (isVoting1) newKeyword = Instantiate(discussionKeywordCard, container);
+        else newKeyword = Instantiate(votingKeywordCard, container);
+
+        TextMeshProUGUI text = newKeyword.GetComponentInChildren<TextMeshProUGUI>();
+        Image image = newKeyword.GetComponent<Image>();
+
+        (image.color, text.text) = DetermineKeywordCardColorAndName((int)keyword);
+
+        trashCan.Add(newKeyword);
+    }
+    private void ResetUI()
+    {
+        foreach (GameObject gameObject in trashCan)
+        {
+            Destroy(gameObject);
+        }
     }
 
 }

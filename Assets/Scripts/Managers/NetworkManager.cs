@@ -106,26 +106,60 @@ public class NetworkManager : MonoBehaviour
         switch (msg.type)
         {
             case "player_joined":
-                PlayerJoinPayload data = null;
+                PlayerJoinPayload joinData = null;
                 try
                 {
-                    data = JsonUtility.FromJson<PlayerJoinPayload>(msg.data);
+                    joinData = JsonUtility.FromJson<PlayerJoinPayload>(msg.data);
                 }
                 catch
                 {
                     Debug.LogWarning("Failed to parse player_joined payload");
                     return;
                 }
-
-                if (data == null)
+                if (joinData == null)
                 {
                     Debug.LogWarning("player_joined payload was null");
                     return;
                 }
+                Debug.Log($"Player joined: {joinData.playerName}");
 
-                Debug.Log($"Player joined: {data.playerName}");
-
-                ConnectPlayer(data.playerName);
+                ConnectPlayer(joinData.playerName);
+                break;
+            case "player_vote_1":
+                PlayerVote1Payload voteData1 = null;
+                try
+                {
+                    voteData1 = JsonUtility.FromJson<PlayerVote1Payload>(msg.data);
+                }
+                catch
+                {
+                    Debug.LogWarning("Failed to parse player_vote_1 payload");
+                    return;
+                }
+                if (voteData1 == null)
+                {
+                    Debug.LogWarning("player_vote_1 payload was null");
+                    return;
+                }
+                RegisterFirstPlayerVote(voteData1.playerID, voteData1.playerVote);
+                break;
+            case "player_vote_2":
+                PlayerVote2Payload voteData2 = null;
+                try
+                {
+                    voteData2 = JsonUtility.FromJson<PlayerVote2Payload>(msg.data);
+                }
+                catch
+                {
+                    Debug.LogWarning("Failed to parse player_vote_2 payload");
+                    return;
+                }
+                if (voteData2 == null)
+                {
+                    Debug.LogWarning("player_vote_2 payload was null");
+                    return;
+                }
+                RegisterSecondPlayerVote(voteData2.playerID, voteData2.playerVote);
                 break;
             case "error":
                 Debug.LogWarning("Server error");
@@ -161,6 +195,49 @@ public class NetworkManager : MonoBehaviour
         //Register player in a list of active players
         UIManager.instance.IncreaseDisplayedPlayerCount();
         UIManager.instance.UpdatePlayerCard(allPlayers.Count - 1, player);
+    }
+    public void RegisterFirstPlayerVote(string playerID, string playerVote)
+    {
+        foreach (GameObject player in allPlayers)
+        {
+            Player playerScript = player.GetComponent<Player>();
+            if (playerScript.GetPlayerID() == playerID)
+            {
+                switch (playerVote)
+                {
+                    case "disagree":
+                        playerScript.SetFirstVote(VoteTypes.Disagree);
+                        break;
+                    case "mostly_disagree":
+                        playerScript.SetFirstVote(VoteTypes.MostlyDisagree);
+                        break;
+                    case "neutral":
+                        playerScript.SetFirstVote(VoteTypes.Neutral);
+                        break;
+                    case "mostly_agree":
+                        playerScript.SetFirstVote(VoteTypes.MostlyAgree);
+                        break;
+                    case "agree":
+                        playerScript.SetFirstVote(VoteTypes.Agree);
+                        break;
+                }
+                break;
+            }
+        }
+    }
+    public void RegisterSecondPlayerVote(string playerID, string playerVote)
+    {
+        foreach (GameObject player in allPlayers)
+        {
+            Player playerScript = player.GetComponent<Player>();
+            if (playerScript.GetPlayerID() == playerID)
+            {
+                if (playerVote == "yes") playerScript.SetSecondVote(true);
+                else if (playerVote == "no") playerScript.SetSecondVote(false);
+                if (GameUIManager.instance != null) GameUIManager.instance.InstantiateVotePlayerIcon(playerScript);
+                break;
+            }
+        }
     }
     public void Send(string json)
     {

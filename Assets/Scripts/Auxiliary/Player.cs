@@ -13,6 +13,10 @@ public class Player : MonoBehaviour
     {
         return playerName;
     }
+    public string GetPlayerID()
+    {
+        return playerId;
+    }
     /*
     public (VoteTypes, bool) GetPlayerVotes()
     {

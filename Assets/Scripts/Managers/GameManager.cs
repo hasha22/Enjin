@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
 
 public class GameManager : MonoBehaviour
@@ -11,7 +9,7 @@ public class GameManager : MonoBehaviour
     [Header("Variables")]
     public List<Topic> allTopics = new List<Topic>();
     [SerializeField] private Topic currentTopic;
-    [SerializeField] private Policy currentPolicy; 
+    [SerializeField] private Policy currentPolicy;
     [SerializeField] public GameScreens currentScreen;
     [SerializeField] public int currentScreenNumber;
     [SerializeField] public int currentRound;
@@ -78,7 +76,7 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
-
+    /*
     public void AssignVote(string playerId, VoteTypes vote = new VoteTypes(), bool voteTwo = false)
     {
         if (currentScreen == GameScreens.FirstPolicyVotingScreen)
@@ -109,6 +107,7 @@ public class GameManager : MonoBehaviour
             Debug.Log($"You can't call this in screen {currentScreen}, you need to call it in screen 2 or 5");
         }
     }
+    */
     public Topic GetCurrentTopic()
     {
         return currentTopic;

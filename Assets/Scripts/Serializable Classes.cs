@@ -16,3 +16,13 @@ public class PlayerJoinPayload
     public string playerName;
     public string playerID;
 }
+public class PlayerVote1Payload
+{
+    public string playerID;
+    public string playerVote;
+}
+public class PlayerVote2Payload
+{
+    public string playerID;
+    public string playerVote;
+}
