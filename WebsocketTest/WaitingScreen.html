@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waiting Screen</title>
+    <link rel="stylesheet" href="Design.css">
+</head>
+<body>
+    <div class="BasicScreen">
+        <div class="circle" style="background-color: #FF6B6B;">
+            <img src="Char1Face.png" alt="profile" class="circle-image" id="profileImage">
+        </div>
+    
+
+        <div class="modal" id="imageModal">
+            <div class="modal-content">
+                <img src="Char1.png" alt="profile enlarged">
+                <div class="modal-right-section">
+                    <div class="text-box" style="background-color: #FFFFFF;">Box 1 Text</div>
+                    <div class="text-box" style="background-color: #FF6B6B;">Box 2 Text</div>
+                    <p class="modal-text">Your text here</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <script>
+        const profileImage = document.getElementById('profileImage');
+        const imageModal = document.getElementById('imageModal');
+
+        profileImage.addEventListener('click', function() {
+            imageModal.classList.add('active');
+        });
+
+        imageModal.addEventListener('click', function(e) {
+            if (e.target === imageModal) {
+                imageModal.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
