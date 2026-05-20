@@ -120,13 +120,15 @@ public class ValueManager : MonoBehaviour
 
     private IEnumerator SmoothSliderCoroutine(Slider slider, float targetValue)
     {
+        GameAudioManager.instance.PlaySFX(GameAudioManager.instance.barSfx, 0.3f);
         float startValue = slider.value;
         float t = 0f;
 
         while (t < 1f)
         {
             t += Time.deltaTime / lerpDuration;
-            slider.value = Mathf.Lerp(startValue, targetValue, t);
+            float easedT = Mathf.SmoothStep(0f, 1f, t);
+            slider.value = Mathf.Lerp(startValue, targetValue, easedT);
             yield return null;
         }
 
