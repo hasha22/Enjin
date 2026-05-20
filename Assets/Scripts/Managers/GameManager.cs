@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Variables")]
     public List<Topic> allTopics = new List<Topic>();
-    [SerializeField] private Topic currentTopic;
+    [SerializeField] public Topic currentTopic;
     [SerializeField] private Policy currentPolicy; 
     [SerializeField] public GameScreens currentScreen;
     [SerializeField] public int currentScreenNumber;
@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public int votingTime;
     public int discussionTime;
     public int totalRounds;
+    public float typingSpeed;
 
     void Awake()
     {
@@ -30,24 +31,11 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        DetermineTopic();
     }
-    public void UpdateData()
-    {
-        switch (currentScreen)
-        {
-            case GameScreens.SituationExplanationScreen:
-                DetermineTopic();
-                GameUIManager.instance.topText.text = "Current Situation";
-                GameUIManager.instance.titleText.text = currentTopic.topicName;
-                GameUIManager.instance.scenarioDescText.text = currentTopic.topicDescription;
-                break;
-            case GameScreens.FirstPolicyVotingScreen:
-                GameUIManager.instance.topText.text = "Proposed Policy";
-                GameUIManager.instance.titleText.text = currentTopic.formulatedPolicy.policyDescription;
-                break;
 
-        }
-    }
+    
+
     public void DetermineTopic()
     {
         switch (currentRound)

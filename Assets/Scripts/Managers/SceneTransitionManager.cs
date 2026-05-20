@@ -15,10 +15,13 @@ public class SceneTransitionManager : MonoBehaviour
 
     public void LoadNextScene()
     {
+        AudioManager.instance.StopBGM();
+        AudioManager.instance.PlaySFX(AudioManager.instance.startGameSFX, 0.5f);
         StartCoroutine(LoadSceneWithAnimation(SceneManager.GetActiveScene().buildIndex + 1));
     }
     private IEnumerator LoadSceneWithAnimation(int index)
     {
+        yield return new WaitForSeconds(1.5f);
         waitingSceneTransition.SetTrigger("Start");
         yield return new WaitForSeconds(animationDelay);
 
