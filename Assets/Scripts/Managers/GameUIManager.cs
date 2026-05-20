@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.OnScreen;
 using UnityEngine.SceneManagement;
@@ -137,8 +136,9 @@ public class GameUIManager : MonoBehaviour
         }
 
         //Turns headers off or on
-        if (currentScreen == GameScreens.CharacterIntroScreen || currentScreen == GameScreens.ResultsScreen || currentScreen == GameScreens.EnjinUpdateScreen) 
-        { headers.SetActive(false); } else { headers.SetActive(true); }
+        if (currentScreen == GameScreens.CharacterIntroScreen || currentScreen == GameScreens.ResultsScreen || currentScreen == GameScreens.EnjinUpdateScreen)
+        { headers.SetActive(false); }
+        else { headers.SetActive(true); }
 
         //Turns timer & continue button off or on
         if (currentScreen == GameScreens.FirstPolicyVotingScreen || currentScreen == GameScreens.SecondPolicyVotingScreen)
@@ -170,9 +170,9 @@ public class GameUIManager : MonoBehaviour
             timer.SetActive(true);
             continueButton.SetActive(false);
             InstantiatePlayerDiscussionIcons();
-			            StartCoroutine(Discussion());
+			StartCoroutine(Discussion());
         }
-        else if(currentScreen == GameScreens.EnjinUpdateScreen)
+        else if (currentScreen == GameScreens.EnjinUpdateScreen)
         {
             iconCircle.SetActive(false);
             timer.SetActive(false);
@@ -200,7 +200,7 @@ public class GameUIManager : MonoBehaviour
         {
             foreach (PolicyKeywords keyword in currentTopic.formulatedPolicy.keywords)
             {
-                InstantiateKeywordInContainer(discussionKeywordContainer, keyword, true);
+                InstantiateKeywordInContainer(discussionKeywordContainer, keyword);
             }
         }
         else if (GameManager.instance.currentScreenNumber == 5)
@@ -242,13 +242,13 @@ public class GameUIManager : MonoBehaviour
         {
             bool useFirstGroup = (yesGroup1.childCount < 3);
             Transform group = useFirstGroup ? yesGroup1 : yesGroup2;
-            InstantiateIconInGroup(group, playerScript.selectedCharacter.characterImage);
+            InstantiateIconInGroup(group, playerScript.selectedCharacter.characterImage, false);
         }
         else if (!playerVote)
         {
             bool useFirstGroup = (noGroup1.childCount < 3);
             Transform group = useFirstGroup ? noGroup1 : noGroup2;
-            InstantiateIconInGroup(group, playerScript.selectedCharacter.characterImage);        
+            InstantiateIconInGroup(group, playerScript.selectedCharacter.characterImage, false);
         }
     }
     private (Color32, string) DetermineKeywordCardColorAndName(int value)
@@ -266,13 +266,18 @@ public class GameUIManager : MonoBehaviour
         }
         return (Color.white, "Error"); //no match
     }
-    private void InstantiateIconInGroup(Transform group, Sprite sprite)
+    private void InstantiateIconInGroup(Transform group, Sprite sprite, bool isVoting1 = true)
     {
-        GameObject prefab = Instantiate(discussionPlayerIcon, group);
+        GameObject prefab = null;
+
+        if (isVoting1) prefab = Instantiate(discussionPlayerIcon, group);
+        else prefab = Instantiate(votingPlayerIcon, group);
+
         Image icon = prefab.transform.Find("Icon").GetComponent<Image>();
         if (icon != null) icon.sprite = sprite;
 
         trashCan.Add(prefab);
+        allPlayerIcons.Add(prefab);
     }
     private void InstantiateKeywordInContainer(Transform container, PolicyKeywords keyword, bool isVoting1 = true)
     {
@@ -294,16 +299,30 @@ public class GameUIManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-	}
         
+        foreach (GameObject gameObject1 in allPlayerIcons)
+        {
+            Destroy(gameObject1);
+        }
+    }
+
     private IEnumerator Discussion()
     {
         iconCircle.SetActive(true);
         yield return null;
-        if (NetworkManager.instance == null) {iconCircle.SetActive(false); yield break;}
-        int playerAmount = NetworkManager.instance.allPlayers.Count;
+        int playerAmount = 0;
+
+        if (NetworkManager.instance != null)
+        { playerAmount = NetworkManager.instance.allPlayers.Count; }
+        else
+        {
+            TimerDone();
+            iconCircle.SetActive(false);
+            yield break;
+        }
+
         Debug.Log(playerAmount);
-        iconCircle.transform.position = allPlayerIcons[0].transform.position;
+        if (allPlayerIcons.Count != 0) iconCircle.transform.position = allPlayerIcons[0].transform.position;
         for (int i = 0; i < playerAmount; i++)
         {
             GameObject speaker = allPlayerIcons[i];

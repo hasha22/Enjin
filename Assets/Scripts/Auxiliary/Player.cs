@@ -3,7 +3,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [Header("Player Data")]
-    [SerializeField] public string playerId;
+    [SerializeField] private string playerId;
     [SerializeField] private string playerName;
     [SerializeField] private VoteTypes firstVote; //made serializable for visualization purposes
     [SerializeField] private bool secondVote;
@@ -34,6 +34,7 @@ public class Player : MonoBehaviour
     {
         selectedCharacter = CharacterDatabase.instance.GetRandomCharacter();
         this.playerName = playerName;
+        playerId = "1";
     }
 
     public void SetFirstVote(VoteTypes vote)
@@ -47,7 +48,7 @@ public class Player : MonoBehaviour
 
     public void HighLight()
     {
-        
+
     }
 
 }
