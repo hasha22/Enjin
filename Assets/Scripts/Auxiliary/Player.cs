@@ -45,4 +45,9 @@ public class Player : MonoBehaviour
         secondVote = vote;
     }
 
+    public void HighLight()
+    {
+        
+    }
+
 }
