@@ -22,8 +22,8 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI enjinDescText;
     [SerializeField] private TextMeshProUGUI roundIndicator;
     [SerializeField] private TextMeshProUGUI voting1Title;
-    [SerializeField] private TextMeshProUGUI enjinVersionText;
-    [SerializeField] private TextMeshProUGUI enjinVersionDescriptionText;
+    [SerializeField] public TextMeshProUGUI enjinVersionText;
+    [SerializeField] public TextMeshProUGUI enjinVersionDescriptionText;
 
     [Header("Keyword References")]
     [SerializeField] private GameObject voting1Screen;
@@ -37,7 +37,6 @@ public class GameUIManager : MonoBehaviour
     [Header("Enjin Update References")]
     [SerializeField] private GameObject enjinTitle;
     [SerializeField] private GameObject backgroundImage;
-    private string enjinVersion;
 
     [Header("Nonscreen References")]
     [SerializeField] private GameObject headers;
@@ -109,7 +108,6 @@ public class GameUIManager : MonoBehaviour
         int currentRound = GameManager.instance.currentRound;
         int totalRounds = GameManager.instance.totalRounds;
         UpdateCurrentScreenNumber(currentScreen);
-        enjinVersion = $"{currentRound}.0";
 
         if ((int)currentScreen >= 7)
         {
@@ -120,6 +118,7 @@ public class GameUIManager : MonoBehaviour
             currentRound = GameManager.instance.currentRound;
             UpdateCurrentScreenNumber(currentScreen);
             if (currentRound > totalRounds) { SceneManager.LoadScene("OutcomeScene"); return; }
+            GameManager.instance.DetermineTopic();
             roundIndicator.text = $"{currentRound}/{totalRounds}";
         }
 
@@ -129,7 +128,7 @@ public class GameUIManager : MonoBehaviour
             if (i == (int)currentScreen)
             {
                 allScreens[i].SetActive(true);
-                GameManager.instance.UpdateData();
+                UpdateData();
             }
             else
             {
@@ -175,11 +174,10 @@ public class GameUIManager : MonoBehaviour
         }
         else if(currentScreen == GameScreens.EnjinUpdateScreen)
         {
+            iconCircle.SetActive(false);
             timer.SetActive(false);
             continueButton.SetActive(true);
             enjinTitle.SetActive(true);
-            enjinVersionText.text = enjinVersion;
-            enjinVersionDescriptionText.text = GameManager.instance.GetCurrentTopic().enjinPolicy.policyDescription;
         }
         else
         {
@@ -302,6 +300,7 @@ public class GameUIManager : MonoBehaviour
     {
         iconCircle.SetActive(true);
         yield return null;
+        if (NetworkManager.instance == null) {iconCircle.SetActive(false); yield break;}
         int playerAmount = NetworkManager.instance.allPlayers.Count;
         Debug.Log(playerAmount);
         iconCircle.transform.position = allPlayerIcons[0].transform.position;
@@ -337,5 +336,38 @@ public class GameUIManager : MonoBehaviour
     {
         timer.SetActive(false);
         continueButton.SetActive(true);
+    }
+
+    public void UpdateData()
+    {
+        string enjinVersion = $"{GameManager.instance.currentRound}.0";
+        switch (GameManager.instance.currentScreen)
+        {
+            case GameScreens.SituationExplanationScreen:
+                GameUIManager.instance.topText.text = "Current Situation";
+                GameUIManager.instance.titleText.text = GameManager.instance.currentTopic.topicName;
+                StartCoroutine(TypeText(GameManager.instance.currentTopic.topicDescription, GameUIManager.instance.scenarioDescText));
+                break;
+            case GameScreens.FirstPolicyVotingScreen:
+                GameUIManager.instance.topText.text = "Proposed Policy";
+                GameUIManager.instance.titleText.text = GameManager.instance.currentTopic.formulatedPolicy.policyDescription;
+                break;
+            case GameScreens.EnjinUpdateScreen:
+                GameUIManager.instance.enjinVersionText.text = enjinVersion;
+                StartCoroutine(TypeText(GameManager.instance.currentTopic.enjinPolicy.policyDescription, GameUIManager.instance.enjinVersionDescriptionText));
+                break;
+        }
+    }
+
+    private IEnumerator TypeText(string text, TextMeshProUGUI targetText)
+    {
+        GameAudioManager.instance.typingSource.Play();
+        targetText.text = "";
+        foreach (char c in text)
+        {
+            targetText.text += c;
+            yield return new WaitForSeconds(GameManager.instance.typingSpeed);
+        }
+        GameAudioManager.instance.typingSource.Stop();
     }
 }
