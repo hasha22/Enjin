@@ -19,9 +19,8 @@ MonoBehaviour:
   formulatedPolicy:
     policyName: Formulated Policy
     policyDescription: All Enjin usage should be documented within the company, and
-      inputting sensitive company data or personal employee data is forbidden unless
-      approved by management.
-    keywords: 01000000
+      inputting sensitive company is forbidden unless approved by management.
+    keywords: 02000000
     enjinPosValue: 0
     moralePosValue: 0
     ethicPosValue: 0
@@ -37,7 +36,7 @@ MonoBehaviour:
       software systems! Do you need your company sale data summarized and analysed
       quickly for a meeting? Need a new website design, or maybe you want to make
       a new phone app? There is nothing Enjin cannot do for you!
-    keywords: 00000000
+    keywords: 0100000004000000
     enjinPosValue: 0
     moralePosValue: 0
     ethicPosValue: 0
