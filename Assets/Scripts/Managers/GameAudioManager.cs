@@ -34,7 +34,7 @@ public class GameAudioManager : MonoBehaviour
         AudioSource audioSource = Instantiate(sourcePrefab, this.transform.position, Quaternion.identity);
         audioSource.clip = audioClip;
         audioSource.volume = volume;
-        if (audioSource.clip == barSfx) {Debug.Log("what will you do now netanyahu"); audioSource.pitch = Random.Range(0.75f, 1.05f);}
+        if (audioSource.clip == barSfx) {audioSource.pitch = Random.Range(0.75f, 1.05f);}
         audioSource.Play();
         Destroy(audioSource.gameObject, audioSource.clip.length);
     }
