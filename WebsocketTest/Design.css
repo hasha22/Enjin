@@ -6,7 +6,7 @@
 
 @font-face {
     font-family: 'Dobra';
-    src: url('./Dobra-Medium.ttf') format('truetype');
+    src: url('Dobra.ttf') format('truetype');
 }
 
 html {
@@ -16,7 +16,90 @@ html {
     height: 100vh;
 }
 
-.ConnectedScreenFrame {
+.JoinRoom {
+    width: 100%;
+    height: 100vh;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    font-family: 'Dobra', serif;
+    text-align: center;
+}
+
+.JoinRoom h2 {
+    color: #4a9eff;
+    font-size: 44px;
+    font-weight: bold;
+    margin-bottom: 45px;
+}
+
+.join-form {
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.join-form label {
+    width: 100%;
+    color: #4a9eff;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: left;
+}
+
+.join-form input {
+    width: 100%;
+    height: 48px;
+    margin-top: 8px;
+    padding: 0 14px;
+
+    border: none;
+    border-radius: 12px;
+    background-color: #FFFFFF;
+
+    color: #333333;
+    font-family: 'Dobra', serif;
+    font-size: 20px;
+    outline: none;
+}
+
+.join-form input:focus {
+    outline: 4px solid #99C998;
+}
+
+.join-btn {
+    background-color: #FF0000;
+    color: #FFFFFF;
+    border: none;
+    padding: 12px 42px;
+    border-radius: 12px;
+
+    font-family: 'Dobra', serif;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.join-btn:hover {
+    background-color: #ff00008f;
+    transform: scale(1.03);
+}
+
+.JoinRoom #status {
+    color: #4a9eff;
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.ConnectedScreen {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -28,7 +111,7 @@ html {
     margin: 0 auto;
 }
 
-.ConnectedScreenFrame p {
+.ConnectedScreen p {
     color: #4a9eff;
     font-size: 40px;
     font-family: 'Dobra', serif;
@@ -44,16 +127,16 @@ html {
     padding: 20px;
 }
 
-.VotingScreenFrame {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    height: 100vh;
-    width: 100%;
-    padding: 20px;
-    position: relative;
+.WaitingScreen p {
+    color: #4a9eff;
+    font-size: 40px;
+    font-family: 'Dobra', serif;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
+
 
 .circle {
     width: 100px;
@@ -119,6 +202,17 @@ html {
     align-items: center;
     gap: 15px;
     padding: 20px;
+}
+
+.VotingScreenFrame {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    padding: 20px;
+    position: relative;
 }
 
 .text-box {
@@ -235,7 +329,7 @@ html {
 
 .final-voting-content {
     position: absolute;
-    top: 105px;
+    top: 180px;
     left: 0;
     width: 100%;
     display: flex;
@@ -258,6 +352,7 @@ html {
     height: 126px;
     border-radius: 16px;
     overflow: hidden;
+    margin-top: 30px;
 }
 
 .final-vote-btn {
