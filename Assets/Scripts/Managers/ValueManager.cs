@@ -35,8 +35,6 @@ public class ValueManager : MonoBehaviour
     [Header("Settings")]
     public float barDelay;
     public float lerpDuration;
-  
-    
 
     public static ValueManager instance { get; private set; }
 
