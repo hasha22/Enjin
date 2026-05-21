@@ -6,7 +6,7 @@
 
 @font-face {
     font-family: 'Dobra';
-    src: url('WebsocketTest/Dobra-Medium.ttf') format('truetype');
+    src: url('./Dobra-Medium.ttf') format('truetype');
 }
 
 html {
