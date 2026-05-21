@@ -59,14 +59,16 @@ public class AudioManager : MonoBehaviour
         }
 
     }
-    public void PlaySFX(AudioClip audioClip, Transform spawnTransform, float volume)
+
+    public void PlaySFX(AudioClip audioClip, float volume)
     {
-        AudioSource audioSource = Instantiate(SFXSource, spawnTransform.position, Quaternion.identity);
+        AudioSource audioSource = Instantiate(SFXSource, this.transform.position, Quaternion.identity);
         audioSource.clip = audioClip;
         audioSource.volume = volume;
         audioSource.Play();
         Destroy(audioSource.gameObject, audioSource.clip.length);
     }
+
     public void PlayBGM()
     {
         if (waitingSceneSource != null)
@@ -88,4 +90,6 @@ public class AudioManager : MonoBehaviour
     {
         waitingSceneSource.Stop();
     }
+
+    
 }
