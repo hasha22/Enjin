@@ -134,7 +134,7 @@ function send(ws, type, dataObj = {})
 
   ws.send(JSON.stringify({
     type,
-    data: JSON.stringify(dataObj) 
+    data: dataObj
   }));
 }
 function getRoom(roomCode) 
