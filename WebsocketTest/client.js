@@ -14,13 +14,14 @@ ws.onclose = () => {
 
 ws.onmessage = (event) => {
   const msg = JSON.parse(event.data);
+  const data = msg.data ? JSON.parse(msg.data) : {};
 
   switch(msg.type)
   {
     case "join_room_success":
-        joinedRoomCode = msg.room;
+        joinedRoomCode = data.room;
         setStatus("Joined room: " + joinedRoomCode);
-        log("Joined as " + msg.playerName);
+        log("Joined as " + data.playerName);
         break;
     case "join_room_failed":
       joinedRoomCode = null;
