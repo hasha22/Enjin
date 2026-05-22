@@ -1,7 +1,7 @@
 // Setup
 const WebSocket = require("ws");
 const wss = new WebSocket.Server({ port: 5085 });
-console.log("Server running on ws://localhost:5085");
+console.log("Server running on wss://enjin--enjin--qpbmsj2bcc7n.code.run");
 
 const rooms = new Map();
 
