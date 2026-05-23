@@ -20,7 +20,7 @@ MonoBehaviour:
     policyName: Formulated Policy
     policyDescription: Customer support should be operated by employees in the company
       because they understand how to treat the customers best.
-    keywords: 01000000
+    keywords: 02000000
     enjinPosValue: 0
     moralePosValue: 0
     ethicPosValue: 0
