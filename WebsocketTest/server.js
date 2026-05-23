@@ -20,7 +20,15 @@ function registerHost(ws, roomCode)
 
 function joinRoom(ws, roomCode, playerName, clientId) 
 {
-  const room = getRoom(roomCode);
+  const room = rooms.get(roomCode);
+
+  if (!room || !room.host) 
+  {
+    send(ws, "join_room_failed", {  
+      reason: "Room not found"
+    });
+    return;
+  }
 
   // Duplicate name check
   for (const p of room.players) 
