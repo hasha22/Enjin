@@ -1,5 +1,5 @@
 //Setup & Connection
-const ws = new WebSocket("ws://localhost:5085");// Create a new WebSocket connection to the server at ws://localhost:5085
+const ws = new WebSocket("wss://enjin--enjin--qpbmsj2bcc7n.code.run");// Create a new WebSocket connection to the server at ws://localhost:5085
 let joinedRoomCode = null; // Variable to store the room code of the room that the client has joined, initialized to null
 const clientId = getClientId();// Get the client's unique ID using the getClientId helper function and store it in the clientId variable
 
@@ -22,6 +22,15 @@ ws.onmessage = (event) => {
         joinedRoomCode = data.room;
         setStatus("Joined room: " + joinedRoomCode);
         log("Joined as " + data.playerName);
+
+
+        localStorage.setItem("roomCode", data.room);
+        localStorage.setItem("playerName", data.playerName);
+        localStorage.setItem("clientId", data.clientId);
+        localStorage.setItem("playerState", data.playerState);
+
+        window.location.href = "WaitingScreen.html";
+        
         break;
     case "join_room_failed":
       joinedRoomCode = null;
