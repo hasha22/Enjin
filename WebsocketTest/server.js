@@ -4,6 +4,12 @@ const wss = new WebSocket.Server({ port: 5085 });
 console.log("Server running on ws://localhost:5085");
 
 const rooms = new Map();
+// Player states
+const PLAYER_STATE = {
+  WAITING: "waiting",
+  VOTING: "voting",
+  MAKING_CHOICE: "making_choice"
+};
 
 // Core logic
 function registerHost(ws, roomCode) 
@@ -47,7 +53,8 @@ function joinRoom(ws, roomCode, playerName, clientId)
   {
     ws,
     playerName: playerName.toLowerCase(),
-    clientId: clientId
+    clientId: clientId,
+    playerState: PLAYER_STATE.WAITING
   };
   room.players.add(player);
   console.log(`Player joined: ${playerName} (total: ${room.players.size})`);
@@ -55,7 +62,8 @@ function joinRoom(ws, roomCode, playerName, clientId)
   send(ws, "join_room_success", {
     room: roomCode,
     playerName,
-    clientId
+    clientId,
+    playerState: player.playerState
   });
 
   // Notify Unity host
@@ -63,7 +71,8 @@ function joinRoom(ws, roomCode, playerName, clientId)
   {
     send(room.host, "player_joined", {
       playerName,
-      playerID: clientId 
+      playerID: clientId,
+      playerState: player.playerState
     });
   }
 
