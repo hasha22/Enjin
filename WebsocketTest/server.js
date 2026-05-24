@@ -4,6 +4,7 @@ const wss = new WebSocket.Server({ port: 5085 });
 console.log("Server running on ws://localhost:5085");
 
 const rooms = new Map();
+
 // Player states
 const PLAYER_STATE = {
   WAITING: "waiting",
@@ -12,25 +13,25 @@ const PLAYER_STATE = {
 };
 
 // Core logic
-function registerHost(ws, roomCode) 
+function registerHost(clientSocket, roomCode) 
 {
   const room = getRoom(roomCode);
-  room.host = ws;
+  room.host = clientSocket;
 
-  send(ws, "host_registered", {
+  send(clientSocket, "host_registered", {
     room: roomCode
   });
 
   console.log(`[room:${roomCode}] host registered`);
 }
 
-function joinRoom(ws, roomCode, playerName, clientId) 
+function joinRoom(clientSocket, roomCode, playerName, clientId) 
 {
   const room = rooms.get(roomCode);
 
   if (!room || !room.host) 
   {
-    send(ws, "join_room_failed", {  
+    send(clientSocket, "join_room_failed", {  
       reason: "Room not found"
     });
     return;
@@ -41,7 +42,7 @@ function joinRoom(ws, roomCode, playerName, clientId)
   {
     if (p.playerName === playerName.toLowerCase()) 
     {
-      send(ws, "join_room_failed", {
+      send(clientSocket, "join_room_failed", {
         reason: "Name already taken"
       });
       return;
@@ -51,15 +52,16 @@ function joinRoom(ws, roomCode, playerName, clientId)
   // Adding players
   const player = 
   {
-    ws,
+    socket: clientSocket,
     playerName: playerName.toLowerCase(),
     clientId: clientId,
-    playerState: PLAYER_STATE.WAITING
+    playerState: PLAYER_STATE.WAITING,
+    connected: true
   };
   room.players.add(player);
   console.log(`Player joined: ${playerName} (total: ${room.players.size})`);
 
-  send(ws, "join_room_success", {
+  send(clientSocket, "join_room_success", {
     room: roomCode,
     playerName,
     clientId,
@@ -81,10 +83,10 @@ function joinRoom(ws, roomCode, playerName, clientId)
 
 
 //Connection Handling
-wss.on("connection", (ws) => {
+wss.on("connection", (clientSocket) => {
   console.log("New client connected");
 
-  ws.on("message", (raw) => {
+  clientSocket.on("message", (raw) => {
     let msg;
 
     try 
@@ -102,7 +104,7 @@ wss.on("connection", (ws) => {
 
       if (!roomCode) return;
 
-      return registerHost(ws, roomCode);
+      return registerHost(clientSocket, roomCode);
     }
 
     // Client Connection
@@ -114,30 +116,30 @@ wss.on("connection", (ws) => {
 
       if (!roomCode || !playerName) 
       {
-        send(ws, "join_room_failed", {
+        send(clientSocket, "join_room_failed", {
           reason: "RoomCode and playerName required"
         });
         return;
       }
 
-      return joinRoom(ws, roomCode, playerName, clientId);
+      return joinRoom(clientSocket, roomCode, playerName, clientId);
     }
   });
 
   // Closing Connection
-  ws.on("close", () => {
+  clientSocket.on("close", () => {
     for (const room of rooms.values()) {
-      if (room.host === ws) {
+      if (room.host === clientSocket) {
         room.host = null;
         console.log(`Host disconnected`);
       }
 
       for (const player of room.players) 
       {
-        if (player.ws === ws) 
+        if (player.socket === clientSocket) 
         {
-          room.players.delete(player);
-          console.log(`Player disconnected: ${player.playerName}`);
+          player.connected = false;
+          console.log(`Player temporarily disconnected: ${player.playerName}`);
         }
       }
     }
@@ -145,11 +147,11 @@ wss.on("connection", (ws) => {
 });
 
 //Helpers
-function send(ws, type, dataObj = {}) 
+function send(clientSocket, type, dataObj = {}) 
 {
-  if (ws.readyState !== WebSocket.OPEN) return;
+  if (clientSocket.readyState !== WebSocket.OPEN) return;
 
-  ws.send(JSON.stringify({
+  clientSocket.send(JSON.stringify({
     type,
     data: JSON.stringify(dataObj) 
   }));
