@@ -88,6 +88,9 @@ wss.on("connection", (clientSocket) => {
   console.log("New client connected");
 
   clientSocket.on("message", (raw) => {
+
+    console.log("RAW message received:", raw.toString());
+    
     let msg;
 
     try 
