@@ -9,7 +9,8 @@ const rooms = new Map();
 const PLAYER_STATE = {
   WAITING: "waiting",
   VOTING: "voting",
-  MAKING_CHOICE: "making_choice"
+  MAKING_CHOICE: "making_choice",
+  VIEWING_CHARACTER: "viewing_character"
 };
 
 // Core logic
@@ -141,6 +142,20 @@ wss.on("connection", (clientSocket) => {
 
       return reconnectPlayer(clientSocket, roomCode, clientId);
     }
+
+    if (msg.type === "start_game_request")
+    {
+      const roomCode = normalize(msg.room);
+      if (!roomCode)
+      {
+        send(clientSocket, "start_game_failed", {
+          reason: "RoomCode required"
+        });
+        return;
+      }
+
+      return startGame(clientSocket, roomCode);
+    }
   });
 
 
@@ -230,3 +245,46 @@ function reconnectPlayer(clientSocket, roomCode, clientId)
     reason: "Player not found"
   });
 }
+
+// Game start logic
+function startGame(clientSocket, roomCode)
+{  const room = rooms.get(roomCode);
+
+  if (!room) 
+  {
+    send(clientSocket, "start_game_failed", {
+      reason: "Room not found"
+    });
+    return;
+  } 
+  if (room.host !== clientSocket)
+  {
+    send(clientSocket, "start_game_failed", {
+      reason: "Only host can start the game"
+    });
+    return;
+  }
+  // Notify all players that the game is starting
+  for (const player of room.players)
+  {
+    player.playerState = PLAYER_STATE.VIEWING_CHARACTER;
+    if (player.connected)
+    {
+      send(player.socket, "game_started", {
+        nextPage: "CharacterScreen.html",
+        playerState: player.playerState,
+        room: roomCode,
+        playerName: player.playerName,
+        clientId: player.clientId,
+        message: "The game has started!"
+
+        
+      });
+    }
+  }
+  send(room.host, "start_game_success", {
+  room: roomCode
+});
+
+  console.log(`[Room: ${roomCode}] Game started`);
+};

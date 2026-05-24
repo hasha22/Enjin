@@ -25,7 +25,7 @@ ws.onmessage = (event) => {
   const msg = JSON.parse(event.data);
   const data = msg.data ? JSON.parse(msg.data) : {};
     switch(msg.type)
-    {        case "reconnect_success":
+    {   case "reconnect_success":
             setStatus("Reconnected to room: " + data.room);
             log("Reconnected as " + data.playerName);   
             localStorage.setItem("roomCode", data.room);
@@ -35,13 +35,29 @@ ws.onmessage = (event) => {
             break;
             
         case "reconnect_failed":
-        setStatus("Reconnection failed: " + data.reason);
-        log("Reconnection failed: " + data.reason);
-        window.location.href = "index.html";
-        break;
-        case "error":
-            log("Server error");
+            setStatus("Reconnection failed: " + data.reason);
+            log("Reconnection failed: " + data.reason);
+            window.location.href = "index.html";
             break;
+            case "error":
+                log("Server error");
+                break;
+
+        case "game_started":
+            setStatus("Game started in room: " + roomCode);
+
+
+
+            localStorage.setItem("roomCode", data.room);
+            localStorage.setItem("playerName", data.playerName);
+            localStorage.setItem("clientId", data.clientId);
+            localStorage.setItem("playerState", data.playerState);
+
+             window.location.href = "WaitingScreen.html";
+
+                break;
+        
+
     }
 };
 
