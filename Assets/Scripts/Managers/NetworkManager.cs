@@ -196,19 +196,6 @@ public class NetworkManager : MonoBehaviour
     Send(json);
     }   
 
-    public void SendStartGameRequest()
-    {
-        string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
-
-        string json = "{"
-            + "\"type\":\"start_game_request\","
-            + "\"room\":\"" + Escape(code) + "\","
-            + "\"clientId\":\"" + Escape(hostClientId) + "\""
-            + "}";
-
-        Debug.Log("Sending start_game_request: " + json);
-        Send(json);
-    }
 
     public void ConnectPlayer(string playerName)
     {
