@@ -124,7 +124,26 @@ wss.on("connection", (clientSocket) => {
 
       return joinRoom(clientSocket, roomCode, playerName, clientId);
     }
+
+
+      // Reconnection Attempt
+    if (msg.type === "reconnect_request")
+    {
+      const roomCode = normalize(msg.room);
+      const clientId = msg.clientId;
+      if (!roomCode || !clientId)
+      {
+        send(clientSocket, "reconnect_failed", {
+          reason: "RoomCode and clientId required"
+        });
+        return;
+      } 
+
+      return reconnectPlayer(clientSocket, roomCode, clientId);
+    }
   });
+
+
 
   // Closing Connection
   clientSocket.on("close", () => {
@@ -174,4 +193,40 @@ function normalize(str)
 function normalizeName(str) 
 {
   return typeof str === "string" ? str.trim().slice(0, 24) : null;
+}
+
+// Reconnection logic
+function reconnectPlayer(clientSocket, roomCode, clientId) 
+{
+  const room = rooms.get(roomCode);
+
+  if (!room) 
+  {
+    send(clientSocket, "reconnect_failed", {
+      reason: "Room not found"
+    });
+    return;
+  }
+
+  for (const player of room.players) 
+  {
+    if (player.clientId === clientId) 
+    {
+      player.socket = clientSocket;
+      player.connected = true;
+
+      send(clientSocket, "reconnect_success", {
+        room: roomCode,
+        playerName: player.playerName,
+        clientId: player.clientId,
+        playerState: player.playerState
+      });
+
+      return;
+    }
+  }
+
+  send(clientSocket, "reconnect_failed", {
+    reason: "Player not found"
+  });
 }
