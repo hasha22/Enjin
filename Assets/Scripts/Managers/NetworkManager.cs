@@ -22,6 +22,9 @@ public class NetworkManager : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Transform playerContainer;
 
+    [Header("Scene Transition")]
+    [SerializeField] private SceneTransitionManager sceneTransitionManager;
+
     void Awake()
     {
         if (instance == null)
@@ -168,6 +171,24 @@ public class NetworkManager : MonoBehaviour
             case "error":
                 Debug.LogWarning("Server error");
                 break;
+
+            case "start_game_success":
+                Debug.Log("Server confirmed: game started");
+
+                if (sceneTransitionManager != null)
+                {
+                    sceneTransitionManager.LoadNextScene();
+                }
+                else
+                {
+                    Debug.LogWarning("SceneTransitionManager is not assigned in NetworkManager.");
+                }
+
+                break;
+
+            case "start_game_failed":
+                Debug.LogWarning("Start game failed: " + msg.data);
+                break;
         }
     }
     public void SendHostRegister()
@@ -182,7 +203,7 @@ public class NetworkManager : MonoBehaviour
         Send(json);
     }
 
-    public void SendStartGameRequest()
+    public void StartGameFromButton()
     {
         if (allPlayers.Count == 0)
         {
@@ -190,6 +211,11 @@ public class NetworkManager : MonoBehaviour
             return;
         }
 
+        SendStartGameRequest();
+    }
+
+    public void SendStartGameRequest()
+    {
         string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
 
         string json = "{"
