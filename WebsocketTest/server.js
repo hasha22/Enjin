@@ -253,6 +253,14 @@ function reconnectPlayer(clientSocket, roomCode, clientId)
 function startGame(clientSocket, roomCode)
 {  const room = rooms.get(roomCode);
 
+  if (room.players.size === 0)
+{
+  send(clientSocket, "start_game_failed", {
+    reason: "No players in the room"
+  });
+  return;
+}
+
   if (!room) 
   {
     send(clientSocket, "start_game_failed", {

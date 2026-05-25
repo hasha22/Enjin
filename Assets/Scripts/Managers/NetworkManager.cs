@@ -184,18 +184,23 @@ public class NetworkManager : MonoBehaviour
 
     public void SendStartGameRequest()
     {
-    string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
+        if (allPlayers.Count == 0)
+        {
+            Debug.LogWarning("Cannot start game: no players connected.");
+            return;
+        }
 
-    string json = "{"
-        + "\"type\":\"start_game_request\","
-        + "\"room\":\"" + Escape(code) + "\","
-        + "\"clientId\":\"" + Escape(hostClientId) + "\""
-        + "}";
+        string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
 
-    Debug.Log("Sending start_game_request: " + json);
-    Send(json);
-    }   
+        string json = "{"
+            + "\"type\":\"start_game_request\","
+            + "\"room\":\"" + Escape(code) + "\","
+            + "\"clientId\":\"" + Escape(hostClientId) + "\""
+            + "}";
 
+        Debug.Log("Sending start_game_request: " + json);
+        Send(json);
+    }
 
     public void ConnectPlayer(string playerName)
     {
