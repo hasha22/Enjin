@@ -106,7 +106,6 @@ public class NetworkManager : MonoBehaviour
         }
 
         if (msg == null || string.IsNullOrEmpty(msg.type)) return;
-
         switch (msg.type)
         {
             case "player_joined":

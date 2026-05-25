@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem.OnScreen;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -170,7 +169,7 @@ public class GameUIManager : MonoBehaviour
             timer.SetActive(true);
             continueButton.SetActive(false);
             InstantiatePlayerDiscussionIcons();
-			StartCoroutine(Discussion());
+            StartCoroutine(Discussion());
         }
         else if (currentScreen == GameScreens.EnjinUpdateScreen)
         {
@@ -299,10 +298,11 @@ public class GameUIManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        
+
         foreach (GameObject gameObject1 in allPlayerIcons)
         {
             Destroy(gameObject1);
+            allPlayerIcons.Remove(gameObject1);
         }
     }
 
