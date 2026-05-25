@@ -13,6 +13,59 @@ const PLAYER_STATE = {
   VIEWING_CHARACTER: "viewing_character"
 };
 
+const CHARACTERS = [
+  {
+    id: "char1",
+    name: "Character 1",
+    faceImage: "Char1Face.png",
+    fullImage: "Char1.png",
+    backgroundColor: "#FF6B6B",
+    active: true
+  },
+  {
+    id: "char2",
+    name: "Character 2",
+    faceImage: "Char2Face.png",
+    fullImage: "Char2.png",
+    backgroundColor: "#4D96FF",
+    active: true
+  },
+
+  // Future characters
+  {
+    id: "char3",
+    name: "Character 3",
+    faceImage: null,
+    fullImage: null,
+    backgroundColor: "#CCCCCC",
+    active: false
+  },
+  {
+    id: "char4",
+    name: "Character 4",
+    faceImage: null,
+    fullImage: null,
+    backgroundColor: "#CCCCCC",
+    active: false
+  },
+  {
+    id: "char5",
+    name: "Character 5",
+    faceImage: null,
+    fullImage: null,
+    backgroundColor: "#CCCCCC",
+    active: false
+  },
+  {
+    id: "char6",
+    name: "Character 6",
+    faceImage: null,
+    fullImage: null,
+    backgroundColor: "#CCCCCC",
+    active: false
+  }
+];
+
 const DISCONNECT_TIMEOUT_MS = 10000;
 
 // Core logic
@@ -30,6 +83,7 @@ function registerHost(clientSocket, roomCode)
 
 function joinRoom(clientSocket, roomCode, playerName, clientId) 
 {
+  const character = getRandomCharacter();
   const room = rooms.get(roomCode);
 
   if (!room || !room.host) 
@@ -60,7 +114,8 @@ function joinRoom(clientSocket, roomCode, playerName, clientId)
     clientId: clientId,
     playerState: PLAYER_STATE.WAITING,
     connected: true,
-    disconnectTimer: null
+    disconnectTimer: null,
+    character: character
   };
   room.players.add(player);
   console.log(`Player joined: ${playerName} (total: ${room.players.size})`);
@@ -69,7 +124,8 @@ function joinRoom(clientSocket, roomCode, playerName, clientId)
     room: roomCode,
     playerName,
     clientId,
-    playerState: player.playerState
+    playerState: player.playerState,
+    character: player.character
   });
 
   // Notify Unity host
@@ -78,7 +134,8 @@ function joinRoom(clientSocket, roomCode, playerName, clientId)
     send(room.host, "player_joined", {
       playerName,
       playerID: clientId,
-      playerState: player.playerState
+      playerState: player.playerState,
+      character: player.character
     });
   }
 
@@ -270,7 +327,8 @@ function reconnectPlayer(clientSocket, roomCode, clientId)
         room: roomCode,
         playerName: player.playerName,
         clientId: player.clientId,
-        playerState: player.playerState
+        playerState: player.playerState,
+        character: player.character
       });
 
       if (room.host) 
@@ -279,6 +337,7 @@ function reconnectPlayer(clientSocket, roomCode, clientId)
           playerName: player.playerName,
           playerID: player.clientId,
           playerState: player.playerState
+        
         });
       }
 
@@ -337,6 +396,7 @@ function startGame(clientSocket, roomCode)
         room: roomCode,
         playerName: player.playerName,
         clientId: player.clientId,
+        character: player.character,
         message: "The game has started!"
 
         
@@ -349,3 +409,12 @@ function startGame(clientSocket, roomCode)
 
   console.log(`[Room: ${roomCode}] Game started`);
 };
+
+function getRandomCharacter()
+{
+  const activeCharacters = CHARACTERS.filter(character => character.active);
+
+  const randomIndex = Math.floor(Math.random() * activeCharacters.length);
+
+  return activeCharacters[randomIndex];
+}
