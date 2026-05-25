@@ -29,6 +29,12 @@ ws.onmessage = (event) => {
       localStorage.setItem("playerName", data.playerName);
       localStorage.setItem("clientId", data.clientId);
       localStorage.setItem("playerState", data.playerState);
+
+      if (data.character) {
+        localStorage.setItem("character", JSON.stringify(data.character));
+      }
+      renderCharacter();
+
       break;
 
     case "reconnect_failed":
@@ -45,3 +51,27 @@ ws.onmessage = (event) => {
 ws.onclose = () => {
   console.log("Socket closed on WaitingScreen");
 };
+
+function renderCharacter() {
+  const savedCharacter = localStorage.getItem("character");
+
+  if (!savedCharacter) {
+    console.log("No character found in localStorage");
+    return;
+  }
+
+  const character = JSON.parse(savedCharacter);
+
+  const profileImage = document.getElementById("profileImage");
+  const characterCircle = document.getElementById("characterCircle");
+
+  if (profileImage) {
+    profileImage.src = character.faceImage;
+  }
+
+  if (characterCircle) {
+    characterCircle.style.backgroundColor = character.backgroundColor;
+  }
+}
+
+renderCharacter();

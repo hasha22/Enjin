@@ -385,7 +385,7 @@ function startGame(clientSocket, roomCode)
 
 
   // Notify all players that the game is starting
-  for (const player of room.players)
+  for (const player of connectedPlayers)
   {
     player.playerState = PLAYER_STATE.VIEWING_CHARACTER;
     if (player.connected)

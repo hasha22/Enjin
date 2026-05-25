@@ -26,13 +26,18 @@ ws.onmessage = (event) => {
   const data = msg.data ? JSON.parse(msg.data) : {};
     switch(msg.type)
     {   case "reconnect_success":
-            setStatus("Reconnected to room: " + data.room);
-            log("Reconnected as " + data.playerName);   
-            localStorage.setItem("roomCode", data.room);
-            localStorage.setItem("playerName", data.playerName);
-            localStorage.setItem("clientId", data.clientId);
-            localStorage.setItem("playerState", data.playerState);
-            break;
+          setStatus("Reconnected to room: " + data.room);
+          log("Reconnected as " + data.playerName);   
+
+          localStorage.setItem("roomCode", data.room);
+          localStorage.setItem("playerName", data.playerName);
+          localStorage.setItem("clientId", data.clientId);
+          localStorage.setItem("playerState", data.playerState);
+
+          if (data.character) {
+            localStorage.setItem("character", JSON.stringify(data.character));
+          }
+          break;
             
         case "reconnect_failed":
             setStatus("Reconnection failed: " + data.reason);
@@ -46,20 +51,20 @@ ws.onmessage = (event) => {
         case "game_started":
             setStatus("Game started in room: " + roomCode);
 
-
-
             localStorage.setItem("roomCode", data.room);
             localStorage.setItem("playerName", data.playerName);
             localStorage.setItem("clientId", data.clientId);
             localStorage.setItem("playerState", data.playerState);
 
-             window.location.href = "WaitingScreen.html";
+            if (data.character) {
+              localStorage.setItem("character", JSON.stringify(data.character));
+            }
 
-                break;
-        
-
-    }
-};
+            window.location.href = "WaitingScreen.html";
+            break;
+      
+      }
+    };
 
 ws.onclose = () => {
   console.log("Connection closed");
@@ -74,3 +79,4 @@ function log(text) {
 function setStatus(text) {
   document.getElementById("status").innerText = text;
 }
+
