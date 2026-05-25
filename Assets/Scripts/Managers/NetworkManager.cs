@@ -189,6 +189,18 @@ public class NetworkManager : MonoBehaviour
             case "start_game_failed":
                 Debug.LogWarning("Start game failed: " + msg.data);
                 break;
+
+            case "player_disconnected":
+                Debug.Log("Player temporarily disconnected: " + msg.data);
+                break;
+
+            case "player_reconnected":
+                Debug.Log("Player reconnected: " + msg.data);
+                break;
+
+            case "player_removed":
+                Debug.Log("Player removed from room: " + msg.data);
+                break;
         }
     }
     public void SendHostRegister()
