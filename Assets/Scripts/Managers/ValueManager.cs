@@ -27,10 +27,10 @@ public class ValueManager : MonoBehaviour
     [SerializeField] public float profitValue;
 
     [Header("PrevValues")]
-    public float prevEnjinValue;
-    public float prevWorkerMoraleValue;
-    public float prevEthicValue;
-    public float prevProfitValue;
+    private float prevEnjinValue;
+    private float prevWorkerMoraleValue;
+    private float prevEthicValue;
+    private float prevProfitValue;
 
     [Header("Settings")]
     public float barDelay;
@@ -48,6 +48,7 @@ public class ValueManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        InstaSetSliders();
     }
 
     public void SetValues(float enj, float morale, float ethic, float profit)
@@ -58,6 +59,11 @@ public class ValueManager : MonoBehaviour
         ethicValue = ethic;
         profitValue = profit;
         StartCoroutine(UpdateSliderCoroutine());
+    }
+
+    public void AssignOutcomeValues()
+    {
+        OutcomeValueContainer.instance.SetValues(enjinValue, workerMoraleValue, ethicValue, profitValue);
     }
 
     public void ChangeValue(float enj, float morale, float ethic, float profit)
@@ -151,4 +157,6 @@ public class ValueManager : MonoBehaviour
     {
         SetValues(Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10));
     }
+
+    
 }

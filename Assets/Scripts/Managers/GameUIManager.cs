@@ -116,7 +116,11 @@ public class GameUIManager : MonoBehaviour
             currentScreen = GameManager.instance.currentScreen;
             currentRound = GameManager.instance.currentRound;
             UpdateCurrentScreenNumber(currentScreen);
-            if (currentRound > totalRounds) { SceneManager.LoadScene("OutcomeScene"); return; }
+            if (currentRound > totalRounds) {
+                ValueManager.instance.AssignOutcomeValues();
+                SceneManager.LoadScene("OutcomeScene"); 
+                return; 
+            }
             GameManager.instance.DetermineTopic();
             roundIndicator.text = $"{currentRound}/{totalRounds}";
         }
@@ -178,6 +182,12 @@ public class GameUIManager : MonoBehaviour
             timer.SetActive(false);
             continueButton.SetActive(true);
             enjinTitle.SetActive(true);
+        }
+        else if (currentScreen == GameScreens.SecondPolicyVotingScreen)
+        {
+            timer.SetActive(true);
+            continueButton.SetActive(false);
+            enjinTitle.SetActive(false);
         }
         else
         {
@@ -320,13 +330,11 @@ public class GameUIManager : MonoBehaviour
             iconCircle.SetActive(false);
             yield break;
         }
-
-        Debug.Log(playerAmount);
         if (allPlayerIcons.Count != 0) iconCircle.transform.position = allPlayerIcons[0].transform.position;
         for (int i = 0; i < playerAmount; i++)
         {
             GameObject speaker = allPlayerIcons[i];
-            StartCoroutine(MoveIcon(iconCircle.transform, speaker.transform.position, 0.35f));
+            StartCoroutine(MoveCircle(iconCircle.transform, speaker.transform.position, 0.35f));
             TimerScript.instance.StartTimer(GameManager.instance.discussionTime);
             yield return new WaitForSeconds(GameManager.instance.discussionTime);
         }
@@ -334,7 +342,16 @@ public class GameUIManager : MonoBehaviour
         iconCircle.SetActive(false);
     }
 
-    private IEnumerator MoveIcon(Transform obj, Vector3 targetPos, float duration)
+    private IEnumerator FinalVoting(Player playerScript)
+    {
+        yield return null;
+        if (timer.activeSelf == true)
+        {
+            InstantiateVotePlayerIcon(playerScript);
+        }
+    }
+
+    private IEnumerator MoveCircle(Transform obj, Vector3 targetPos, float duration)
     {
         Vector3 startPos = obj.position;
         float time = 0f;
