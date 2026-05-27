@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5594710555291320354}
-  - component: {fileID: 227357413590160678}
+  - component: {fileID: 4922306494565762444}
   m_Layer: 0
   m_Name: Audio Manager
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &227357413590160678
+--- !u!114 &4922306494565762444
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,8 +41,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5146547005203683510}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58ff3c0113687da448e9c6a77b7d425e, type: 3}
+  m_Script: {fileID: 11500000, guid: 8b17a830058f4c24faaa91e3647cc131, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
-  SFXSource: {fileID: 8962674081189532459, guid: 53eb87c0a810a3a4ba0dc20b10cac77d, type: 3}
-  startGameSFX: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::GameAudioManager
+  sourcePrefab: {fileID: 8962674081189532459, guid: 53eb87c0a810a3a4ba0dc20b10cac77d, type: 3}
+  continueButtonSource: {fileID: 0}
+  typingSource: {fileID: 0}
+  buttonSfx: {fileID: 8300000, guid: b9077d3aa3e85af498d10bdc25a231cf, type: 3}
+  barSfx: {fileID: 8300000, guid: c24d909d1bd9c804fbad1e5e60d1b807, type: 3}
+  typingSfx: {fileID: 8300000, guid: b086aafb724dc9f47bf62fa78ba1513e, type: 3}

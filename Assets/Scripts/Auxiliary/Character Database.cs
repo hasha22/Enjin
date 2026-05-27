@@ -5,6 +5,7 @@ using UnityEngine;
 public class CharacterDatabase : MonoBehaviour
 {
     public static CharacterDatabase instance { get; private set; }
+
     [Header("Characters")]
     [SerializeField] private List<Character> allCharacters = new List<Character>();
     private HashSet<Character> assignedCharacters = new HashSet<Character>();
@@ -35,7 +36,6 @@ public class CharacterDatabase : MonoBehaviour
         }
 
         int randIndex = Random.Range(0, available.Count);
-        Debug.Log(randIndex);
         characterToAssign = available[randIndex];
         assignedCharacters.Add(characterToAssign);
 

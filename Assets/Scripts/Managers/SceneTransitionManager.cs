@@ -4,8 +4,6 @@ using UnityEngine.SceneManagement;
 
 public class SceneTransitionManager : MonoBehaviour
 {
-    //public static SceneTransitionManager instance { get; private set; }
-
     [Header("Hierarchy Objects")]
     [SerializeField] private GameObject crossfade;
 
@@ -15,8 +13,6 @@ public class SceneTransitionManager : MonoBehaviour
 
     public void LoadNextScene()
     {
-        AudioManager.instance.StopBGM();
-        AudioManager.instance.PlaySFX(AudioManager.instance.startGameSFX, 0.5f);
         StartCoroutine(LoadSceneWithAnimation(SceneManager.GetActiveScene().buildIndex + 1));
     }
     private IEnumerator LoadSceneWithAnimation(int index)

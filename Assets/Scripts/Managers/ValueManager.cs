@@ -1,40 +1,38 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ValueManager : MonoBehaviour
 {
     [Header("Slider References")]
-    public GameObject sliderContainer;
-    public Slider enjinSlider;
-    public Slider workerMoraleSlider;
-    public Slider ethicSlider;
-    public Slider profitSlider;
+    [SerializeField] private GameObject sliderContainer;
+    [SerializeField] private Slider enjinSlider;
+    [SerializeField] private Slider workerMoraleSlider;
+    [SerializeField] private Slider ethicSlider;
+    [SerializeField] private Slider profitSlider;
 
     [Header("mark,")]
-    public GameObject markContainer;
-    public RectTransform enijnMark;
-    public RectTransform workMark;
-    public RectTransform ethMark;
-    public RectTransform profMark;
+    [SerializeField] private GameObject markContainer;
+    [SerializeField] private RectTransform enijnMark;
+    [SerializeField] private RectTransform workMark;
+    [SerializeField] private RectTransform ethMark;
+    [SerializeField] private RectTransform profMark;
 
     [Header("Values")]
-    [SerializeField] public float enjinValue;
-    [SerializeField] public float workerMoraleValue;
-    [SerializeField] public float ethicValue;
-    [SerializeField] public float profitValue;
+    [SerializeField] private float enjinValue;
+    [SerializeField] private float workerMoraleValue;
+    [SerializeField] private float ethicValue;
+    [SerializeField] private float profitValue;
 
-    [Header("PrevValues")]
+    [Header("Previous Values")]
     private float prevEnjinValue;
     private float prevWorkerMoraleValue;
     private float prevEthicValue;
     private float prevProfitValue;
 
     [Header("Settings")]
-    public float barDelay;
-    public float lerpDuration;
+    [SerializeField] private float barDelay;
+    [SerializeField] private float lerpDuration;
 
     public static ValueManager instance { get; private set; }
 
@@ -48,42 +46,37 @@ public class ValueManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        InstaSetSliders();
+        InstantlySetSliders();
     }
-
     public void SetValues(float enj, float morale, float ethic, float profit)
     {
-        AssignPrevs();
+        AssignPreviousValues();
         enjinValue = enj;
         workerMoraleValue = morale;
         ethicValue = ethic;
         profitValue = profit;
         StartCoroutine(UpdateSliderCoroutine());
     }
-
     public void AssignOutcomeValues()
     {
         OutcomeValueContainer.instance.SetValues(enjinValue, workerMoraleValue, ethicValue, profitValue);
     }
-
     public void ChangeValue(float enj, float morale, float ethic, float profit)
     {
-        InstaSetSliders();
-        AssignPrevs();
+        InstantlySetSliders();
+        AssignPreviousValues();
         enjinValue += enj;
         workerMoraleValue += morale;
         ethicValue += ethic;
         profitValue += profit;
         StartCoroutine(UpdateSliderCoroutine());
     }
-
     public void MakeBig()
     {
         RectTransform rect = sliderContainer.GetComponent<RectTransform>();
         rect.anchoredPosition = new Vector2(0, -26);
         rect.localScale = new Vector2(3, 3);
     }
-
     public void MakeSmall()
     {
         markContainer.SetActive(false);
@@ -91,8 +84,7 @@ public class ValueManager : MonoBehaviour
         rect.anchoredPosition = new Vector2(-781, -445);
         rect.localScale = new Vector2(1, 1);
     }
-
-    public void InstaSetSliders()
+    public void InstantlySetSliders()
     {
         StopAllCoroutines();
         enjinSlider.value = enjinValue;
@@ -101,7 +93,7 @@ public class ValueManager : MonoBehaviour
         profitSlider.value = profitValue;
     }
 
-    public void AssignPrevs()
+    public void AssignPreviousValues()
     {
         prevEnjinValue = enjinSlider.value;
         prevWorkerMoraleValue = workerMoraleSlider.value;
@@ -121,7 +113,6 @@ public class ValueManager : MonoBehaviour
         yield return new WaitForSeconds(barDelay);
         yield return StartCoroutine(SmoothSliderCoroutine(profitSlider, profitValue));
     }
-
     private IEnumerator SmoothSliderCoroutine(Slider slider, float targetValue)
     {
         GameAudioManager.instance.PlaySFX(GameAudioManager.instance.barSfx, 0.3f);
@@ -138,7 +129,6 @@ public class ValueManager : MonoBehaviour
 
         slider.value = targetValue;
     }
-
     private IEnumerator ShowMarks()
     {
         markContainer.SetActive(true);
@@ -152,11 +142,8 @@ public class ValueManager : MonoBehaviour
         profMark.anchoredPosition = new Vector2(xPos, profMark.anchoredPosition.y);
         yield return null;
     }
-
     public void testSliders()
     {
         SetValues(Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10));
     }
-
-    
 }
