@@ -5,29 +5,101 @@ console.log("Server running on ws://localhost:5085");
 
 const rooms = new Map();
 
+// Player states
+const PLAYER_STATE = {
+  WAITING: "waiting",
+  VOTING: "voting",
+  MAKING_CHOICE: "making_choice",
+  VIEWING_CHARACTER: "viewing_character"
+};
+
+const CHARACTERS = [
+  {
+    id: "char1",
+    name: "Character 1",
+    faceImage: "Char1Face.png",
+    fullImage: "Char1.png",
+    backgroundColor: "#FF6B6B",
+    active: true
+  },
+  {
+    id: "char2",
+    name: "Character 2",
+    faceImage: "Char2Face.png",
+    fullImage: "Char2.png",
+    backgroundColor: "#4D96FF",
+    active: true
+  },
+
+  // Future characters
+  {
+    id: "char3",
+    name: "Character 3",
+    faceImage: null,
+    fullImage: null,
+    backgroundColor: "#CCCCCC",
+    active: false
+  },
+  {
+    id: "char4",
+    name: "Character 4",
+    faceImage: null,
+    fullImage: null,
+    backgroundColor: "#CCCCCC",
+    active: false
+  },
+  {
+    id: "char5",
+    name: "Character 5",
+    faceImage: null,
+    fullImage: null,
+    backgroundColor: "#CCCCCC",
+    active: false
+  },
+  {
+    id: "char6",
+    name: "Character 6",
+    faceImage: null,
+    fullImage: null,
+    backgroundColor: "#CCCCCC",
+    active: false
+  }
+];
+
+const DISCONNECT_TIMEOUT_MS = 10000;
+
 // Core logic
-function registerHost(ws, roomCode) 
+function registerHost(clientSocket, roomCode) 
 {
   const room = getRoom(roomCode);
-  room.host = ws;
+  room.host = clientSocket;
 
-  send(ws, "host_registered", {
+  send(clientSocket, "host_registered", {
     room: roomCode
   });
 
   console.log(`[room:${roomCode}] host registered`);
 }
 
-function joinRoom(ws, roomCode, playerName, clientId) 
+function joinRoom(clientSocket, roomCode, playerName, clientId) 
 {
-  const room = getRoom(roomCode);
+  const character = getRandomCharacter();
+  const room = rooms.get(roomCode);
+
+  if (!room || !room.host) 
+  {
+    send(clientSocket, "join_room_failed", {  
+      reason: "Room not found"
+    });
+    return;
+  }
 
   // Duplicate name check
   for (const p of room.players) 
   {
     if (p.playerName === playerName.toLowerCase()) 
     {
-      send(ws, "join_room_failed", {
+      send(clientSocket, "join_room_failed", {
         reason: "Name already taken"
       });
       return;
@@ -37,17 +109,23 @@ function joinRoom(ws, roomCode, playerName, clientId)
   // Adding players
   const player = 
   {
-    ws,
+    socket: clientSocket,
     playerName: playerName.toLowerCase(),
-    clientId: clientId
+    clientId: clientId,
+    playerState: PLAYER_STATE.WAITING,
+    connected: true,
+    disconnectTimer: null,
+    character: character
   };
   room.players.add(player);
   console.log(`Player joined: ${playerName} (total: ${room.players.size})`);
 
-  send(ws, "join_room_success", {
+  send(clientSocket, "join_room_success", {
     room: roomCode,
     playerName,
-    clientId
+    clientId,
+    playerState: player.playerState,
+    character: player.character
   });
 
   // Notify Unity host
@@ -55,7 +133,9 @@ function joinRoom(ws, roomCode, playerName, clientId)
   {
     send(room.host, "player_joined", {
       playerName,
-      playerID: clientId 
+      playerID: clientId,
+      playerState: player.playerState,
+      character: player.character
     });
   }
 
@@ -64,10 +144,13 @@ function joinRoom(ws, roomCode, playerName, clientId)
 
 
 //Connection Handling
-wss.on("connection", (ws) => {
+wss.on("connection", (clientSocket) => {
   console.log("New client connected");
 
-  ws.on("message", (raw) => {
+  clientSocket.on("message", (raw) => {
+
+    console.log("RAW message received:", raw.toString());
+    
     let msg;
 
     try 
@@ -85,7 +168,7 @@ wss.on("connection", (ws) => {
 
       if (!roomCode) return;
 
-      return registerHost(ws, roomCode);
+      return registerHost(clientSocket, roomCode);
     }
 
     // Client Connection
@@ -97,42 +180,99 @@ wss.on("connection", (ws) => {
 
       if (!roomCode || !playerName) 
       {
-        send(ws, "join_room_failed", {
+        send(clientSocket, "join_room_failed", {
           reason: "RoomCode and playerName required"
         });
         return;
       }
 
-      return joinRoom(ws, roomCode, playerName, clientId);
+      return joinRoom(clientSocket, roomCode, playerName, clientId);
+    }
+
+
+      // Reconnection Attempt
+    if (msg.type === "reconnect_request")
+    {
+      const roomCode = normalize(msg.room);
+      const clientId = msg.clientId;
+      if (!roomCode || !clientId)
+      {
+        send(clientSocket, "reconnect_failed", {
+          reason: "RoomCode and clientId required"
+        });
+        return;
+      } 
+
+      return reconnectPlayer(clientSocket, roomCode, clientId);
+    }
+
+    if (msg.type === "start_game_request")
+    {
+      const roomCode = normalize(msg.room);
+      if (!roomCode)
+      {
+        send(clientSocket, "start_game_failed", {
+          reason: "RoomCode required"
+        });
+        return;
+      }
+
+      return startGame(clientSocket, roomCode);
     }
   });
 
+
+
   // Closing Connection
-  ws.on("close", () => {
+  clientSocket.on("close", () => {
     for (const room of rooms.values()) {
-      if (room.host === ws) {
+      if (room.host === clientSocket) {
         room.host = null;
         console.log(`Host disconnected`);
       }
 
-      for (const player of room.players) 
+    for (const player of room.players) 
+    {
+      if (player.socket === clientSocket) 
       {
-        if (player.ws === ws) 
+        player.connected = false;
+        console.log(`Player temporarily disconnected: ${player.playerName}`);
+
+        if (room.host) 
         {
-          room.players.delete(player);
-          console.log(`Player disconnected: ${player.playerName}`);
+          send(room.host, "player_disconnected", {
+            playerName: player.playerName,
+            playerID: player.clientId
+          });
         }
+
+        player.disconnectTimer = setTimeout(() => {
+          if (!player.connected) 
+          {
+            room.players.delete(player);
+
+            console.log(`Player removed after timeout: ${player.playerName}`);
+
+            if (room.host) 
+            {
+              send(room.host, "player_removed", {
+                playerName: player.playerName,
+                playerID: player.clientId
+              });
+            }
+          }
+        }, DISCONNECT_TIMEOUT_MS);
       }
-    }
+    }}
   });
 });
 
 //Helpers
-function send(ws, type, dataObj = {}) 
+function send(clientSocket, type, dataObj = {}) 
 {
-  if (ws.readyState !== WebSocket.OPEN) return;
+  if (clientSocket.readyState !== WebSocket.OPEN) return;
 
-  ws.send(JSON.stringify({
+  clientSocket.send(JSON.stringify({
     type,
     data: JSON.stringify(dataObj) 
   }));
@@ -155,4 +295,126 @@ function normalize(str)
 function normalizeName(str) 
 {
   return typeof str === "string" ? str.trim().slice(0, 24) : null;
+}
+
+// Reconnection logic
+function reconnectPlayer(clientSocket, roomCode, clientId) 
+{
+  const room = rooms.get(roomCode);
+
+  if (!room) 
+  {
+    send(clientSocket, "reconnect_failed", {
+      reason: "Room not found"
+    });
+    return;
+  }
+
+  for (const player of room.players) 
+  {
+    if (player.clientId === clientId) 
+    {
+      player.socket = clientSocket;
+      player.connected = true;
+
+      if (player.disconnectTimer) 
+      {
+        clearTimeout(player.disconnectTimer);
+        player.disconnectTimer = null;
+      }
+
+      send(clientSocket, "reconnect_success", {
+        room: roomCode,
+        playerName: player.playerName,
+        clientId: player.clientId,
+        playerState: player.playerState,
+        character: player.character
+      });
+
+      if (room.host) 
+      {
+        send(room.host, "player_reconnected", {
+          playerName: player.playerName,
+          playerID: player.clientId,
+          playerState: player.playerState
+        
+        });
+      }
+
+  
+      return;
+    }
+  }
+
+  send(clientSocket, "reconnect_failed", {
+    reason: "Player not found"
+  });
+}
+
+// Game start logic
+function startGame(clientSocket, roomCode)
+{  const room = rooms.get(roomCode);
+
+  if (!room) 
+  {
+    send(clientSocket, "start_game_failed", {
+      reason: "Room not found"
+    });
+    return;
+  } 
+
+
+  if (room.host !== clientSocket)
+  {
+    send(clientSocket, "start_game_failed", {
+      reason: "Only host can start the game"
+    });
+    return;
+  }
+
+
+   const connectedPlayers = [...room.players].filter(player => player.connected);
+
+  if (connectedPlayers.length === 0)
+  {
+    send(clientSocket, "start_game_failed", {
+      reason: "No connected players in the room"
+    });
+    return;
+  }
+
+
+  // Notify all players that the game is starting
+  for (const player of room.players)
+  {
+    player.playerState = PLAYER_STATE.VIEWING_CHARACTER;
+    if (player.connected)
+    {
+      send(player.socket, "game_started", {
+        nextPage: "CharacterScreen.html",
+        playerState: player.playerState,
+        room: roomCode,
+        playerName: player.playerName,
+        clientId: player.clientId,
+        character: player.character,
+        message: "The game has started!"
+
+        
+      });
+    }
+  }
+  send(room.host, "start_game_success", {
+  room: roomCode
+});
+
+  console.log(`[Room: ${roomCode}] Game started`);
+};
+
+function getRandomCharacter()
+{
+  const activeCharacters = CHARACTERS.filter(character => character.active);
+
+  const randomIndex = Math.floor(Math.random() * activeCharacters.length);
+
+  return activeCharacters[randomIndex];
 }

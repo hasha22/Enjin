@@ -22,6 +22,9 @@ public class NetworkManager : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Transform playerContainer;
 
+    [Header("Scene Transition")]
+    [SerializeField] private SceneTransitionManager sceneTransitionManager;
+
     void Awake()
     {
         if (instance == null)
@@ -167,6 +170,36 @@ public class NetworkManager : MonoBehaviour
             case "error":
                 Debug.LogWarning("Server error");
                 break;
+
+            case "start_game_success":
+                Debug.Log("Server confirmed: game started");
+
+                if (sceneTransitionManager != null)
+                {
+                    sceneTransitionManager.LoadNextScene();
+                }
+                else
+                {
+                    Debug.LogWarning("SceneTransitionManager is not assigned in NetworkManager.");
+                }
+
+                break;
+
+            case "start_game_failed":
+                Debug.LogWarning("Start game failed: " + msg.data);
+                break;
+
+            case "player_disconnected":
+                Debug.Log("Player temporarily disconnected: " + msg.data);
+                break;
+
+            case "player_reconnected":
+                Debug.Log("Player reconnected: " + msg.data);
+                break;
+
+            case "player_removed":
+                Debug.Log("Player removed from room: " + msg.data);
+                break;
         }
     }
     public void SendHostRegister()
@@ -180,6 +213,32 @@ public class NetworkManager : MonoBehaviour
         Debug.Log("Sending host_register: " + json);
         Send(json);
     }
+
+    public void StartGameFromButton()
+    {
+        if (allPlayers.Count == 0)
+        {
+            Debug.LogWarning("Cannot start game: no players connected.");
+            return;
+        }
+
+        SendStartGameRequest();
+    }
+
+    public void SendStartGameRequest()
+    {
+        string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
+
+        string json = "{"
+            + "\"type\":\"start_game_request\","
+            + "\"room\":\"" + Escape(code) + "\","
+            + "\"clientId\":\"" + Escape(hostClientId) + "\""
+            + "}";
+
+        Debug.Log("Sending start_game_request: " + json);
+        Send(json);
+    }
+
     public void ConnectPlayer(string playerName)
     {
         if (allPlayers.Count >= 6)
