@@ -6,7 +6,7 @@ public class Player : MonoBehaviour
     [SerializeField] private string playerId;
     [SerializeField] private string playerName;
     [SerializeField] private VoteTypes firstVote; //made serializable for visualization purposes
-    [SerializeField] private bool secondVote;
+    [SerializeField] public bool secondVote;
     public Character selectedCharacter;
 
     public string GetPlayerName()
