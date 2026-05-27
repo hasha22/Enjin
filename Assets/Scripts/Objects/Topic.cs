@@ -20,17 +20,11 @@ public class Policy
     public string policyDescription;
     public List<PolicyKeywords> keywords;
 
-    [Header("Positive Values")]
-    public int enjinPosValue;
-    public int moralePosValue;
-    public int ethicPosValue;
-    public int profitPosValue;
-
-    [Header("Negative Values")]
-    public int enjinNegValue;
-    public int moraleNegValue;
-    public int ethicNegValue;
-    public int profitNegValue;
+    [Header("Value changes")]
+    public int enjinValue;
+    public int moraleValue;
+    public int ethicValue;
+    public int profitValue;
 }
 
 

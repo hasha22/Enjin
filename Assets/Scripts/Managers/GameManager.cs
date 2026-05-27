@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.Build;
 using UnityEngine;
 
 
@@ -96,6 +98,36 @@ public class GameManager : MonoBehaviour
         }
     }
     */
+
+    public void DeterminePolicyOutcome()
+    {
+        List<Player> votedYes = new List<Player>();
+        List<Player> votedNo = new List<Player>();
+        foreach (GameObject player in NetworkManager.instance.allPlayers)
+        {
+            Player playerScript = player.GetComponent<Player>();
+            if (playerScript.secondVote){votedYes.Add(playerScript);}
+            else {votedNo.Add(playerScript);}
+        }
+        if (votedYes.Count > votedNo.Count)
+        {
+            int enj = currentTopic.formulatedPolicy.enjinValue;
+            int morale = currentTopic.formulatedPolicy.moraleValue;
+            int ethic = currentTopic.formulatedPolicy.ethicValue;
+            int profit = currentTopic.formulatedPolicy.profitValue;
+            ValueManager.instance.ChangeValue(enj, morale, ethic, profit);
+        }
+        else
+        {
+            int enj = currentTopic.enjinPolicy.enjinValue;
+            int morale = currentTopic.enjinPolicy.moraleValue;
+            int ethic = currentTopic.enjinPolicy.ethicValue;
+            int profit = currentTopic.enjinPolicy.profitValue;
+            ValueManager.instance.ChangeValue(enj, morale, ethic, profit);
+        }
+    }
+    
+
     public Topic GetCurrentTopic()
     {
         return currentTopic;
