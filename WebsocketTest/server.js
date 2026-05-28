@@ -135,7 +135,7 @@ function joinRoom(clientSocket, roomCode, playerName, clientId)
       playerName,
       playerID: clientId,
       playerState: player.playerState,
-      character: player.character
+      characterId: player.character.id
     });
   }
 
