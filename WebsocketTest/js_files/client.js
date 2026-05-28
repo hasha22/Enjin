@@ -14,7 +14,9 @@ ws.onclose = () => {
 
 ws.onmessage = (event) => {
   const msg = JSON.parse(event.data);
-  const data = msg.data ? JSON.parse(msg.data) : {};
+  const data = typeof msg.data === "string"
+    ? JSON.parse(msg.data)
+    : (msg.data || {});
 
   switch(msg.type)
   {
