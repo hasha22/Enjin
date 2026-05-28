@@ -5,7 +5,7 @@ public class Player : MonoBehaviour
     [Header("Player Data")]
     [SerializeField] private string playerId;
     [SerializeField] private string playerName;
-    [SerializeField] private VoteTypes firstVote; //made serializable for visualization purposes
+    [SerializeField] private VoteTypes firstVote;
     [SerializeField] private bool secondVote;
     public Character selectedCharacter;
 
@@ -17,11 +17,6 @@ public class Player : MonoBehaviour
     {
         return playerId;
     }
-    /*
-    public (VoteTypes, bool) GetPlayerVotes()
-    {
-        return (firstVote, secondVote);
-    }*/
     public VoteTypes GetFirstVote()
     {
         return firstVote;
@@ -36,7 +31,6 @@ public class Player : MonoBehaviour
         this.playerName = playerName;
         playerId = "1";
     }
-
     public void SetFirstVote(VoteTypes vote)
     {
         firstVote = vote;
@@ -45,10 +39,4 @@ public class Player : MonoBehaviour
     {
         secondVote = vote;
     }
-
-    public void HighLight()
-    {
-
-    }
-
 }

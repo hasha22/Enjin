@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="--bg-color: #D9D9D9;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Waiting Screen</title>
+    <title>Voting Screen</title>
     <link rel="stylesheet" href="Design.css">
 </head>
 <body>
@@ -24,12 +24,15 @@
                 </div>
         </div>
 
-        <div>
-        <p>Time to view your character!</p>
-        </div>
-        
+        <div class="final-voting-content">
+    <h1 class="voting-title">Final voting phase</h1>
+
+    <div class="final-vote-buttons">
+        <button class="final-vote-btn vote-btn" id="voteBtn">Vote</button>
+        <button class="final-vote-btn pass-btn" id="passBtn">Pass</button>
     </div>
-    
+</div>
+
 
     <script>
         const profileImage = document.getElementById('profileImage');
@@ -44,6 +47,7 @@
                 imageModal.classList.remove('active');
             }
         });
+
     </script>
 </body>
 </html>

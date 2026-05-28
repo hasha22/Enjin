@@ -26,3 +26,12 @@ public class PlayerVote2Payload
     public string playerID;
     public string playerVote;
 }
+public class PlayerCharacterPayload
+{
+    public string playerID;
+    public string playerCharacter;
+    public string characterName;
+    public string characterDescription;
+    public string keyword1;
+    public string keyword2;
+}

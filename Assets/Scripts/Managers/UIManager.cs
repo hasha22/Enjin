@@ -69,8 +69,8 @@ public class UIManager : MonoBehaviour
                 return player6OutlineColor;
         }
 
-        Debug.Log("Error: No color found. Returning red.");
-        return Color.red;
+        Debug.Log("Error: No color found. Returning white.");
+        return Color.white;
     }
     public void SetRoomCode(string code)
     {

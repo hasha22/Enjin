@@ -274,7 +274,7 @@ function send(clientSocket, type, dataObj = {})
 
   clientSocket.send(JSON.stringify({
     type,
-    data: JSON.stringify(dataObj) 
+    data: dataObj
   }));
 }
 function getRoom(roomCode) 

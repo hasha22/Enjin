@@ -14,9 +14,9 @@ public class GameUIManager : MonoBehaviour
     private List<GameObject> trashCan = new List<GameObject>();
 
     [Header("Text References")]
-    public TextMeshProUGUI titleText;
-    public TextMeshProUGUI topText;
-    public TextMeshProUGUI scenarioDescText;
+    [SerializeField] private TextMeshProUGUI titleText;
+    [SerializeField] private TextMeshProUGUI topText;
+    [SerializeField] private TextMeshProUGUI scenarioDescText;
     [SerializeField] private TextMeshProUGUI enjinDescText;
     [SerializeField] private TextMeshProUGUI roundIndicator;
     [SerializeField] private TextMeshProUGUI voting1Title;
@@ -35,7 +35,6 @@ public class GameUIManager : MonoBehaviour
     [Header("Enjin Update References")]
     [SerializeField] private GameObject enjinTitle;
     [SerializeField] private GameObject backgroundImage;
-    private string enjinVersion;
 
     [Header("Nonscreen References")]
     [SerializeField] private GameObject headers;
@@ -70,14 +69,15 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private Transform noGroup1;
     [SerializeField] private Transform noGroup2;
 
-    [Header("List of players")]
-    [SerializeField] public List<GameObject> allPlayerIcons = new List<GameObject>();
+    [Header("List of player icons")]
+    [SerializeField] private List<GameObject> allPlayerIcons = new List<GameObject>();
 
-
+    #region Start & Awake
     private void Awake()
     {
         if (instance == null) { instance = this; }
-        voteGroups = new Dictionary<VoteTypes, (Transform, Transform)>
+
+        voteGroups = new Dictionary<VoteTypes, (Transform, Transform)> // dictionary to make working with layout groups easier
         {
             { VoteTypes.Agree,          (agreeGroup1,         agreeGroup2)         },
             { VoteTypes.MostlyAgree,    (mostlyAgreeGroup1,   mostlyAgreeGroup2)   },
@@ -90,7 +90,7 @@ public class GameUIManager : MonoBehaviour
     {
         roundIndicator.text = $"{GameManager.instance.currentRound}/{GameManager.instance.totalRounds}";
 
-        //resetting automatically to screen 0 (character intro)
+        //sets automatically to screen 0 (character intro)
         foreach (GameObject screen in allScreens)
         {
             screen.SetActive(false);
@@ -100,15 +100,17 @@ public class GameUIManager : MonoBehaviour
         timer.SetActive(false);
         continueButton.SetActive(true);
     }
+    #endregion
     public void NextScreen()
     {
+        //cycles through game screens, called by "Continue" button
         GameManager.instance.currentScreen++;
         GameScreens currentScreen = GameManager.instance.currentScreen;
         int currentRound = GameManager.instance.currentRound;
         int totalRounds = GameManager.instance.totalRounds;
         UpdateCurrentScreenNumber(currentScreen);
-        enjinVersion = $"{currentRound}.0";
 
+        //Resets UI after round is over
         if ((int)currentScreen >= 7)
         {
             GameManager.instance.currentScreen = GameScreens.SituationExplanationScreen;
@@ -117,7 +119,14 @@ public class GameUIManager : MonoBehaviour
             currentScreen = GameManager.instance.currentScreen;
             currentRound = GameManager.instance.currentRound;
             UpdateCurrentScreenNumber(currentScreen);
-            if (currentRound > totalRounds) { SceneManager.LoadScene("OutcomeScene"); return; }
+
+            if (currentRound > totalRounds)
+            {
+                ValueManager.instance.AssignOutcomeValues();
+                SceneManager.LoadScene("OutcomeScene");
+                return;
+            }
+            GameManager.instance.DetermineTopic();
             roundIndicator.text = $"{currentRound}/{totalRounds}";
         }
 
@@ -127,7 +136,7 @@ public class GameUIManager : MonoBehaviour
             if (i == (int)currentScreen)
             {
                 allScreens[i].SetActive(true);
-                GameManager.instance.UpdateData();
+                UpdateData();
             }
             else
             {
@@ -140,7 +149,7 @@ public class GameUIManager : MonoBehaviour
         { headers.SetActive(false); }
         else { headers.SetActive(true); }
 
-        //Turns timer & continue button off or on
+        //Enables and disables screens
         if (currentScreen == GameScreens.FirstPolicyVotingScreen || currentScreen == GameScreens.SecondPolicyVotingScreen)
         {
             if (currentScreen == GameScreens.FirstPolicyVotingScreen)
@@ -170,15 +179,20 @@ public class GameUIManager : MonoBehaviour
             timer.SetActive(true);
             continueButton.SetActive(false);
             InstantiatePlayerDiscussionIcons();
-            StartCoroutine(Discussion());
+            StartCoroutine(InitiateDiscussion());
         }
         else if (currentScreen == GameScreens.EnjinUpdateScreen)
         {
+            iconCircle.SetActive(false);
             timer.SetActive(false);
             continueButton.SetActive(true);
             enjinTitle.SetActive(true);
-            enjinVersionText.text = enjinVersion;
-            enjinVersionDescriptionText.text = GameManager.instance.GetCurrentTopic().enjinPolicy.policyDescription;
+        }
+        else if (currentScreen == GameScreens.SecondPolicyVotingScreen)
+        {
+            timer.SetActive(true);
+            continueButton.SetActive(false);
+            enjinTitle.SetActive(false);
         }
         else
         {
@@ -189,11 +203,7 @@ public class GameUIManager : MonoBehaviour
         }
         if (currentScreen == GameScreens.ResultsScreen) { ValueManager.instance.MakeBig(); } else { ValueManager.instance.MakeSmall(); }
     }
-
-    public void UpdateCurrentScreenNumber(GameScreens scrin)
-    {
-        GameManager.instance.currentScreenNumber = (int)scrin;
-    }
+    #region Screen Visulization Logic
     public void InstantiateKeywordCards()
     {
         Topic currentTopic = GameManager.instance.GetCurrentTopic();
@@ -250,23 +260,7 @@ public class GameUIManager : MonoBehaviour
             bool useFirstGroup = (noGroup1.childCount < 3);
             Transform group = useFirstGroup ? noGroup1 : noGroup2;
             InstantiateIconInGroup(group, playerScript.selectedCharacter.characterImage, false);
-
         }
-    }
-    private (Color32, string) DetermineKeywordCardColorAndName(int value)
-    {
-        switch (value)
-        {
-            case 1:
-                return (innovation, "Innovation");
-            case 2:
-                return (riskManagement, "Risk Management");
-            case 3:
-                return (workerSatisfaction, "Worker Satisfaction");
-            case 4:
-                return (profit, "Profit");
-        }
-        return (Color.white, "Error"); //no match
     }
     private void InstantiateIconInGroup(Transform group, Sprite sprite, bool isVoting1 = true)
     {
@@ -295,19 +289,7 @@ public class GameUIManager : MonoBehaviour
 
         trashCan.Add(newKeyword);
     }
-    private void ResetUI()
-    {
-        foreach (GameObject gameObject in trashCan)
-        {
-            Destroy(gameObject);
-        }
-        foreach (GameObject gameObject1 in allPlayerIcons)
-        {
-            Destroy(gameObject1);
-        }
-    }
-
-    private IEnumerator Discussion()
+    private IEnumerator InitiateDiscussion()
     {
         iconCircle.SetActive(true);
         yield return null;
@@ -321,21 +303,50 @@ public class GameUIManager : MonoBehaviour
             iconCircle.SetActive(false);
             yield break;
         }
-
-        Debug.Log(playerAmount);
         if (allPlayerIcons.Count != 0) iconCircle.transform.position = allPlayerIcons[0].transform.position;
         for (int i = 0; i < playerAmount; i++)
         {
             GameObject speaker = allPlayerIcons[i];
-            StartCoroutine(MoveIcon(iconCircle.transform, speaker.transform.position, 0.35f));
+            StartCoroutine(MoveCircle(iconCircle.transform, speaker.transform.position, 0.35f));
             TimerScript.instance.StartTimer(GameManager.instance.discussionTime);
             yield return new WaitForSeconds(GameManager.instance.discussionTime);
         }
         TimerDone();
         iconCircle.SetActive(false);
     }
+    private IEnumerator FinalVoting(Player playerScript)
+    {
+        yield return null;
+        if (timer.activeSelf == true)
+        {
+            InstantiateVotePlayerIcon(playerScript);
+        }
+    }
+    #endregion
+    #region Helper Methods
+    public void TimerDone()
+    {
+        timer.SetActive(false);
+        continueButton.SetActive(true);
+    }
+    private void UpdateCurrentScreenNumber(GameScreens screen)
+    {
+        GameManager.instance.currentScreenNumber = (int)screen;
+    }
+    private void ResetUI()
+    {
+        foreach (GameObject gameObject in trashCan)
+        {
+            Destroy(gameObject);
+        }
 
-    private IEnumerator MoveIcon(Transform obj, Vector3 targetPos, float duration)
+        foreach (GameObject gameObject1 in allPlayerIcons)
+        {
+            Destroy(gameObject1);
+            allPlayerIcons.Remove(gameObject1);
+        }
+    }
+    private IEnumerator MoveCircle(Transform obj, Vector3 targetPos, float duration)
     {
         Vector3 startPos = obj.position;
         float time = 0f;
@@ -351,10 +362,51 @@ public class GameUIManager : MonoBehaviour
 
         obj.position = targetPos;
     }
-
-    public void TimerDone()
+    private (Color32, string) DetermineKeywordCardColorAndName(int value)
     {
-        timer.SetActive(false);
-        continueButton.SetActive(true);
+        switch (value)
+        {
+            case 1:
+                return (innovation, "Innovation");
+            case 2:
+                return (riskManagement, "Risk Management");
+            case 3:
+                return (workerSatisfaction, "Worker Satisfaction");
+            case 4:
+                return (profit, "Profit");
+        }
+        return (Color.white, "Error"); //no match
     }
+    private void UpdateData()
+    {
+        string enjinVersion = $"{GameManager.instance.currentRound}.0";
+        switch (GameManager.instance.currentScreen)
+        {
+            case GameScreens.SituationExplanationScreen:
+                GameUIManager.instance.topText.text = "Current Situation";
+                GameUIManager.instance.titleText.text = GameManager.instance.currentTopic.topicName;
+                StartCoroutine(TypeText(GameManager.instance.currentTopic.topicDescription, GameUIManager.instance.scenarioDescText));
+                break;
+            case GameScreens.FirstPolicyVotingScreen:
+                GameUIManager.instance.topText.text = "Proposed Policy";
+                GameUIManager.instance.titleText.text = GameManager.instance.currentTopic.formulatedPolicy.policyDescription;
+                break;
+            case GameScreens.EnjinUpdateScreen:
+                GameUIManager.instance.enjinVersionText.text = enjinVersion;
+                StartCoroutine(TypeText(GameManager.instance.currentTopic.enjinPolicy.policyDescription, GameUIManager.instance.enjinVersionDescriptionText));
+                break;
+        }
+    }
+    private IEnumerator TypeText(string text, TextMeshProUGUI targetText)
+    {
+        GameAudioManager.instance.typingSource.Play();
+        targetText.text = "";
+        foreach (char c in text)
+        {
+            targetText.text += c;
+            yield return new WaitForSeconds(GameManager.instance.typingSpeed);
+        }
+        GameAudioManager.instance.typingSource.Stop();
+    }
+    #endregion
 }

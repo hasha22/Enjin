@@ -18,9 +18,9 @@ MonoBehaviour:
     it seems logical.
   formulatedPolicy:
     policyName: Formulated Policy
-    policyDescription: Enjin should not take part in advising people on company decisions
-      because it is still capable of making mistakes and its advice is not foolproof.
-    keywords: 01000000
+    policyDescription: Enjin shouldn't take part in advising people on company decisions
+      because it is still capable of making basic mistakes.
+    keywords: 02000000
     enjinPosValue: 0
     moralePosValue: 0
     ethicPosValue: 0
@@ -39,7 +39,7 @@ MonoBehaviour:
       so you can be sure it will understand you and your team''s needs!
 
 '
-    keywords: 00000000
+    keywords: 01000000
     enjinPosValue: 0
     moralePosValue: 0
     ethicPosValue: 0

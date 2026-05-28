@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4914645aa4654324688982b7387c5f46, type: 3}
+  m_Name: Enjin Ending
+  m_EditorClassIdentifier: Assembly-CSharp::Ending
+  endingName: Enjin ending
+  endingText:
+  - "Well, you were the aftermath\r\nOf every judgment\r\nSo cold by the sweat that\r\nYou\u2019ll
+    waste away"
+  - "And you carry your enemies\r\nBut they\u2019re so familiar\r\nI\u2019m sick
+    of the company\r\nSo I cull the shame"
+  - "And I know you\u2019ll say how I\u2019m a burden\r\nYeah, do your worst, all
+    at once\r\nI know what you want from me (from me)\r\nI know what you\u2019re
+    thinking"
+  - "And it\u2019s not the voice of all the others\r\nYou\u2019ve only said it to
+    yourself\r\nI know what you want from me (from me)\r\nI know what you\u2019re
+    thinking"

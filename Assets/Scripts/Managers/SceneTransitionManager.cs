@@ -4,8 +4,6 @@ using UnityEngine.SceneManagement;
 
 public class SceneTransitionManager : MonoBehaviour
 {
-    //public static SceneTransitionManager instance { get; private set; }
-
     [Header("Hierarchy Objects")]
     [SerializeField] private GameObject crossfade;
 
@@ -19,6 +17,7 @@ public class SceneTransitionManager : MonoBehaviour
     }
     private IEnumerator LoadSceneWithAnimation(int index)
     {
+        yield return new WaitForSeconds(1.5f);
         waitingSceneTransition.SetTrigger("Start");
         yield return new WaitForSeconds(animationDelay);
 

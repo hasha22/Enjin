@@ -8,15 +8,16 @@ public class GameManager : MonoBehaviour
 
     [Header("Variables")]
     public List<Topic> allTopics = new List<Topic>();
-    [SerializeField] private Topic currentTopic;
-    [SerializeField] private Policy currentPolicy;
-    [SerializeField] public GameScreens currentScreen;
-    [SerializeField] public int currentScreenNumber;
-    [SerializeField] public int currentRound;
+    public Topic currentTopic;
+    public GameScreens currentScreen;
+    public int currentScreenNumber;
+    public int currentRound;
+
     [Header("Settings")]
     public int votingTime;
     public int discussionTime;
     public int totalRounds;
+    public float typingSpeed;
 
     void Awake()
     {
@@ -28,23 +29,7 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-    public void UpdateData()
-    {
-        switch (currentScreen)
-        {
-            case GameScreens.SituationExplanationScreen:
-                DetermineTopic();
-                GameUIManager.instance.topText.text = "Current Situation";
-                GameUIManager.instance.titleText.text = currentTopic.topicName;
-                GameUIManager.instance.scenarioDescText.text = currentTopic.topicDescription;
-                break;
-            case GameScreens.FirstPolicyVotingScreen:
-                GameUIManager.instance.topText.text = "Proposed Policy";
-                GameUIManager.instance.titleText.text = currentTopic.formulatedPolicy.policyDescription;
-                break;
-
-        }
+        DetermineTopic();
     }
     public void DetermineTopic()
     {
@@ -52,62 +37,52 @@ public class GameManager : MonoBehaviour
         {
             case 1:
                 currentTopic = allTopics[0];
-                currentPolicy = currentTopic.formulatedPolicy;
                 break;
             case 2:
                 currentTopic = allTopics[1];
-                currentPolicy = currentTopic.formulatedPolicy;
                 break;
             case 3:
                 currentTopic = allTopics[2];
-                currentPolicy = currentTopic.formulatedPolicy;
                 break;
             case 4:
                 currentTopic = allTopics[3];
-                currentPolicy = currentTopic.formulatedPolicy;
                 break;
             case 5:
                 currentTopic = allTopics[4];
-                currentPolicy = currentTopic.formulatedPolicy;
                 break;
             case 6:
                 currentTopic = allTopics[5];
-                currentPolicy = currentTopic.formulatedPolicy;
                 break;
         }
     }
-    /*
-    public void AssignVote(string playerId, VoteTypes vote = new VoteTypes(), bool voteTwo = false)
+
+    public void DeterminePolicyOutcome()
     {
-        if (currentScreen == GameScreens.FirstPolicyVotingScreen)
+        List<Player> votedYes = new List<Player>();
+        List<Player> votedNo = new List<Player>();
+        foreach (GameObject player in NetworkManager.instance.allPlayers)
         {
-            foreach(GameObject g in NetworkManager.instance.allPlayers)
-            {
-                Player thisPlayer = g.GetComponent<Player>();
-                if (playerId == thisPlayer.playerId)
-                {
-                    thisPlayer.SetFirstVote(vote);
-                }
-            }
+            Player playerScript = player.GetComponent<Player>();
+            if (playerScript.GetSecondVote()) { votedYes.Add(playerScript); }
+            else { votedNo.Add(playerScript); }
         }
-        else if (currentScreen == GameScreens.SecondPolicyVotingScreen)
+        if (votedYes.Count > votedNo.Count)
         {
-            foreach(GameObject g in NetworkManager.instance.allPlayers)
-            {
-                Player thisPlayer = g.GetComponent<Player>();
-                if (playerId == thisPlayer.playerId)
-                {
-                    thisPlayer.SetSecondVote(voteTwo);
-                    //CALL DISPLAY SECOND VOTE HERE!!!!!
-                }
-            }
+            int enj = currentTopic.formulatedPolicy.enjinValue;
+            int morale = currentTopic.formulatedPolicy.moraleValue;
+            int ethic = currentTopic.formulatedPolicy.ethicValue;
+            int profit = currentTopic.formulatedPolicy.profitValue;
+            ValueManager.instance.ChangeValue(enj, morale, ethic, profit);
         }
         else
         {
-            Debug.Log($"You can't call this in screen {currentScreen}, you need to call it in screen 2 or 5");
+            int enj = currentTopic.enjinPolicy.enjinValue;
+            int morale = currentTopic.enjinPolicy.moraleValue;
+            int ethic = currentTopic.enjinPolicy.ethicValue;
+            int profit = currentTopic.enjinPolicy.profitValue;
+            ValueManager.instance.ChangeValue(enj, morale, ethic, profit);
         }
     }
-    */
     public Topic GetCurrentTopic()
     {
         return currentTopic;

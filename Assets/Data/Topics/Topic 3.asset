@@ -22,7 +22,7 @@ MonoBehaviour:
     policyName: Formulated Policy
     policyDescription: Enjin should not be used to generate art or assets of any
       kind because it takes away from people's ability to express themselves.
-    keywords: 02000000
+    keywords: 03000000
     enjinPosValue: 0
     moralePosValue: 0
     ethicPosValue: 0
@@ -37,7 +37,7 @@ MonoBehaviour:
       of creating anything you can imagine. Do you need assets and images for a new
       website? Stock images for a presentation? Promotional images for an advertisement?
       Enjin 3.0 has got you covered!
-    keywords: 0000000003000000
+    keywords: 04000000
     enjinPosValue: 0
     moralePosValue: 0
     ethicPosValue: 0
