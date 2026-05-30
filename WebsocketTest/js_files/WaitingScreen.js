@@ -19,7 +19,9 @@ ws.onopen = () => {
 
 ws.onmessage = (event) => {
   const msg = JSON.parse(event.data);
-  const data = msg.data ? JSON.parse(msg.data) : {};
+  const data = typeof msg.data === "string"
+    ? JSON.parse(msg.data)
+    : (msg.data || {});
 
   switch (msg.type) {
     case "reconnect_success":
@@ -42,16 +44,6 @@ ws.onmessage = (event) => {
       window.location.href = "index.html";
       break;
 
-    case "show_scenario":
-      sessionStorage.setItem("roomCode", data.room);
-      sessionStorage.setItem("playerName", data.playerName);
-      sessionStorage.setItem("clientId", data.clientId);
-      sessionStorage.setItem("playerState", data.playerState);
-
-      window.location.href = "SituationScreen.html";
-      break;
-
-  
     case "error":
       console.log("Server error");
       break;
@@ -74,6 +66,16 @@ function renderCharacter() {
 
   const profileImage = document.getElementById("profileImage");
   const characterCircle = document.getElementById("characterCircle");
+  const fullImage = document.getElementById("fullImage");
+  const background = document.getElementById("Background");
+
+  const box1Text = document.getElementById("box1Text");
+  const box2Text = document.getElementById("box2Text");
+  const modalDescription = document.getElementById("modalDescription");
+
+   if (background) {
+    background.style.backgroundColor = character.backgroundColor;
+   }
 
   if (profileImage) {
     profileImage.src = character.faceImage;
@@ -82,6 +84,23 @@ function renderCharacter() {
   if (characterCircle) {
     characterCircle.style.backgroundColor = character.backgroundColor;
   }
+
+  if (fullImage) {
+    fullImage.src = character.fullImage;  
+  }
+  if (box1Text) {
+    box1Text.textContent = character.box1Text;
+  }
+
+  if (box2Text) {
+    box2Text.textContent = character.box2Text;
+    box2Text.style.backgroundColor = character.backgroundColor;
+  }
+
+  if (modalDescription) {
+    modalDescription.textContent = character.modalDescription;
+  }
 }
+
 
 renderCharacter();

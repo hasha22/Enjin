@@ -239,6 +239,20 @@ public class NetworkManager : MonoBehaviour
         Send(json);
     }
 
+    public void SendShowScenarioRequest()
+{
+    string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
+
+    string json = "{"
+        + "\"type\":\"show_scenario_request\","
+        + "\"room\":\"" + Escape(code) + "\","
+        + "\"clientId\":\"" + Escape(hostClientId) + "\""
+        + "}";
+
+    Debug.Log("Sending show_scenario_request: " + json);
+    Send(json);
+}
+
     public void ConnectPlayer(string playerName)
     {
         if (allPlayers.Count >= 6)
