@@ -20,6 +20,9 @@ const CHARACTERS = [
     faceImage: "Char1Face.png",
     fullImage: "Char1.png",
     backgroundColor: "#FF6B6B",
+    box1Text: "Box 1 text for character 1",
+    box2Text: "Box 2 text for character 1",
+    modalDescription: "Description text for character 1.",
     active: true
   },
   {
@@ -28,6 +31,9 @@ const CHARACTERS = [
     faceImage: "Char2Face.png",
     fullImage: "Char2.png",
     backgroundColor: "#4D96FF",
+    box1Text: "Box 1 text for character 2",
+    box2Text: "Box 2 text for character 2",
+    modalDescription: "Description text for character 2.",
     active: true
   },
 
