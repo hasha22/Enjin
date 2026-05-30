@@ -268,6 +268,8 @@ public class NetworkManager : MonoBehaviour
         + "}";
 
     Debug.Log("Sending show_scenario_request: " + json);
+    Debug.Log("NetworkManager instance check: " + gameObject.name);
+    Debug.Log("WebSocket state before show_scenario: " + (websocket != null ? websocket.State.ToString() : "null"));
     Send(json);
 }
 
