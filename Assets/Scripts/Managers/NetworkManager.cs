@@ -200,6 +200,24 @@ public class NetworkManager : MonoBehaviour
             case "player_removed":
                 Debug.Log("Player removed from room: " + msg.data);
                 break;
+
+            case "show_scenario_success":
+                Debug.Log("Server confirmed: scenario shown");
+
+                if (GameUIManager.instance != null)
+                {
+                    GameUIManager.instance.NextScreen();
+                }
+                else
+                {
+                    Debug.LogWarning("GameUIManager instance is missing.");
+                }
+
+                break;
+
+            case "show_scenario_failed":
+                Debug.LogWarning("Show scenario failed: " + msg.data);
+                break;
         }
     }
     public void SendHostRegister()
