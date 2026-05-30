@@ -10,7 +10,8 @@ const PLAYER_STATE = {
   WAITING: "waiting",
   VOTING: "voting",
   MAKING_CHOICE: "making_choice",
-  VIEWING_CHARACTER: "viewing_character"
+  VIEWING_CHARACTER: "viewing_character",
+  VIEWING_SCENARIO: "viewing_scenario"
 };
 
 const CHARACTERS = [
@@ -225,8 +226,22 @@ wss.on("connection", (clientSocket) => {
 
       return startGame(clientSocket, roomCode);
     }
-  });
 
+    if (msg.type === "show_scenario_request")
+      {
+        const roomCode = normalize(msg.room);
+
+        if (!roomCode)
+        {
+          send(clientSocket, "show_scenario_failed", {
+            reason: "RoomCode required"
+          });
+          return;
+        }
+
+        return showScenario(clientSocket, roomCode);
+      }
+    });
 
 
   // Closing Connection
@@ -398,7 +413,7 @@ function startGame(clientSocket, roomCode)
     {
       send(player.socket, "game_started", {
         nextPage: "CharacterScreen.html",
-        playerState: player.playerState,
+        playerState: PLAYER_STATE.VIEWING_CHARACTER,
         room: roomCode,
         playerName: player.playerName,
         clientId: player.clientId,
@@ -423,4 +438,55 @@ function getRandomCharacter()
   const randomIndex = Math.floor(Math.random() * activeCharacters.length);
 
   return activeCharacters[randomIndex];
+} 
+
+function showScenario(clientSocket, roomCode)
+{
+  const room = rooms.get(roomCode);
+
+  if (!room)
+  {
+    send(clientSocket, "show_scenario_failed", {
+      reason: "Room not found"
+    });
+    return;
+  }
+
+  if (room.host !== clientSocket)
+  {
+    send(clientSocket, "show_scenario_failed", {
+      reason: "Only host can show scenario"
+    });
+    return;
+  }
+
+  const connectedPlayers = [...room.players].filter(player => player.connected);
+
+  if (connectedPlayers.length === 0)
+  {
+    send(clientSocket, "show_scenario_failed", {
+      reason: "No connected players in the room"
+    });
+    return;
+  }
+
+  for (const player of connectedPlayers)
+  {
+    player.playerState = PLAYER_STATE.VIEWING_SCENARIO;
+
+    send(player.socket, "show_scenario", {
+      nextPage: "SituationScreen.html",
+      playerState: player.playerState,
+      room: roomCode,
+      playerName: player.playerName,
+      clientId: player.clientId,
+      message: "Look at the main screen"
+    });
+  }
+
+  send(room.host, "show_scenario_success", {
+    room: roomCode
+  });
+
+  console.log(`[Room: ${roomCode}] Scenario shown`);
 }
