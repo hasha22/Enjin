@@ -82,7 +82,21 @@ public class GameManager : MonoBehaviour
             int profit = currentTopic.enjinPolicy.profitValue;
             ValueManager.instance.ChangeValue(enj, morale, ethic, profit);
         }
+
+
     }
+
+    public void ContinueToScenario()
+{
+    if (NetworkManager.instance != null)
+    {
+        NetworkManager.instance.SendShowScenarioRequest();
+    }
+    else
+    {
+        Debug.LogWarning("NetworkManager instance is missing.");
+    }
+}
     public Topic GetCurrentTopic()
     {
         return currentTopic;
