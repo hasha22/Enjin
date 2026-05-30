@@ -28,7 +28,7 @@ const CHARACTERS = [
   {
     id: "char2",
     name: "Character 2",
-    faceImage: "Char2Face.png",
+    faceImage: "CharFace2.png",
     fullImage: "Char2.png",
     backgroundColor: "#4D96FF",
     box1Text: "Box 1 text for character 2",
