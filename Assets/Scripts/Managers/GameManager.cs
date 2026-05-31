@@ -86,6 +86,19 @@ public class GameManager : MonoBehaviour
 
     }
 
+
+    public void StartVotingPhase()
+{
+    if (NetworkManager.instance != null)
+    {
+        NetworkManager.instance.SendStartVotingRequest();
+    }
+    else
+    {
+        Debug.LogWarning("NetworkManager instance is missing.");
+    }
+}
+
     public void ContinueToScenario()
 {
     if (NetworkManager.instance != null)
@@ -102,3 +115,4 @@ public class GameManager : MonoBehaviour
         return currentTopic;
     }
 }
+
