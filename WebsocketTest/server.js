@@ -523,23 +523,30 @@ function startVoting(hostSocket, roomCode) {
     return;
   }
 
+  const connectedPlayers = [...room.players].filter(player => player.connected);
+
+  if (connectedPlayers.length === 0) {
+    send(hostSocket, "start_voting_failed", {
+      reason: "No connected players in the room"
+    });
+    return;
+  }
+
   const votingDuration = 60;
   const votingStartedAt = Date.now();
 
-  for (const player of room.players) {
+  for (const player of connectedPlayers) {
     player.playerState = PLAYER_STATE.VOTING;
 
-    if (player.connected && player.ws.readyState === WebSocket.OPEN) {
-      send(player.ws, "voting_started", {
-        room: roomCode,
-        playerName: player.playerName,
-        clientId: player.clientId,
-        playerState: player.playerState,
-        votingDuration: votingDuration,
-        votingStartedAt: votingStartedAt,
-        character: player.character
-      });
-    }
+    send(player.socket, "voting_started", {
+      room: roomCode,
+      playerName: player.playerName,
+      clientId: player.clientId,
+      playerState: player.playerState,
+      votingDuration: votingDuration,
+      votingStartedAt: votingStartedAt,
+      character: player.character
+    });
   }
 
   send(hostSocket, "start_voting_success", {
@@ -547,4 +554,6 @@ function startVoting(hostSocket, roomCode) {
     votingDuration: votingDuration,
     votingStartedAt: votingStartedAt
   });
+
+  console.log(`[Room: ${roomCode}] Voting started`);
 }
