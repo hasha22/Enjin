@@ -8,54 +8,48 @@
 </head>
 <body>
     <div class="WaitingScreen">
-        <div class="circle" style="background-color: #FF6B6B;">
-            <img src="Char1Face.png" alt="profile" class="circle-image" id="profileImage">
-        </div>
-    
 
-        <div class="modal" id="imageModal">
-            <div class="modal-content">
-                <img src="Char1.png" alt="profile enlarged">
-            <div class="modal-right-section">
-                <div class="text-box" style="background-color: #FFFFFF;">Box 1 Text</div>
-                <div class="text-box" style="background-color: #FF6B6B;">Box 2 Text</div>
-                <div class="modal-text">Your text here</div>
-            </div>
-                </div>
-        </div>
+        <div class="voting-content" id="votingContent">
+            <h1 class="voting-title">
+                Round <span id="roundNumber">1</span>: Voting phase
+            </h1>
 
-        <div class="voting-content">
-            <h1 class="voting-title">Voting phase</h1>
-            
+            <p id="timer">Time left: --</p>
+
             <div class="slider-container">
-                <input type="range" min="0" max="100" value="50" class="voting-slider" id="votingSlider">
+                <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    value="50" 
+                    class="voting-slider" 
+                    id="voteSlider"
+                >
+
                 <div class="slider-labels">
-                    <span class="slider-label">Strongly agree</span>
+                    <span class="slider-label">Totally disagree</span>
                     <span class="slider-label">Neutral</span>
-                    <span class="slider-label">Strongly disagree</span>
+                    <span class="slider-label">Totally agree</span>
                 </div>
+
+                <p id="voteValue">50</p>
             </div>
 
-            <button class="submit-btn" id="submitBtn">Submit Vote</button>
+            <button class="submit-btn" id="submitVoteBtn">Submit Vote</button>
+
+            <p id="status">Choose your position on the scale</p>
         </div>
+
+        <div class="voting-content" id="waitingContent" style="display: none;">
+            <h1 class="voting-title">Well done!</h1>
+            <p id="waitingText">Your vote has been saved. Waiting for the other players...</p>
+        </div>
+
+        <div id="log"></div>
+
     </div>
-    </div>
-        
 
-    <script>
-        const profileImage = document.getElementById('profileImage');
-        const imageModal = document.getElementById('imageModal');
-
-        profileImage.addEventListener('click', function() {
-            imageModal.classList.add('active');
-        });
-
-        imageModal.addEventListener('click', function(e) {
-            if (e.target === imageModal) {
-                imageModal.classList.remove('active');
-            }
-        });
-
-    </script>
+    <script src="characterWidget.js"></script>
+    <script src="VotingScreen.js"></script>
 </body>
 </html>

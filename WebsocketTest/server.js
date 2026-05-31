@@ -241,6 +241,20 @@ wss.on("connection", (clientSocket) => {
 
         return showScenario(clientSocket, roomCode);
       }
+
+    if (msg.type === "start_voting_request") {
+        const roomCode = normalize(msg.room || msg.roomCode);
+
+        if (!roomCode) {
+          send(clientSocket, "start_voting_failed", {
+            reason: "Room code is missing"
+          });
+          return;
+        }
+
+        startVoting(clientSocket, roomCode);
+        return;
+      }
     });
 
 
@@ -489,4 +503,48 @@ function showScenario(clientSocket, roomCode)
   });
 
   console.log(`[Room: ${roomCode}] Scenario shown`);
+}
+
+
+function startVoting(hostSocket, roomCode) {
+  const room = rooms.get(roomCode);
+
+  if (!room) {
+    send(hostSocket, "start_voting_failed", {
+      reason: "Room not found"
+    });
+    return;
+  }
+
+  if (room.host !== hostSocket) {
+    send(hostSocket, "start_voting_failed", {
+      reason: "Only host can start voting"
+    });
+    return;
+  }
+
+  const votingDuration = 60;
+  const votingStartedAt = Date.now();
+
+  for (const player of room.players) {
+    player.playerState = PLAYER_STATE.VOTING;
+
+    if (player.connected && player.ws.readyState === WebSocket.OPEN) {
+      send(player.ws, "voting_started", {
+        room: roomCode,
+        playerName: player.playerName,
+        clientId: player.clientId,
+        playerState: player.playerState,
+        votingDuration: votingDuration,
+        votingStartedAt: votingStartedAt,
+        character: player.character
+      });
+    }
+  }
+
+  send(hostSocket, "start_voting_success", {
+    room: roomCode,
+    votingDuration: votingDuration,
+    votingStartedAt: votingStartedAt
+  });
 }
