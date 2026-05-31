@@ -339,12 +339,13 @@ public class GameUIManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        trashCan.Clear();
 
-        foreach (GameObject gameObject1 in allPlayerIcons)
+        foreach (GameObject icon in allPlayerIcons)
         {
-            Destroy(gameObject1);
-            allPlayerIcons.Remove(gameObject1);
+            Destroy(icon);
         }
+        allPlayerIcons.Clear();
     }
     private IEnumerator MoveCircle(Transform obj, Vector3 targetPos, float duration)
     {
