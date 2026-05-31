@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" style="--bg-color: #D9D9D9;">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voting Screen</title>
+    <title>Waiting Screen</title>
     <link rel="stylesheet" href="Design.css">
 </head>
 <body>
@@ -24,23 +24,12 @@
                 </div>
         </div>
 
-        <div class="voting-content">
-            <h1 class="voting-title">Voting phase</h1>
-            
-            <div class="slider-container">
-                <input type="range" min="1" max="5" value="3" class="voting-slider" id="votingSlider">
-                <div class="slider-labels">
-                    <span class="slider-label">Strongly agree</span>
-                    <span class="slider-label">Neutral</span>
-                    <span class="slider-label">Strongly disagree</span>
-                </div>
-            </div>
-
-            <button class="submit-btn" id="submitBtn">Submit Vote</button>
+        <div>
+        <p>Waiting for next round...</p>
         </div>
-    </div>
-    </div>
         
+    </div>
+    
 
     <script>
         const profileImage = document.getElementById('profileImage');
@@ -55,7 +44,6 @@
                 imageModal.classList.remove('active');
             }
         });
-
     </script>
 </body>
 </html>
