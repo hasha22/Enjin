@@ -14,7 +14,9 @@ ws.onclose = () => {
 
 ws.onmessage = (event) => {
   const msg = JSON.parse(event.data);
-  const data = msg.data ? JSON.parse(msg.data) : {};
+  const data = typeof msg.data === "string"
+    ? JSON.parse(msg.data)
+    : (msg.data || {});
 
   switch(msg.type)
   {
@@ -24,10 +26,11 @@ ws.onmessage = (event) => {
         log("Joined as " + data.playerName);
 
 
-        localStorage.setItem("roomCode", data.room);
-        localStorage.setItem("playerName", data.playerName);
-        localStorage.setItem("clientId", data.clientId);
-        localStorage.setItem("playerState", data.playerState);
+        sessionStorage.setItem("roomCode", data.room);
+        sessionStorage.setItem("playerName", data.playerName);
+        sessionStorage.setItem("clientId", data.clientId);
+        sessionStorage.setItem("playerState", data.playerState);
+        sessionStorage.setItem("character", JSON.stringify(data.character));
 
         window.location.href = "WaitingScreen.html";
         
@@ -39,6 +42,7 @@ ws.onmessage = (event) => {
     case "error":
       log("Server error");
       break;
+
   }
 };
 
@@ -61,10 +65,10 @@ function joinRoom() {
 
 //Helpers
 function getClientId() {
-  let id = localStorage.getItem("clientId");
+  let id = sessionStorage.getItem("clientId");
   if (!id) {
     id = crypto.randomUUID();
-    localStorage.setItem("clientId", id);
+    sessionStorage.setItem("clientId", id);
   }
   return id;
 }

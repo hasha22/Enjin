@@ -1,8 +1,8 @@
 // Setup
 const ws = new WebSocket("wss://enjin--enjin--qpbmsj2bcc7n.code.run/");
 
-const roomCode = localStorage.getItem("roomCode");
-const clientId = localStorage.getItem("clientId");
+const roomCode = sessionStorage.getItem("roomCode");
+const clientId = sessionStorage.getItem("clientId");
 
 
 ws.onopen = () => {
@@ -26,13 +26,18 @@ ws.onmessage = (event) => {
   const data = msg.data ? JSON.parse(msg.data) : {};
     switch(msg.type)
     {   case "reconnect_success":
-            setStatus("Reconnected to room: " + data.room);
-            log("Reconnected as " + data.playerName);   
-            localStorage.setItem("roomCode", data.room);
-            localStorage.setItem("playerName", data.playerName);
-            localStorage.setItem("clientId", data.clientId);
-            localStorage.setItem("playerState", data.playerState);
-            break;
+          setStatus("Reconnected to room: " + data.room);
+          log("Reconnected as " + data.playerName);   
+
+          sessionStorage.setItem("roomCode", data.room);
+          sessionStorage.setItem("playerName", data.playerName);
+          sessionStorage.setItem("clientId", data.clientId);
+          sessionStorage.setItem("playerState", data.playerState);
+
+          if (data.character) {
+            sessionStorage.setItem("character", JSON.stringify(data.character));
+          }
+          break;
             
         case "reconnect_failed":
             setStatus("Reconnection failed: " + data.reason);
@@ -46,20 +51,20 @@ ws.onmessage = (event) => {
         case "game_started":
             setStatus("Game started in room: " + roomCode);
 
+            sessionStorage.setItem("roomCode", data.room);
+            sessionStorage.setItem("playerName", data.playerName);
+            sessionStorage.setItem("clientId", data.clientId);
+            sessionStorage.setItem("playerState", data.playerState);
 
+            if (data.character) {
+              sessionStorage.setItem("character", JSON.stringify(data.character));
+            }
 
-            localStorage.setItem("roomCode", data.room);
-            localStorage.setItem("playerName", data.playerName);
-            localStorage.setItem("clientId", data.clientId);
-            localStorage.setItem("playerState", data.playerState);
-
-             window.location.href = "WaitingScreen.html";
-
-                break;
-        
-
-    }
-};
+            window.location.href = "WaitingScreen.html";
+            break;
+      
+      }
+    };
 
 ws.onclose = () => {
   console.log("Connection closed");
@@ -74,3 +79,4 @@ function log(text) {
 function setStatus(text) {
   document.getElementById("status").innerText = text;
 }
+

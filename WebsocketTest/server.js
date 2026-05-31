@@ -10,24 +10,31 @@ const PLAYER_STATE = {
   WAITING: "waiting",
   VOTING: "voting",
   MAKING_CHOICE: "making_choice",
-  VIEWING_CHARACTER: "viewing_character"
+  VIEWING_CHARACTER: "viewing_character",
+  VIEWING_SCENARIO: "viewing_scenario"
 };
 
 const CHARACTERS = [
   {
     id: "char1",
     name: "Character 1",
-    faceImage: "Char1Face.png",
+    faceImage: "CharFace1.png",
     fullImage: "Char1.png",
     backgroundColor: "#FF6B6B",
+    box1Text: "Box 1 text for character 1",
+    box2Text: "Box 2 text for character 1",
+    modalDescription: "Description text for character 1.",
     active: true
   },
   {
     id: "char2",
     name: "Character 2",
-    faceImage: "Char2Face.png",
+    faceImage: "CharFace2.png",
     fullImage: "Char2.png",
     backgroundColor: "#4D96FF",
+    box1Text: "Box 1 text for character 2",
+    box2Text: "Box 2 text for character 2",
+    modalDescription: "Description text for character 2.",
     active: true
   },
 
@@ -135,7 +142,7 @@ function joinRoom(clientSocket, roomCode, playerName, clientId)
       playerName,
       playerID: clientId,
       playerState: player.playerState,
-      character: player.character
+      characterId: player.character.id
     });
   }
 
@@ -219,8 +226,22 @@ wss.on("connection", (clientSocket) => {
 
       return startGame(clientSocket, roomCode);
     }
-  });
 
+    if (msg.type === "show_scenario_request")
+      {
+        const roomCode = normalize(msg.room);
+
+        if (!roomCode)
+        {
+          send(clientSocket, "show_scenario_failed", {
+            reason: "RoomCode required"
+          });
+          return;
+        }
+
+        return showScenario(clientSocket, roomCode);
+      }
+    });
 
 
   // Closing Connection
@@ -274,7 +295,7 @@ function send(clientSocket, type, dataObj = {})
 
   clientSocket.send(JSON.stringify({
     type,
-    data: dataObj
+    data: JSON.stringify(dataObj) 
   }));
 }
 function getRoom(roomCode) 
@@ -385,14 +406,14 @@ function startGame(clientSocket, roomCode)
 
 
   // Notify all players that the game is starting
-  for (const player of room.players)
+  for (const player of connectedPlayers)
   {
     player.playerState = PLAYER_STATE.VIEWING_CHARACTER;
     if (player.connected)
     {
       send(player.socket, "game_started", {
         nextPage: "CharacterScreen.html",
-        playerState: player.playerState,
+        playerState: PLAYER_STATE.VIEWING_CHARACTER,
         room: roomCode,
         playerName: player.playerName,
         clientId: player.clientId,
@@ -417,4 +438,55 @@ function getRandomCharacter()
   const randomIndex = Math.floor(Math.random() * activeCharacters.length);
 
   return activeCharacters[randomIndex];
+} 
+
+function showScenario(clientSocket, roomCode)
+{
+  const room = rooms.get(roomCode);
+
+  if (!room)
+  {
+    send(clientSocket, "show_scenario_failed", {
+      reason: "Room not found"
+    });
+    return;
+  }
+
+  if (room.host !== clientSocket)
+  {
+    send(clientSocket, "show_scenario_failed", {
+      reason: "Only host can show scenario"
+    });
+    return;
+  }
+
+  const connectedPlayers = [...room.players].filter(player => player.connected);
+
+  if (connectedPlayers.length === 0)
+  {
+    send(clientSocket, "show_scenario_failed", {
+      reason: "No connected players in the room"
+    });
+    return;
+  }
+
+  for (const player of connectedPlayers)
+  {
+    player.playerState = PLAYER_STATE.VIEWING_SCENARIO;
+
+    send(player.socket, "show_scenario", {
+      nextPage: "SituationScreen.html",
+      playerState: player.playerState,
+      room: roomCode,
+      playerName: player.playerName,
+      clientId: player.clientId,
+      message: "Look at the main screen"
+    });
+  }
+
+  send(room.host, "show_scenario_success", {
+    room: roomCode
+  });
+
+  console.log(`[Room: ${roomCode}] Scenario shown`);
 }

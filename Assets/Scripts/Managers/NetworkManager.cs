@@ -200,6 +200,24 @@ public class NetworkManager : MonoBehaviour
             case "player_removed":
                 Debug.Log("Player removed from room: " + msg.data);
                 break;
+
+            case "show_scenario_success":
+                Debug.Log("Server confirmed: scenario shown");
+
+                if (GameUIManager.instance != null)
+                {
+                    GameUIManager.instance.NextScreen();
+                }
+                else
+                {
+                    Debug.LogWarning("GameUIManager instance is missing.");
+                }
+
+                break;
+
+            case "show_scenario_failed":
+                Debug.LogWarning("Show scenario failed: " + msg.data);
+                break;
         }
     }
     public void SendHostRegister()
@@ -238,6 +256,30 @@ public class NetworkManager : MonoBehaviour
         Debug.Log("Sending start_game_request: " + json);
         Send(json);
     }
+
+   public void SendShowScenarioRequest()
+{
+    if (instance != null && instance != this)
+    {
+        Debug.LogWarning("Wrong NetworkManager instance. Redirecting to real instance.");
+        instance.SendShowScenarioRequest();
+        return;
+    }
+
+    string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
+
+    string json = "{"
+        + "\"type\":\"show_scenario_request\","
+        + "\"room\":\"" + Escape(code) + "\","
+        + "\"clientId\":\"" + Escape(hostClientId) + "\""
+        + "}";
+
+    Debug.Log("Sending show_scenario_request: " + json);
+    Debug.Log("NetworkManager instance check: " + gameObject.name);
+    Debug.Log("WebSocket state before show_scenario: " + (websocket != null ? websocket.State.ToString() : "null"));
+
+    Send(json);
+}
 
     public void ConnectPlayer(string playerName)
     {
