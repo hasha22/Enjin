@@ -23,7 +23,7 @@ const CHARACTERS = [
     backgroundColor: "#FF6B6B",
     box1Text: "Box 1 text for character 1",
     box2Text: "Box 2 text for character 1",
-    modalDescription: "Description text for character 1.",
+    modalDescription: "You think Enjin shouldn’t be discussed, it should be used. Moreover, you think that if Enjin isn’t used, the sector will fall behind. You care more about what you create, than that you created it. Think about how you're going to push for Enjin implementation within the company.  How can Enjin boost productivity? How can it make people's lives more efficient? Get in character",
     active: true
   },
   {
