@@ -595,6 +595,8 @@ function startVoting(hostSocket, roomCode, voteType) {
     return;
   }
 
+  room.currentRound = 1;
+
   for (const player of connectedPlayers) {
     player.playerState = PLAYER_STATE.VOTING;
 
