@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Playtest Client</title>
+  <link rel="stylesheet" href="Design.css">
+
+  <style>
+    /* PLAYTEST QUICK FIX: one page, many screens */
+    .screen {
+      display: none;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    [data-role="status"] {
+      color: #4a9eff;
+      font-size: 24px;
+      font-weight: bold;
+      font-family: 'Dobra', serif;
+      margin-top: 10px;
+    }
+
+    [data-role="log"] {
+      color: #333333;
+      font-family: 'Dobra', serif;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 1. Join screen -->
+  <section id="joinScreen" class="screen active">
+    <div class="JoinRoom">
+      <h2>Room Player Client</h2>
+
+      <div class="join-form">
+        <label>
+          Player name:
+          <input id="playerName" maxlength="24" placeholder="Your name">
+        </label>
+
+        <label>
+          Room code:
+          <input id="roomCode" value="ABCD" maxlength="10">
+        </label>
+
+        <button class="join-btn" onclick="joinRoom()">Join Room</button>
+
+        <p data-role="status">Not joined</p>
+        <div data-role="log"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Connected / lobby screen -->
+  <section id="connectedScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Game Lobby</h2>
+      <label data-role="status">Connected to lobby!<br>Waiting for game to start</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 3. Character screen -->
+  <section id="characterScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Waiting Screen</h2>
+      <label data-role="status">Waiting for the next step</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 4. Situation screen -->
+  <section id="situationScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Look at the main screen</h2>
+      <label data-role="status">The current situation is being explained there.</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 5. Voting screen -->
+  <section id="votingScreen" class="screen">
+    <div class="WaitingScreen">
+      <div class="voting-content" id="votingContent">
+        <h1 class="voting-title">
+          Round <span id="roundNumber">1</span>: Voting phase
+        </h1>
+
+        <p id="timer">Time left: --</p>
+
+        <div class="slider-container">
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value="50"
+            class="voting-slider"
+            id="voteSlider"
+          >
+
+          <div class="slider-labels">
+            <span class="slider-label">Totally disagree</span>
+            <span class="slider-label">Neutral</span>
+            <span class="slider-label">Totally agree</span>
+          </div>
+
+          <p id="voteValue">50</p>
+        </div>
+
+        <button class="submit-btn" id="submitVoteBtn">Submit Vote</button>
+
+        <p data-role="status">Choose your position on the scale</p>
+      </div>
+
+      <div class="voting-content" id="waitingContent" style="display: none;">
+        <h1 class="voting-title">Well done!</h1>
+        <p id="waitingText">Your vote has been saved. Waiting for the other players...</p>
+      </div>
+
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <script src="characterWidget.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>
