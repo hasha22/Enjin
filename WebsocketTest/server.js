@@ -383,7 +383,6 @@ function send(clientSocket, type, dataObj = {})
 
   console.log(
         "SENDING TO CLIENT:",
-        JSON.stringify(message)
     );
 
   clientSocket.send(JSON.stringify({
