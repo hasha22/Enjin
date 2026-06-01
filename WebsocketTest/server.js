@@ -254,7 +254,7 @@ wss.on("connection", (clientSocket) => {
         }
         console.log("Succesfully starting the voting round on host ", payload.hostClientId);
 
-        startVoting(clientSocket, roomCode, voteType);
+        startVoting(clientSocket, roomCode);
         return;
       }
 
