@@ -11,6 +11,8 @@ let currentRound = 1;
 let votingDuration = 60;
 let votingStartedAt = Date.now();
 
+let currentVoteType = "first_vote";
+
 let hasSubmittedVote = false;
 let countdownInterval = null;
 let currentScreenId = "joinScreen";
@@ -89,6 +91,8 @@ function connectWebSocket() {
 function handleCharacterInfo(data)
 {
   const character = buildCharacterObject(data);
+
+  
 
     sessionStorage.setItem(
         "character",
@@ -194,7 +198,9 @@ function handleVotingStarted(data) {
   currentRound = Number(data.currentRound) || 1;
   votingDuration = Number(data.votingDuration) || 60;
   votingStartedAt = Number(data.votingStartedAt) || Date.now();
+  currentVoteType = data.voteType || "first_vote";
 
+  sessionStorage.setItem("voteType", currentVoteType);
   sessionStorage.setItem("currentRound", currentRound);
   sessionStorage.setItem("votingDuration", votingDuration);
   sessionStorage.setItem("votingStartedAt", votingStartedAt);
@@ -285,7 +291,7 @@ function resetVotingScreen() {
   }
 
   if (voteSlider && voteValue) {
-    voteSlider.value = 50;
+    voteSlider.value = 3;
     voteValue.innerText = voteSlider.value;
   }
 
@@ -340,6 +346,18 @@ function updateTimerText() {
   }
 }
 
+function mapSliderValueToFirstVote(sliderValue) {
+  const value = Number(sliderValue);
+
+  if (value === 1) return "disagree";
+  if (value === 2) return "mostly_disagree";
+  if (value === 3) return "neutral";
+  if (value === 4) return "mostly_agree";
+  if (value === 5) return "agree";
+
+  return "neutral";
+}
+
 function submitVote(submitReason) {
   if (hasSubmittedVote) {
     return;
@@ -359,7 +377,7 @@ function submitVote(submitReason) {
 
   hasSubmittedVote = true;
 
-  const vote = Number(voteSlider.value);
+  const vote = mapSliderValueToFirstVote(voteSlider.value);
   const roomCode = joinedRoomCode || sessionStorage.getItem("roomCode");
 
   if (submitVoteBtn) {
@@ -374,6 +392,7 @@ function submitVote(submitReason) {
     room: roomCode,
     clientId: clientId,
     roundNumber: currentRound,
+    voteType: currentVoteType,
     voteValue: vote,
     submitReason: submitReason
   }));

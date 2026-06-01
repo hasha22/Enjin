@@ -318,7 +318,8 @@ public class NetworkManager : MonoBehaviour
             + "\"type\":\"start_voting_request\","
             + "\"room\":\"" + Escape(code) + "\","
             + "\"clientId\":\"" + Escape(hostClientId) + "\","
-            + "\"currentRound\":" + round
+            + "\"currentRound\":" + round + ","
+            + "\"voteType\":\"first_vote\""
             + "}";
 
         Debug.Log("Sending start_voting_request: " + json);
@@ -370,9 +371,13 @@ public class NetworkManager : MonoBehaviour
     }
     public void RegisterFirstPlayerVote(string playerID, string playerVote)
     {
+        Debug.Log($"TRY REGISTER FIRST VOTE | playerID: {playerID}, vote: {playerVote}");
         foreach (GameObject player in allPlayers)
         {
             Player playerScript = player.GetComponent<Player>();
+
+            Debug.Log($"Checking player: {playerScript.GetPlayerName()} with ID: {playerScript.GetPlayerID()}");
+
             if (playerScript.GetPlayerID() == playerID)
             {
                 switch (playerVote)
@@ -392,7 +397,11 @@ public class NetworkManager : MonoBehaviour
                     case "agree":
                         playerScript.SetFirstVote(VoteTypes.Agree);
                         break;
+
+
                 }
+
+                Debug.Log($"FIRST VOTE SAVED | player: {playerScript.GetPlayerName()}, ID: {playerScript.GetPlayerID()}, vote: {playerScript.GetFirstVote()}");
                 break;
             }
         }
