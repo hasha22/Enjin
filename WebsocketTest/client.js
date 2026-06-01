@@ -89,6 +89,7 @@ function connectWebSocket() {
 function handleCharacterInfo(data)
 {
   const character = buildCharacterObject(data);
+  console.log("Built character:", character);
 
     sessionStorage.setItem(
         "character",
@@ -96,6 +97,50 @@ function handleCharacterInfo(data)
     );
 
     renderCharacterWidgetSafely();
+}
+function buildCharacterObject(data)
+{
+    let faceImage = "";
+    let fullImage = "";
+    let backgroundColor = "#99C998";
+
+    switch(data.characterName)
+    {
+        case "AIArtist":
+            faceImage = "Char1Face.png";
+            fullImage = "Char1.png";
+            backgroundColor = "#99C998";
+            break;
+        case "CulturalOrganiser":
+            faceImage = "Char2Face.png";
+            fullImage = "Char2.png";
+            backgroundColor = "#7EA5D8";
+            break;
+        case "EthicalAdvisor":
+            faceImage = "Char2Face.png";
+            fullImage = "Char2.png";
+            backgroundColor = "#D9A066";
+            break;
+        case "FinanceEmployee":
+            faceImage = "Char2Face.png";
+            fullImage = "Char2.png";
+            backgroundColor = "#D9A066";
+            break;
+        case "UIDesigner":
+            faceImage = "Char1Face.png";
+            fullImage = "Char1.png";
+            backgroundColor = "#D9A066";
+            break;
+    }
+
+    return {
+        faceImage,
+        fullImage,
+        box1Text: data.keyword1,
+        box2Text: data.keyword2,
+        modalDescription: data.characterDescription,
+        backgroundColor
+    };
 }
 
 function parseServerMessage(event) {

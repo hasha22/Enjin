@@ -120,6 +120,7 @@ function joinRoom(clientSocket, roomCode, playerName, clientId)
     playerState: PLAYER_STATE.WAITING,
     connected: true,
     disconnectTimer: null,
+    character: character,
   };
   room.players.add(player);
   console.log(`Player joined: ${playerName} (total: ${room.players.size})`);
@@ -272,6 +273,7 @@ wss.on("connection", (clientSocket) => {
         console.log("Received character_info on server.");
 
         const roomCode = normalize(msg.room || msg.roomCode);
+        const playerID = msg.playerID;
         const characterName = msg.characterName;
         const characterDescription = msg.characterDescription;
         const keyword1 = msg.keyword1;
@@ -282,7 +284,7 @@ wss.on("connection", (clientSocket) => {
           //send character_info failed 
         }
 
-        assignCharacterInfo(clientSocket, roomCode, characterName, characterDescription, keyword1, keyword2);
+        assignCharacterInfo(clientSocket, roomCode, playerID, characterName, characterDescription, keyword1, keyword2);
         return;
       }
     });
@@ -331,7 +333,46 @@ wss.on("connection", (clientSocket) => {
     }}
   });
 });
+function assignCharacterInfo(roomCode, playerID, characterName, characterDescription, keyword1, keyword2)
+{
+    const room = rooms.get(roomCode);
 
+    if (!room)
+        return;
+
+    const player =
+        [...room.players].find(
+            p => p.clientId === playerID
+        );
+
+        if (!player)
+    {
+        console.log(
+            `Player ${playerID} not found`
+        );
+        return;
+    }
+
+    player.character =
+    {
+        characterName,
+        characterDescription,
+        keyword1,
+        keyword2
+    };
+
+    send(player.socket, "character_info",
+    {
+        characterName,
+        characterDescription,
+        keyword1,
+        keyword2
+    });
+     console.log(
+        `Assigned ${characterName} to ${player.playerName}`
+    );
+
+}
 //Helpers
 function send(clientSocket, type, dataObj = {}) 
 {

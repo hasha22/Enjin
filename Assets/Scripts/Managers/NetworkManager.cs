@@ -327,13 +327,14 @@ public class NetworkManager : MonoBehaviour
 
         Send(json);
     }
-    public void SendCharacterInfo(string characterName, string characterDescription, string keyword1, string keyword2)
+    public void SendCharacterInfo(string playerID, string characterName, string characterDescription, string keyword1, string keyword2)
     {
         string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
 
         string json = "{"
             + "\"type\":\"character_info\","
             + "\"room\":\"" + Escape(code) + "\","
+            + "\"playerID\":\"" + playerID + "\","
             + "\"characterName\":\"" + Escape(characterName) + "\","
             + "\"characterDescription\":\"" + Escape(characterDescription) + "\","
             + "\"keyword1\":\"" + Escape(keyword1) + "\","
@@ -362,7 +363,8 @@ public class NetworkManager : MonoBehaviour
         UIManager.instance.IncreaseDisplayedPlayerCount();
         UIManager.instance.UpdatePlayerCard(allPlayers.Count - 1, player);
 
-        SendCharacterInfo(player.selectedCharacter.characterName,
+        SendCharacterInfo(player.GetPlayerID(),
+            player.selectedCharacter.characterName,
             player.selectedCharacter.characterDescription,
             player.selectedCharacter.characterKeywords[0].ToString(),
             player.selectedCharacter.characterKeywords[1].ToString()
