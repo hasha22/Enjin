@@ -359,6 +359,11 @@ function assignCharacterInfo(roomCode, playerID, characterName, characterDescrip
         keyword2
     };
 
+    console.log(
+    "Player socket state:",
+    player.socket.readyState
+);
+
     send(player.socket, "character_info",
     {
         characterName,
@@ -375,6 +380,11 @@ function assignCharacterInfo(roomCode, playerID, characterName, characterDescrip
 function send(clientSocket, type, dataObj = {}) 
 {
   if (clientSocket.readyState !== WebSocket.OPEN) return;
+
+  console.log(
+        "SENDING TO CLIENT:",
+        JSON.stringify(message)
+    );
 
   clientSocket.send(JSON.stringify({
     type,
@@ -595,8 +605,6 @@ function startVoting(hostSocket, roomCode, voteType) {
     return;
   }
 
-  room.currentRound = 1;
-
   for (const player of connectedPlayers) {
     player.playerState = PLAYER_STATE.VOTING;
 
@@ -622,7 +630,6 @@ function startVoting(hostSocket, roomCode, voteType) {
 
 function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, voteType) {
   const room = rooms.get(roomCode);
-  
 
   if (!room) {
     send(clientSocket, "vote_failed", {
@@ -648,7 +655,6 @@ function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, v
   }
 
   const roundNumber = room.currentRound;
-  console.log("room.currentRound =", room.currentRound);
 
   if (!roundNumber || roundNumber <= 0) {
     send(clientSocket, "vote_failed", {
