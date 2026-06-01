@@ -620,6 +620,7 @@ function startVoting(hostSocket, roomCode, voteType) {
 
 function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, voteType) {
   const room = rooms.get(roomCode);
+  
 
   if (!room) {
     send(clientSocket, "vote_failed", {
@@ -645,6 +646,7 @@ function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, v
   }
 
   const roundNumber = room.currentRound;
+  console.log("room.currentRound =", room.currentRound);
 
   if (!roundNumber || roundNumber <= 0) {
     send(clientSocket, "vote_failed", {
