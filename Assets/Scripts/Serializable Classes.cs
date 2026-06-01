@@ -19,10 +19,12 @@ public class OutgoingMessage<T>
     public T data;
 }
 // Payloads for sending data to server
+[System.Serializable]
 public class InformServerPayload
 {
     public string hostClientId;
 }
+[System.Serializable]
 public class CharacterInfoPayload
 {
     public string playerID;
@@ -39,12 +41,14 @@ public class PlayerJoinEnvelope
     public string playerName;
     public string playerID;
 }
+[System.Serializable]
 public class PlayerVote1Envelope
 {
     public string playerName;
     public string playerID;
     public string playerVote;
 }
+[System.Serializable]
 public class PlayerVote2Envelope
 {
     public string playerName;
