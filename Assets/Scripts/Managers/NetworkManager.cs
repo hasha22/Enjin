@@ -129,7 +129,7 @@ public class NetworkManager : MonoBehaviour
                 }
                 Debug.Log($"Player joined: {joinData.playerName}");
 
-                ConnectPlayer(joinData.playerName);
+                ConnectPlayer(joinData.playerName, joinData.playerID);
                 break;
             case "player_vote_1":
                 PlayerVote1Payload voteData1 = null;
@@ -300,13 +300,6 @@ public class NetworkManager : MonoBehaviour
 
     public void SendStartVotingRequest()
     {
-        if (instance != null && instance != this)
-        {
-            Debug.LogWarning("Wrong NetworkManager instance. Redirecting to real instance.");
-            instance.SendStartVotingRequest();
-            return;
-        }
-
         string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
 
         int round = 1;
@@ -334,7 +327,24 @@ public class NetworkManager : MonoBehaviour
 
         Send(json);
     }
-    public void ConnectPlayer(string playerName)
+    public void SendCharacterInfo(string characterName, string characterDescription, string keyword1, string keyword2)
+    {
+        string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
+
+        string json = "{"
+            + "\"type\":\"character_info\","
+            + "\"room\":\"" + Escape(code) + "\","
+            + "\"characterName\":\"" + Escape(characterName) + "\","
+            + "\"characterDescription\":\"" + Escape(characterDescription) + "\","
+            + "\"keyword1\":\"" + Escape(keyword1) + "\","
+            + "\"keyword2\":\"" + Escape(keyword2) + "\""
+            + "}";
+
+        Debug.Log("Sending character_info " + json);
+
+        Send(json);
+    }
+    public void ConnectPlayer(string playerName, string playerID)
     {
         if (allPlayers.Count >= 6)
         {
@@ -345,12 +355,18 @@ public class NetworkManager : MonoBehaviour
         GameObject newPlayer = Instantiate(playerPrefab, playerContainer);
         allPlayers.Add(newPlayer);
         Player player = newPlayer.GetComponent<Player>();
-        player.InitializePlayerData(playerName);
+        player.InitializePlayerData(playerName, playerID);
 
         //Instantiate & Update UI elements
         //Register player in a list of active players
         UIManager.instance.IncreaseDisplayedPlayerCount();
         UIManager.instance.UpdatePlayerCard(allPlayers.Count - 1, player);
+
+        SendCharacterInfo(player.selectedCharacter.characterName,
+            player.selectedCharacter.characterDescription,
+            player.selectedCharacter.characterKeywords[0].ToString(),
+            player.selectedCharacter.characterKeywords[1].ToString()
+        );
     }
     public void RegisterFirstPlayerVote(string playerID, string playerVote)
     {

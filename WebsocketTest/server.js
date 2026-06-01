@@ -1,7 +1,6 @@
 // Setup
 const WebSocket = require("ws");
 const wss = new WebSocket.Server({ port: 5085 });
-console.log("Server running on ws://localhost:5085");
 
 const rooms = new Map();
 
@@ -90,7 +89,6 @@ function registerHost(clientSocket, roomCode)
 
 function joinRoom(clientSocket, roomCode, playerName, clientId) 
 {
-  const character = getRandomCharacter();
   const room = rooms.get(roomCode);
 
   if (!room || !room.host) 
@@ -122,7 +120,6 @@ function joinRoom(clientSocket, roomCode, playerName, clientId)
     playerState: PLAYER_STATE.WAITING,
     connected: true,
     disconnectTimer: null,
-    character: character,
   };
   room.players.add(player);
   console.log(`Player joined: ${playerName} (total: ${room.players.size})`);
@@ -132,7 +129,6 @@ function joinRoom(clientSocket, roomCode, playerName, clientId)
     playerName,
     clientId,
     playerState: player.playerState,
-    character: player.character
   });
 
   // Notify Unity host
@@ -141,11 +137,8 @@ function joinRoom(clientSocket, roomCode, playerName, clientId)
     send(room.host, "player_joined", {
       playerName,
       playerID: clientId,
-      playerState: player.playerState,
-      characterId: player.character.id
     });
   }
-
   console.log(`[Room: ${roomCode}] Player joined: ${playerName}`);
 }
 
@@ -271,6 +264,25 @@ wss.on("connection", (clientSocket) => {
         }
 
         submitVote(clientSocket, roomCode, clientId, voteValue, submitReason);
+        return;
+      }
+
+      if(msg.type === "character_info")
+      {
+        console.log("Received character_info on server.");
+
+        const roomCode = normalize(msg.room || msg.roomCode);
+        const characterName = msg.characterName;
+        const characterDescription = msg.characterDescription;
+        const keyword1 = msg.keyword1;
+        const keyword2 = msg.keyword2;
+
+        if(!roomCode)
+        {
+          //send character_info failed 
+        }
+
+        assignCharacterInfo(clientSocket, roomCode, characterName, characterDescription, keyword1, keyword2);
         return;
       }
     });
@@ -464,15 +476,6 @@ function startGame(clientSocket, roomCode)
 
   console.log(`[Room: ${roomCode}] Game started`);
 };
-
-function getRandomCharacter()
-{
-  const activeCharacters = CHARACTERS.filter(character => character.active);
-
-  const randomIndex = Math.floor(Math.random() * activeCharacters.length);
-
-  return activeCharacters[randomIndex];
-} 
 
 function showScenario(clientSocket, roomCode)
 {

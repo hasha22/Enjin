@@ -73,7 +73,9 @@ function connectWebSocket() {
       case "vote_failed":
         handleVoteFailed(data);
         break;
-
+      case "character_info":
+        handleCharacterInfo(data);
+        break;
       case "error":
         log("Server error");
         break;
@@ -83,6 +85,17 @@ function connectWebSocket() {
         break;
     }
   };
+}
+function handleCharacterInfo(data)
+{
+  const character = buildCharacterObject(data);
+
+    sessionStorage.setItem(
+        "character",
+        JSON.stringify(character)
+    );
+
+    renderCharacterWidgetSafely();
 }
 
 function parseServerMessage(event) {
