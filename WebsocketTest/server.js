@@ -166,6 +166,9 @@ wss.on("connection", (clientSocket) => {
     if (msg.type === "host_register") 
     {
       const roomCode = normalize(msg.room || msg.roomCode);
+      const payload = msg.data;
+
+      console.log("Host registered with id:", payload.hostClientId)
 
       if (!roomCode) return;
 
@@ -210,6 +213,7 @@ wss.on("connection", (clientSocket) => {
     if (msg.type === "start_game_request")
     {
       const roomCode = normalize(msg.room);
+      const payload = msg.data;
       if (!roomCode)
       {
         send(clientSocket, "start_game_failed", {
@@ -217,6 +221,7 @@ wss.on("connection", (clientSocket) => {
         });
         return;
       }
+      console.log("Game started by host:", payload.hostClientId);
 
       return startGame(clientSocket, roomCode);
     }
@@ -224,6 +229,7 @@ wss.on("connection", (clientSocket) => {
     if (msg.type === "show_scenario_request")
       {
         const roomCode = normalize(msg.room);
+        const payload = msg.data;
 
         if (!roomCode)
         {
@@ -232,13 +238,13 @@ wss.on("connection", (clientSocket) => {
           });
           return;
         }
-
+        console.log("Showing scenario from host:", payload.hostClientId);
         return showScenario(clientSocket, roomCode);
       }
 
     if (msg.type === "start_voting_request") {
         const roomCode = normalize(msg.room || msg.roomCode);
-        const roundNumber = Number(msg.roundNumber || msg.currentRound);
+        const payload = msg.data;
 
         if (!roomCode) {
           send(clientSocket, "start_voting_failed", {
@@ -246,8 +252,8 @@ wss.on("connection", (clientSocket) => {
           });
           return;
         }
-
-        startVoting(clientSocket, roomCode, roundNumber);
+        console.log("Succesfully starting the voting round on host ", payload.hostClientId);
+        startVoting(clientSocket, roomCode);
         return;
       }
 
@@ -273,18 +279,8 @@ wss.on("connection", (clientSocket) => {
         console.log("Received character_info on server.");
 
         const roomCode = normalize(msg.room || msg.roomCode);
-        const playerID = msg.playerID;
-        const characterName = msg.characterName;
-        const characterDescription = msg.characterDescription;
-        const keyword1 = msg.keyword1;
-        const keyword2 = msg.keyword2;
-
-        if(!roomCode)
-        {
-          //send character_info failed 
-        }
-
-        assignCharacterInfo(clientSocket, roomCode, playerID, characterName, characterDescription, keyword1, keyword2);
+        const payload = msg.data;
+        assignCharacterInfo(roomCode, payload.playerID, payload.characterName, payload.characterDescription, payload.keyword1, payload.keyword2);
         return;
       }
     });
@@ -570,7 +566,7 @@ function showScenario(clientSocket, roomCode)
 }
 
 
-function startVoting(hostSocket, roomCode, requestedRoundNumber) {
+function startVoting(hostSocket, roomCode) {
   const room = rooms.get(roomCode);
 
   if (!room) {
@@ -596,22 +592,6 @@ function startVoting(hostSocket, roomCode, requestedRoundNumber) {
     return;
   }
 
-  const validRequestedRound =
-    Number.isInteger(requestedRoundNumber) && requestedRoundNumber > 0;
-
-  const roundNumber = validRequestedRound
-    ? requestedRoundNumber
-    : room.currentRound + 1;
-
-  room.currentRound = roundNumber;
-
-  if (!room.roundVotes[roundNumber]) {
-    room.roundVotes[roundNumber] = {};
-  }
-
-  const votingDuration = 60;
-  const votingStartedAt = Date.now();
-
   for (const player of connectedPlayers) {
     player.playerState = PLAYER_STATE.VOTING;
 
@@ -621,10 +601,6 @@ function startVoting(hostSocket, roomCode, requestedRoundNumber) {
         playerName: player.playerName,
         clientId: player.clientId,
         playerState: player.playerState,
-        currentRound: room.currentRound,
-        roundNumber: room.currentRound,
-        votingDuration: votingDuration,
-        votingStartedAt: votingStartedAt,
         character: player.character
       });
     }
@@ -632,13 +608,9 @@ function startVoting(hostSocket, roomCode, requestedRoundNumber) {
 
   send(hostSocket, "start_voting_success", {
     room: roomCode,
-    currentRound: room.currentRound,
-    roundNumber: room.currentRound,
-    votingDuration: votingDuration,
-    votingStartedAt: votingStartedAt
   });
 
-  console.log(`[Room: ${roomCode}] Voting started for round ${room.currentRound}`);
+  console.log(`[Room: ${roomCode}] Voting started`);
 }
 
 

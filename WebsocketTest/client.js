@@ -236,14 +236,6 @@ function handleShowScenario(data) {
 function handleVotingStarted(data) {
   savePlayerData(data);
 
-  currentRound = Number(data.currentRound) || 1;
-  votingDuration = Number(data.votingDuration) || 60;
-  votingStartedAt = Number(data.votingStartedAt) || Date.now();
-
-  sessionStorage.setItem("currentRound", currentRound);
-  sessionStorage.setItem("votingDuration", votingDuration);
-  sessionStorage.setItem("votingStartedAt", votingStartedAt);
-
   resetVotingScreen();
   renderCharacterWidgetSafely();
   showScreen("votingScreen");
@@ -318,16 +310,11 @@ function setupVotingControls() {
 function resetVotingScreen() {
   hasSubmittedVote = false;
 
-  const roundNumber = document.getElementById("roundNumber");
   const voteSlider = document.getElementById("voteSlider");
   const voteValue = document.getElementById("voteValue");
   const submitVoteBtn = document.getElementById("submitVoteBtn");
   const votingContent = document.getElementById("votingContent");
   const waitingContent = document.getElementById("waitingContent");
-
-  if (roundNumber) {
-    roundNumber.innerText = currentRound;
-  }
 
   if (voteSlider && voteValue) {
     voteSlider.value = 50;

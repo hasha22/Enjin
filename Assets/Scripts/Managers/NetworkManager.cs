@@ -112,10 +112,10 @@ public class NetworkManager : MonoBehaviour
         switch (msg.type)
         {
             case "player_joined":
-                PlayerJoinPayload joinData = null;
+                PlayerJoinEnvelope joinData = null;
                 try
                 {
-                    joinData = JsonUtility.FromJson<PlayerJoinPayload>(msg.data);
+                    joinData = JsonUtility.FromJson<PlayerJoinEnvelope>(msg.data);
                 }
                 catch
                 {
@@ -132,10 +132,10 @@ public class NetworkManager : MonoBehaviour
                 ConnectPlayer(joinData.playerName, joinData.playerID);
                 break;
             case "player_vote_1":
-                PlayerVote1Payload voteData1 = null;
+                PlayerVote1Envelope voteData1 = null;
                 try
                 {
-                    voteData1 = JsonUtility.FromJson<PlayerVote1Payload>(msg.data);
+                    voteData1 = JsonUtility.FromJson<PlayerVote1Envelope>(msg.data);
                 }
                 catch
                 {
@@ -150,10 +150,10 @@ public class NetworkManager : MonoBehaviour
                 RegisterFirstPlayerVote(voteData1.playerID, voteData1.playerVote);
                 break;
             case "player_vote_2":
-                PlayerVote2Payload voteData2 = null;
+                PlayerVote2Envelope voteData2 = null;
                 try
                 {
-                    voteData2 = JsonUtility.FromJson<PlayerVote2Payload>(msg.data);
+                    voteData2 = JsonUtility.FromJson<PlayerVote2Envelope>(msg.data);
                 }
                 catch
                 {
@@ -240,14 +240,12 @@ public class NetworkManager : MonoBehaviour
     }
     public void SendHostRegister()
     {
-        string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
-        string json = "{"
-            + "\"type\":\"host_register\","
-            + "\"room\":\"" + Escape(code) + "\","
-            + "\"clientId\":\"" + Escape(hostClientId) + "\""
-            + "}";
-        Debug.Log("Sending host_register: " + json);
-        Send(json);
+        SendMessageToServer(
+        "host_register",
+        new InformServerPayload
+        {
+            hostClientId = this.hostClientId
+        });
     }
 
     public void StartGameFromButton()
@@ -263,87 +261,45 @@ public class NetworkManager : MonoBehaviour
 
     public void SendStartGameRequest()
     {
-        string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
-
-        string json = "{"
-            + "\"type\":\"start_game_request\","
-            + "\"room\":\"" + Escape(code) + "\","
-            + "\"clientId\":\"" + Escape(hostClientId) + "\""
-            + "}";
-
-        Debug.Log("Sending start_game_request: " + json);
-        Send(json);
+        SendMessageToServer(
+        "start_game_request",
+        new InformServerPayload
+        {
+            hostClientId = this.hostClientId
+        });
     }
 
     public void SendShowScenarioRequest()
     {
-        if (instance != null && instance != this)
-        {
-            Debug.LogWarning("Wrong NetworkManager instance. Redirecting to real instance.");
-            instance.SendShowScenarioRequest();
-            return;
-        }
-        string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
-
-        string json = "{"
-            + "\"type\":\"show_scenario_request\","
-            + "\"room\":\"" + Escape(code) + "\","
-            + "\"clientId\":\"" + Escape(hostClientId) + "\""
-            + "}";
-
-        Debug.Log("Sending show_scenario_request: " + json);
-        Debug.Log("NetworkManager instance check: " + gameObject.name);
-        Debug.Log("WebSocket state before show_scenario: " + (websocket != null ? websocket.State.ToString() : "null"));
-
-        Send(json);
+        SendMessageToServer(
+            "show_scenario_request",
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            });
     }
 
     public void SendStartVotingRequest()
     {
-        string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
-
-        int round = 1;
-
-        if (GameManager.instance != null)
-        {
-            round = GameManager.instance.currentRound;
-
-            if (round <= 0)
+        SendMessageToServer(
+            "start_voting_request",
+            new InformServerPayload
             {
-                round = 1;
-            }
-        }
-
-        string json = "{"
-            + "\"type\":\"start_voting_request\","
-            + "\"room\":\"" + Escape(code) + "\","
-            + "\"clientId\":\"" + Escape(hostClientId) + "\","
-            + "\"currentRound\":" + round
-            + "}";
-
-        Debug.Log("Sending start_voting_request: " + json);
-        Debug.Log("NetworkManager instance check: " + gameObject.name);
-        Debug.Log("WebSocket state before start_voting: " + (websocket != null ? websocket.State.ToString() : "null"));
-
-        Send(json);
+                hostClientId = this.hostClientId
+            });
     }
     public void SendCharacterInfo(string playerID, string characterName, string characterDescription, string keyword1, string keyword2)
     {
-        string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
-
-        string json = "{"
-            + "\"type\":\"character_info\","
-            + "\"room\":\"" + Escape(code) + "\","
-            + "\"playerID\":\"" + playerID + "\","
-            + "\"characterName\":\"" + Escape(characterName) + "\","
-            + "\"characterDescription\":\"" + Escape(characterDescription) + "\","
-            + "\"keyword1\":\"" + Escape(keyword1) + "\","
-            + "\"keyword2\":\"" + Escape(keyword2) + "\""
-            + "}";
-
-        Debug.Log("Sending character_info " + json);
-
-        Send(json);
+        SendMessageToServer(
+        "character_info",
+        new CharacterInfoPayload
+        {
+            playerID = playerID,
+            characterName = characterName,
+            characterDescription = characterDescription,
+            keyword1 = keyword1,
+            keyword2 = keyword2
+        });
     }
     public void ConnectPlayer(string playerName, string playerID)
     {
@@ -401,7 +357,6 @@ public class NetworkManager : MonoBehaviour
     }
     public void RegisterSecondPlayerVote(string playerID, string playerVote)
     {
-        Debug.Log("meow");
         foreach (GameObject player in allPlayers)
         {
             Player playerScript = player.GetComponent<Player>();
@@ -413,6 +368,22 @@ public class NetworkManager : MonoBehaviour
                 break;
             }
         }
+    }
+    private void SendMessageToServer<T>(string type, T payload)
+    {
+        OutgoingMessage<T> message =
+            new OutgoingMessage<T>()
+            {
+                type = type,
+                room = roomCode.Trim().ToUpper(),
+                data = payload
+            };
+
+        string json = JsonUtility.ToJson(message);
+
+        Debug.Log($"Sending {type}: {json}");
+
+        Send(json);
     }
     public void Send(string json)
     {
