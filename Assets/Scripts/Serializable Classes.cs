@@ -18,18 +18,18 @@ public class PlayerJoinPayload
 }
 public class PlayerVote1Payload
 {
+    public string playerName;
     public string playerID;
     public string playerVote;
 }
 public class PlayerVote2Payload
 {
+    public string playerName;
     public string playerID;
     public string playerVote;
 }
 public class PlayerCharacterPayload
 {
-    public string playerID;
-    public string playerCharacter;
     public string characterName;
     public string characterDescription;
     public string keyword1;

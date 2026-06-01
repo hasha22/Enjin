@@ -4,6 +4,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Objects/Topic")]
 public class Topic : ScriptableObject
 {
+    [TextArea(1, 10)]
+    public string shortenedName;
     [TextArea(2, 10)]
     public string topicName;
     [TextArea(3, 10)]

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5be028ba93737df409e7a198304f8a7c, type: 3}
   m_Name: Topic 4
   m_EditorClassIdentifier: Assembly-CSharp::Topic
+  shortenedName: Enjin, the developer!
   topicName: Everyone uses Enjin for this... right?
   topicDescription: 'As Enjin is becoming more and more popular, employees within
     the organization are using Enjin for a wide variety of different tasks, without
@@ -19,16 +20,12 @@ MonoBehaviour:
   formulatedPolicy:
     policyName: Formulated Policy
     policyDescription: All Enjin usage should be documented within the company, and
-      inputting sensitive company is forbidden unless approved by management.
+      inputting sensitive company data is forbidden unless approved by management.
     keywords: 02000000
-    enjinPosValue: 0
-    moralePosValue: 0
-    ethicPosValue: 0
-    profitPosValue: 0
-    enjinNegValue: 0
-    moraleNegValue: 0
-    ethicNegValue: 0
-    profitNegValue: 0
+    enjinValue: 0
+    moraleValue: 0
+    ethicValue: 0
+    profitValue: 0
   enjinPolicy:
     policyName: Enjin V4.0
     policyDescription: Enjin 4.0, our newest, most advanced model is now capable
@@ -37,11 +34,7 @@ MonoBehaviour:
       quickly for a meeting? Need a new website design, or maybe you want to make
       a new phone app? There is nothing Enjin cannot do for you!
     keywords: 0100000004000000
-    enjinPosValue: 0
-    moralePosValue: 0
-    ethicPosValue: 0
-    profitPosValue: 0
-    enjinNegValue: 0
-    moraleNegValue: 0
-    ethicNegValue: 0
-    profitNegValue: 0
+    enjinValue: 0
+    moraleValue: 0
+    ethicValue: 0
+    profitValue: 0

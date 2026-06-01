@@ -25,11 +25,11 @@ public class Player : MonoBehaviour
     {
         return secondVote;
     }
-    public void InitializePlayerData(string playerName)
+    public void InitializePlayerData(string playerName, string playerID)
     {
         selectedCharacter = CharacterDatabase.instance.GetRandomCharacter();
         this.playerName = playerName;
-        playerId = "1";
+        playerId = playerID;
     }
     public void SetFirstVote(VoteTypes vote)
     {

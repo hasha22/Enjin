@@ -129,7 +129,7 @@ public class NetworkManager : MonoBehaviour
                 }
                 Debug.Log($"Player joined: {joinData.playerName}");
 
-                ConnectPlayer(joinData.playerName);
+                ConnectPlayer(joinData.playerName, joinData.playerID);
                 break;
             case "player_vote_1":
                 PlayerVote1Payload voteData1 = null;
@@ -236,7 +236,7 @@ public class NetworkManager : MonoBehaviour
             case "start_voting_failed":
                 Debug.LogWarning("Start voting failed: " + msg.data);
                 break;
-                    }
+        }
     }
     public void SendHostRegister()
     {
@@ -275,72 +275,76 @@ public class NetworkManager : MonoBehaviour
         Send(json);
     }
 
-   public void SendShowScenarioRequest()
-{
-    if (instance != null && instance != this)
+    public void SendShowScenarioRequest()
     {
-        Debug.LogWarning("Wrong NetworkManager instance. Redirecting to real instance.");
-        instance.SendShowScenarioRequest();
-        return;
-    }
-
-
-    
-    
-
-
-    string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
-
-    string json = "{"
-        + "\"type\":\"show_scenario_request\","
-        + "\"room\":\"" + Escape(code) + "\","
-        + "\"clientId\":\"" + Escape(hostClientId) + "\""
-        + "}";
-
-    Debug.Log("Sending show_scenario_request: " + json);
-    Debug.Log("NetworkManager instance check: " + gameObject.name);
-    Debug.Log("WebSocket state before show_scenario: " + (websocket != null ? websocket.State.ToString() : "null"));
-
-    Send(json);
-}
-
-public void SendStartVotingRequest()
-{
-    if (instance != null && instance != this)
-    {
-        Debug.LogWarning("Wrong NetworkManager instance. Redirecting to real instance.");
-        instance.SendStartVotingRequest();
-        return;
-    }
-
-    string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
-
-    int round = 1;
-
-    if (GameManager.instance != null)
-    {
-        round = GameManager.instance.currentRound;
-
-        if (round <= 0)
+        if (instance != null && instance != this)
         {
-            round = 1;
+            Debug.LogWarning("Wrong NetworkManager instance. Redirecting to real instance.");
+            instance.SendShowScenarioRequest();
+            return;
         }
+        string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
+
+        string json = "{"
+            + "\"type\":\"show_scenario_request\","
+            + "\"room\":\"" + Escape(code) + "\","
+            + "\"clientId\":\"" + Escape(hostClientId) + "\""
+            + "}";
+
+        Debug.Log("Sending show_scenario_request: " + json);
+        Debug.Log("NetworkManager instance check: " + gameObject.name);
+        Debug.Log("WebSocket state before show_scenario: " + (websocket != null ? websocket.State.ToString() : "null"));
+
+        Send(json);
     }
 
-    string json = "{"
-        + "\"type\":\"start_voting_request\","
-        + "\"room\":\"" + Escape(code) + "\","
-        + "\"clientId\":\"" + Escape(hostClientId) + "\","
-        + "\"currentRound\":" + round
-        + "}";
+    public void SendStartVotingRequest()
+    {
+        string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
 
-    Debug.Log("Sending start_voting_request: " + json);
-    Debug.Log("NetworkManager instance check: " + gameObject.name);
-    Debug.Log("WebSocket state before start_voting: " + (websocket != null ? websocket.State.ToString() : "null"));
+        int round = 1;
 
-    Send(json);
-}
-    public void ConnectPlayer(string playerName)
+        if (GameManager.instance != null)
+        {
+            round = GameManager.instance.currentRound;
+
+            if (round <= 0)
+            {
+                round = 1;
+            }
+        }
+
+        string json = "{"
+            + "\"type\":\"start_voting_request\","
+            + "\"room\":\"" + Escape(code) + "\","
+            + "\"clientId\":\"" + Escape(hostClientId) + "\","
+            + "\"currentRound\":" + round
+            + "}";
+
+        Debug.Log("Sending start_voting_request: " + json);
+        Debug.Log("NetworkManager instance check: " + gameObject.name);
+        Debug.Log("WebSocket state before start_voting: " + (websocket != null ? websocket.State.ToString() : "null"));
+
+        Send(json);
+    }
+    public void SendCharacterInfo(string characterName, string characterDescription, string keyword1, string keyword2)
+    {
+        string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
+
+        string json = "{"
+            + "\"type\":\"character_info\","
+            + "\"room\":\"" + Escape(code) + "\","
+            + "\"characterName\":\"" + Escape(characterName) + "\","
+            + "\"characterDescription\":\"" + Escape(characterDescription) + "\","
+            + "\"keyword1\":\"" + Escape(keyword1) + "\","
+            + "\"keyword2\":\"" + Escape(keyword2) + "\""
+            + "}";
+
+        Debug.Log("Sending character_info " + json);
+
+        Send(json);
+    }
+    public void ConnectPlayer(string playerName, string playerID)
     {
         if (allPlayers.Count >= 6)
         {
@@ -351,13 +355,18 @@ public void SendStartVotingRequest()
         GameObject newPlayer = Instantiate(playerPrefab, playerContainer);
         allPlayers.Add(newPlayer);
         Player player = newPlayer.GetComponent<Player>();
-        player.InitializePlayerData(playerName);
-        player.SetFirstVote(VoteTypes.Agree);
+        player.InitializePlayerData(playerName, playerID);
 
         //Instantiate & Update UI elements
         //Register player in a list of active players
         UIManager.instance.IncreaseDisplayedPlayerCount();
         UIManager.instance.UpdatePlayerCard(allPlayers.Count - 1, player);
+
+        SendCharacterInfo(player.selectedCharacter.characterName,
+            player.selectedCharacter.characterDescription,
+            player.selectedCharacter.characterKeywords[0].ToString(),
+            player.selectedCharacter.characterKeywords[1].ToString()
+        );
     }
     public void RegisterFirstPlayerVote(string playerID, string playerVote)
     {
