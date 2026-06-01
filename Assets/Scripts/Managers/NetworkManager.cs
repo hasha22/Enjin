@@ -218,7 +218,25 @@ public class NetworkManager : MonoBehaviour
             case "show_scenario_failed":
                 Debug.LogWarning("Show scenario failed: " + msg.data);
                 break;
-        }
+
+            case "start_voting_success":
+                Debug.Log("Server confirmed: voting started");
+
+                if (GameUIManager.instance != null)
+                {
+                    GameUIManager.instance.NextScreen();
+                }
+                else
+                {
+                    Debug.LogWarning("GameUIManager instance is missing.");
+                }
+
+                break;
+
+            case "start_voting_failed":
+                Debug.LogWarning("Start voting failed: " + msg.data);
+                break;
+                    }
     }
     public void SendHostRegister()
     {
@@ -266,6 +284,11 @@ public class NetworkManager : MonoBehaviour
         return;
     }
 
+
+    
+    
+
+
     string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
 
     string json = "{"
@@ -281,6 +304,42 @@ public class NetworkManager : MonoBehaviour
     Send(json);
 }
 
+public void SendStartVotingRequest()
+{
+    if (instance != null && instance != this)
+    {
+        Debug.LogWarning("Wrong NetworkManager instance. Redirecting to real instance.");
+        instance.SendStartVotingRequest();
+        return;
+    }
+
+    string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
+
+    int round = 1;
+
+    if (GameManager.instance != null)
+    {
+        round = GameManager.instance.currentRound;
+
+        if (round <= 0)
+        {
+            round = 1;
+        }
+    }
+
+    string json = "{"
+        + "\"type\":\"start_voting_request\","
+        + "\"room\":\"" + Escape(code) + "\","
+        + "\"clientId\":\"" + Escape(hostClientId) + "\","
+        + "\"currentRound\":" + round
+        + "}";
+
+    Debug.Log("Sending start_voting_request: " + json);
+    Debug.Log("NetworkManager instance check: " + gameObject.name);
+    Debug.Log("WebSocket state before start_voting: " + (websocket != null ? websocket.State.ToString() : "null"));
+
+    Send(json);
+}
     public void ConnectPlayer(string playerName)
     {
         if (allPlayers.Count >= 6)

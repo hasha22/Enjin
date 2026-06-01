@@ -86,7 +86,40 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void ContinueToScenario()
+
+public void ContinueButtonPressed()
+{
+    Debug.Log("Continue button pressed. Current screen: " + currentScreen);
+
+    switch (currentScreen)
+    {
+        case GameScreens.CharacterIntroScreen:
+            ContinueToScenario();
+            break;
+
+        case GameScreens.SituationExplanationScreen:
+            StartVotingPhase();
+            break;
+
+        default:
+            Debug.LogWarning("No Continue action assigned for screen: " + currentScreen);
+            break;
+    }
+}
+
+public void StartVotingPhase()
+{
+    if (NetworkManager.instance != null)
+    {
+        NetworkManager.instance.SendStartVotingRequest();
+    }
+    else
+    {
+        Debug.LogWarning("NetworkManager instance is missing.");
+    }
+}
+
+public void ContinueToScenario()
 {
     if (NetworkManager.instance != null)
     {
@@ -102,3 +135,4 @@ public class GameManager : MonoBehaviour
         return currentTopic;
     }
 }
+
