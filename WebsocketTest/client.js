@@ -90,15 +90,15 @@ function connectWebSocket() {
 }
 function handleCharacterInfo(data)
 {
+   console.log("CHARACTER_INFO RECEIVED:", data);
   const character = buildCharacterObject(data);
   console.log("Built character:", character);
 
-  
-
-    sessionStorage.setItem(
+  sessionStorage.setItem(
         "character",
         JSON.stringify(character)
     );
+    console.log("STORED CHARACTER:", sessionStorage.getItem("character"));
 
     renderCharacterWidgetSafely();
 }
@@ -115,7 +115,7 @@ function buildCharacterObject(data)
             fullImage = "Char1.png";
             backgroundColor = "#99C998";
             break;
-        case "CulturalOrganiser":
+        case "CulturalOrganizer":
             faceImage = "Char2Face.png";
             fullImage = "Char2.png";
             backgroundColor = "#7EA5D8";

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfbb24d7071b4ad459a7ae40510e8f2a, type: 3}
   m_Name: The Finance Employee
   m_EditorClassIdentifier: Assembly-CSharp::Character
-  characterName: The Finance Employee
+  characterName: FinanceEmployee
   characterDescription: "You understand the hype around Enjin, but you don\u2019t
     exactly understand how it works yet. You don\u2019t know for certain if Enjin
     is capable of judging work. You are more experienced in what the plans that are

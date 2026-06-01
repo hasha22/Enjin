@@ -231,6 +231,7 @@
     attachCharacterWidgetEvents();
 
     const character = getSavedCharacter();
+    console.log("RENDERING CHARACTER:", character);
     const root = document.getElementById(ROOT_ID);
 
     if (!character) {

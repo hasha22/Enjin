@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfbb24d7071b4ad459a7ae40510e8f2a, type: 3}
   m_Name: The Cultural Organizer
   m_EditorClassIdentifier: Assembly-CSharp::Character
-  characterName: Cultural Organizer
+  characterName: CulturalOrganizer
   characterDescription: "You don't trust Enjin. You believe your own voice is more
     important than Enjin's voice. If Enjin is used, you want to understand why -
     Enjin needs to be a transparent tool.  \n\nThink about how you can maintain the

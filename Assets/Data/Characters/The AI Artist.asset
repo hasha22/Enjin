@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfbb24d7071b4ad459a7ae40510e8f2a, type: 3}
   m_Name: The AI Artist
   m_EditorClassIdentifier: Assembly-CSharp::Character
-  characterName: AI Artist
+  characterName: AIArtist
   characterDescription: "You think Enjin shouldn\u2019t be discussed, it should be
     used. Moreover, you think that if Enjin isn\u2019t used, the sector will fall
     behind. You care more about what you create, than that you created it.\n\nThink

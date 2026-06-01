@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfbb24d7071b4ad459a7ae40510e8f2a, type: 3}
   m_Name: The UI Designer
   m_EditorClassIdentifier: Assembly-CSharp::Character
-  characterName: The UI Designer
+  characterName: UIDesigner
   characterDescription: "You believe Enjin shouldn\u2019t replace any work. You think
     Enjin only has a negative influence on creativity, and that by using it artists
     sell their creativity to big corporations You believe Enjin can be used for administrative
