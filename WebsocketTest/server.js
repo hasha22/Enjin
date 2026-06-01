@@ -123,7 +123,6 @@ function joinRoom(clientSocket, roomCode, playerName, clientId)
     connected: true,
     disconnectTimer: null,
     character: character,
-    choices: {}
   };
   room.players.add(player);
   console.log(`Player joined: ${playerName} (total: ${room.players.size})`);
@@ -646,11 +645,7 @@ function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason) {
   const voteData = {
     roundNumber: roundNumber,
     voteValue: voteValue,
-    submitReason: submitReason,
-    submittedAt: submittedAt
   };
-
-  player.choices[roundNumber] = voteData;
 
   if (!room.roundVotes[roundNumber]) {
     room.roundVotes[roundNumber] = {};
@@ -660,8 +655,6 @@ function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason) {
     playerName: player.playerName,
     playerID: clientId,
     voteValue: voteValue,
-    submitReason: submitReason,
-    submittedAt: submittedAt
   };
 
   player.playerState = PLAYER_STATE.WAITING;
@@ -675,15 +668,10 @@ function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason) {
   });
 
   if (room.host && room.host.readyState === WebSocket.OPEN) {
-    send(room.host, "player_choice_submitted", {
-      room: roomCode,
-      currentRound: roundNumber,
-      roundNumber: roundNumber,
+    send(room.host, "player_vote_1", {
       playerName: player.playerName,
       playerID: clientId,
       voteValue: voteValue,
-      submitReason: submitReason,
-      submittedAt: submittedAt
     });
   }
 
