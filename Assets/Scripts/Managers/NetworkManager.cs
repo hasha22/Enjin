@@ -287,7 +287,7 @@ public class NetworkManager : MonoBehaviour
             {
                 hostClientId = this.hostClientId
             });
-	}
+    }
     public void SendCharacterInfo(string playerID, string characterName, string characterDescription, string keyword1, string keyword2)
     {
         SendMessageToServer(
@@ -410,10 +410,6 @@ public class NetworkManager : MonoBehaviour
         {
             await websocket.Close();
         }
-    }
-    private string Escape(string s)
-    {
-        return (s ?? "").Replace("\\", "\\\\").Replace("\"", "\\\"");
     }
     public List<GameObject> GetPlayerList()
     {
