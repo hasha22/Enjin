@@ -604,7 +604,7 @@ function startVoting(hostSocket, roomCode, requestedRoundNumber, voteType) {
         playerName: player.playerName,
         clientId: player.clientId,
         playerState: player.playerState,
-        character: player.character
+        character: player.character,
         voteType: voteType
       });
     }
