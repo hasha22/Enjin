@@ -122,7 +122,8 @@ function joinRoom(clientSocket, roomCode, playerName, clientId)
     playerState: PLAYER_STATE.WAITING,
     connected: true,
     disconnectTimer: null,
-    character: character
+    character: character,
+    choices: {}
   };
   room.players.add(player);
   console.log(`Player joined: ${playerName} (total: ${room.players.size})`);
@@ -244,6 +245,7 @@ wss.on("connection", (clientSocket) => {
 
     if (msg.type === "start_voting_request") {
         const roomCode = normalize(msg.room || msg.roomCode);
+        const roundNumber = Number(msg.roundNumber || msg.currentRound);
 
         if (!roomCode) {
           send(clientSocket, "start_voting_failed", {
@@ -252,7 +254,24 @@ wss.on("connection", (clientSocket) => {
           return;
         }
 
-        startVoting(clientSocket, roomCode);
+        startVoting(clientSocket, roomCode, roundNumber);
+        return;
+      }
+
+      if (msg.type === "submit_vote") {
+        const roomCode = normalize(msg.room || msg.roomCode);
+        const clientId = msg.clientId;
+        const voteValue = Number(msg.voteValue);
+        const submitReason = msg.submitReason || "manual";
+
+        if (!roomCode || !clientId) {
+          send(clientSocket, "vote_failed", {
+            reason: "Room code and clientId are required"
+          });
+          return;
+        }
+
+        submitVote(clientSocket, roomCode, clientId, voteValue, submitReason);
         return;
       }
     });
@@ -317,7 +336,9 @@ function getRoom(roomCode)
   if (!rooms.has(roomCode)) {
     rooms.set(roomCode, {
       host: null,
-      players: new Set()
+      players: new Set(),
+        currentRound: 0,
+        roundVotes: {}
     });
   }
   return rooms.get(roomCode);
@@ -506,7 +527,7 @@ function showScenario(clientSocket, roomCode)
 }
 
 
-function startVoting(hostSocket, roomCode) {
+function startVoting(hostSocket, roomCode, requestedRoundNumber) {
   const room = rooms.get(roomCode);
 
   if (!room) {
@@ -532,28 +553,141 @@ function startVoting(hostSocket, roomCode) {
     return;
   }
 
+  const validRequestedRound =
+    Number.isInteger(requestedRoundNumber) && requestedRoundNumber > 0;
+
+  const roundNumber = validRequestedRound
+    ? requestedRoundNumber
+    : room.currentRound + 1;
+
+  room.currentRound = roundNumber;
+
+  if (!room.roundVotes[roundNumber]) {
+    room.roundVotes[roundNumber] = {};
+  }
+
   const votingDuration = 60;
   const votingStartedAt = Date.now();
 
   for (const player of connectedPlayers) {
     player.playerState = PLAYER_STATE.VOTING;
 
-    send(player.socket, "voting_started", {
-      room: roomCode,
-      playerName: player.playerName,
-      clientId: player.clientId,
-      playerState: player.playerState,
-      votingDuration: votingDuration,
-      votingStartedAt: votingStartedAt,
-      character: player.character
-    });
+    if (player.socket.readyState === WebSocket.OPEN) {
+      send(player.socket, "voting_started", {
+        room: roomCode,
+        playerName: player.playerName,
+        clientId: player.clientId,
+        playerState: player.playerState,
+        currentRound: room.currentRound,
+        roundNumber: room.currentRound,
+        votingDuration: votingDuration,
+        votingStartedAt: votingStartedAt,
+        character: player.character
+      });
+    }
   }
 
   send(hostSocket, "start_voting_success", {
     room: roomCode,
+    currentRound: room.currentRound,
+    roundNumber: room.currentRound,
     votingDuration: votingDuration,
     votingStartedAt: votingStartedAt
   });
 
-  console.log(`[Room: ${roomCode}] Voting started`);
+  console.log(`[Room: ${roomCode}] Voting started for round ${room.currentRound}`);
+}
+
+
+function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason) {
+  const room = rooms.get(roomCode);
+
+  if (!room) {
+    send(clientSocket, "vote_failed", {
+      reason: "Room not found"
+    });
+    return;
+  }
+
+  const player = [...room.players].find(player => player.clientId === clientId);
+
+  if (!player) {
+    send(clientSocket, "vote_failed", {
+      reason: "Player not found"
+    });
+    return;
+  }
+
+  if (player.socket !== clientSocket) {
+    send(clientSocket, "vote_failed", {
+      reason: "This socket does not belong to this player"
+    });
+    return;
+  }
+
+  const roundNumber = room.currentRound;
+
+  if (!roundNumber || roundNumber <= 0) {
+    send(clientSocket, "vote_failed", {
+      reason: "Voting has not started yet"
+    });
+    return;
+  }
+
+  if (Number.isNaN(voteValue)) {
+    send(clientSocket, "vote_failed", {
+      reason: "Vote value is invalid"
+    });
+    return;
+  }
+
+  const submittedAt = new Date().toISOString();
+
+  const voteData = {
+    roundNumber: roundNumber,
+    voteValue: voteValue,
+    submitReason: submitReason,
+    submittedAt: submittedAt
+  };
+
+  player.choices[roundNumber] = voteData;
+
+  if (!room.roundVotes[roundNumber]) {
+    room.roundVotes[roundNumber] = {};
+  }
+
+  room.roundVotes[roundNumber][clientId] = {
+    playerName: player.playerName,
+    playerID: clientId,
+    voteValue: voteValue,
+    submitReason: submitReason,
+    submittedAt: submittedAt
+  };
+
+  player.playerState = PLAYER_STATE.WAITING;
+
+  send(clientSocket, "vote_saved", {
+    room: roomCode,
+    currentRound: roundNumber,
+    roundNumber: roundNumber,
+    voteValue: voteValue,
+    playerState: player.playerState
+  });
+
+  if (room.host && room.host.readyState === WebSocket.OPEN) {
+    send(room.host, "player_choice_submitted", {
+      room: roomCode,
+      currentRound: roundNumber,
+      roundNumber: roundNumber,
+      playerName: player.playerName,
+      playerID: clientId,
+      voteValue: voteValue,
+      submitReason: submitReason,
+      submittedAt: submittedAt
+    });
+  }
+
+  console.log(
+    `[Room: ${roomCode}] ${player.playerName} voted ${voteValue} in round ${roundNumber}`
+  );
 }
