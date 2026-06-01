@@ -168,7 +168,7 @@ wss.on("connection", (clientSocket) => {
       const roomCode = normalize(msg.room || msg.roomCode);
       const payload = msg.data;
 
-      console.log("Host registered with id:", payload.hostClientId)
+      console.log("Host registered with id:", payload.hostClientId);
 
       if (!roomCode) return;
 
