@@ -50,7 +50,6 @@ function connectWebSocket() {
       case "join_room_success":
         handleJoinRoomSuccess(data);
         break;
-
       case "join_room_failed":
         joinedRoomCode = null;
         log("Join failed: " + (data.reason || "Unknown reason"));
@@ -91,15 +90,12 @@ function connectWebSocket() {
 }
 function handleCharacterInfo(data)
 {
-   console.log("CHARACTER_INFO RECEIVED:", data);
   const character = buildCharacterObject(data);
-  console.log("Built character:", character);
 
   sessionStorage.setItem(
         "character",
         JSON.stringify(character)
     );
-    console.log("STORED CHARACTER:", sessionStorage.getItem("character"));
 
     renderCharacterWidgetSafely();
 }
@@ -149,8 +145,6 @@ function buildCharacterObject(data)
 }
 
 function parseServerMessage(event) {
-  console.log("EVENT DATA TYPE:", typeof event.data);
-  console.log("EVENT DATA:", event.data);
 
   let msg;
 
@@ -185,27 +179,6 @@ function parseServerMessage(event) {
     type: msg.type,
     data: data
   };
-  /*
-  const msg = JSON.parse(event.data);
-
-  let data = {};
-
-  if (typeof msg.data === "string" && msg.data.length > 0) {
-    try {
-      data = JSON.parse(msg.data);
-    } catch (error) {
-      console.warn("Could not parse msg.data as JSON:", msg.data);
-      data = {};
-    }
-  } else if (msg.data && typeof msg.data === "object") {
-    data = msg.data;
-  }
-
-  return {
-    type: msg.type,
-    data: data
-  };
-  */
 }
 
 function joinRoom() {
@@ -246,10 +219,6 @@ function handleJoinRoomSuccess(data) {
 
   savePlayerData(data);
 
-  if (data.character) {
-    sessionStorage.setItem("character", JSON.stringify(data.character));
-  }
-
   setStatus("Connected to lobby! Waiting for game to start", "connectedScreen");
   log("Joined as " + (data.playerName || sessionStorage.getItem("playerName")), "connectedScreen");
 
@@ -257,32 +226,21 @@ function handleJoinRoomSuccess(data) {
 }
 
 function handleGameStarted(data) {
-  savePlayerData(data);
 
-  if (data.character) {
-    sessionStorage.setItem("character", JSON.stringify(data.character));
-  }
-
-  renderCharacterWidgetSafely();
   setStatus("Character received. Waiting for the next step.", "characterScreen");
   showScreen("characterScreen");
 }
 
 function handleShowScenario(data) {
-  savePlayerData(data);
 
   setStatus("The current situation is being explained there.", "situationScreen");
-  renderCharacterWidgetSafely();
   showScreen("situationScreen");
 }
 
 function handleVotingStarted(data) {
-  savePlayerData(data);
 
   resetVotingScreen();
-  renderCharacterWidgetSafely();
   showScreen("votingScreen");
-  startVotingTimer();
 }
 
 function handleVoteSaved(data) {
@@ -319,14 +277,6 @@ function savePlayerData(data) {
   if (data.clientId) {
     clientId = data.clientId;
     sessionStorage.setItem("clientId", data.clientId);
-  }
-
-  if (data.playerState) {
-    sessionStorage.setItem("playerState", data.playerState);
-  }
-
-  if (data.character) {
-    sessionStorage.setItem("character", JSON.stringify(data.character));
   }
 }
 
@@ -380,41 +330,6 @@ function resetVotingScreen() {
   setStatus("Choose your position on the scale", "votingScreen");
 }
 
-function startVotingTimer() {
-  clearInterval(countdownInterval);
-
-  updateTimerText();
-
-  countdownInterval = setInterval(() => {
-    updateTimerText();
-
-    const remainingSeconds = getRemainingSeconds();
-
-    if (remainingSeconds <= 0) {
-      clearInterval(countdownInterval);
-
-      if (!hasSubmittedVote) {
-        submitVote("timeout");
-      }
-    }
-  }, 250);
-}
-
-function getRemainingSeconds() {
-  const now = Date.now();
-  const elapsedSeconds = Math.floor((now - votingStartedAt) / 1000);
-  return Math.max(votingDuration - elapsedSeconds, 0);
-}
-
-function updateTimerText() {
-  const remainingSeconds = getRemainingSeconds();
-  const timerElement = document.getElementById("timer");
-
-  if (timerElement) {
-    timerElement.innerText = "Time left: " + remainingSeconds + "s";
-  }
-}
-
 function mapSliderValueToFirstVote(sliderValue) {
   const value = Number(sliderValue);
 
@@ -447,7 +362,7 @@ function submitVote(submitReason) {
   hasSubmittedVote = true;
 
   const vote = mapSliderValueToFirstVote(voteSlider.value);
-  const roomCode = joinedRoomCode || sessionStorage.getItem("roomCode");
+  const roomCode = joinedRoomCode;
 
   if (submitVoteBtn) {
     submitVoteBtn.disabled = true;
@@ -463,7 +378,6 @@ function submitVote(submitReason) {
     roundNumber: currentRound,
     voteType: currentVoteType,
     voteValue: vote,
-    submitReason: submitReason
   }));
 }
 
