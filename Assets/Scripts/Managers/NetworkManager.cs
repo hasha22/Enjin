@@ -14,7 +14,9 @@ public class NetworkManager : MonoBehaviour
 
     [Header("Room Settings")]
     [SerializeField] private string serverUrl = "wss://enjin--enjin--qpbmsj2bcc7n.code.run";
-    [SerializeField] private string roomCode = "DCBA";
+    [SerializeField] private bool useLocalServerInEditor = true;
+    [SerializeField] private string localServerUrl = "ws://localhost:5085";
+    [SerializeField] private string roomCode = "ABCD";
     [SerializeField] private string hostClientId = "unity-host-1";
 
     [Header("Players")]
@@ -24,6 +26,11 @@ public class NetworkManager : MonoBehaviour
 
     [Header("Scene Transition")]
     [SerializeField] private SceneTransitionManager sceneTransitionManager;
+
+    private const string PlayerStateWaiting = "waiting";
+    private const string PlayerStateVoting = "voting";
+    private const string PlayerStateViewingCharacter = "viewing_character";
+    private const string PlayerStateViewingScenario = "viewing_scenario";
 
     void Awake()
     {
@@ -36,8 +43,6 @@ public class NetworkManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        UIManager.instance.SetRoomCode(roomCode);
     }
 
     async void Start()
@@ -45,6 +50,7 @@ public class NetworkManager : MonoBehaviour
         Application.runInBackground = true;
         await Connect();
 
+        UIManager.instance.SetRoomCode(roomCode);
     }
 
     void Update()
@@ -62,7 +68,8 @@ public class NetworkManager : MonoBehaviour
         if (isConnecting) return;
         isConnecting = true;
 
-        websocket = new WebSocket(serverUrl);
+        string targetServerUrl = GetTargetServerUrl();
+        websocket = new WebSocket(targetServerUrl);
 
         websocket.OnOpen += () =>
         {
@@ -95,6 +102,16 @@ public class NetworkManager : MonoBehaviour
         {
             isConnecting = false;
         }
+    }
+    private string GetTargetServerUrl()
+    {
+#if UNITY_EDITOR
+        if (useLocalServerInEditor && !string.IsNullOrWhiteSpace(localServerUrl))
+        {
+            return localServerUrl;
+        }
+#endif
+        return serverUrl;
     }
     private void HandleIncoming(string raw)
     {
@@ -231,21 +248,88 @@ public class NetworkManager : MonoBehaviour
                 {
                     Debug.LogWarning("GameUIManager instance is missing.");
                 }
+
                 break;
 
             case "start_voting_failed":
                 Debug.LogWarning("Start voting failed: " + msg.data);
+                break;
+
+            case "player_screen_command_success":
+                PlayerScreenCommandSuccessEnvelope screenData = null;
+                try
+                {
+                    screenData = JsonUtility.FromJson<PlayerScreenCommandSuccessEnvelope>(msg.data);
+                }
+                catch
+                {
+                    Debug.LogWarning("Failed to parse player_screen_command_success payload");
+                    return;
+                }
+
+                HandlePlayerScreenCommandSuccess(screenData);
+                break;
+
+            case "player_screen_command_failed":
+                FailureEnvelope failureData = null;
+                try
+                {
+                    failureData = JsonUtility.FromJson<FailureEnvelope>(msg.data);
+                }
+                catch
+                {
+                    Debug.LogWarning("Player screen command failed: " + msg.data);
+                    return;
+                }
+
+                Debug.LogWarning("Player screen command failed: " + failureData.reason);
+                break;
+        }
+    }
+    private void HandlePlayerScreenCommandSuccess(PlayerScreenCommandSuccessEnvelope screenData)
+    {
+        if (screenData == null)
+        {
+            Debug.LogWarning("Player screen command success payload was null.");
+            return;
+        }
+
+        Debug.Log($"Server confirmed player screen: {screenData.screenId}");
+
+        switch (screenData.screenId)
+        {
+            case "characterScreen":
+                if (sceneTransitionManager != null)
+                {
+                    sceneTransitionManager.LoadNextScene();
+                }
+                else
+                {
+                    Debug.LogWarning("SceneTransitionManager is not assigned in NetworkManager.");
+                }
+                break;
+
+            case "situationScreen":
+            case "votingScreen":
+                if (GameUIManager.instance != null)
+                {
+                    GameUIManager.instance.NextScreen();
+                }
+                else
+                {
+                    Debug.LogWarning("GameUIManager instance is missing.");
+                }
                 break;
         }
     }
     public void SendHostRegister()
     {
         SendMessageToServer(
-            "host_register",
-            new InformServerPayload
-            {
-                hostClientId = this.hostClientId
-            });
+        "host_register",
+        new InformServerPayload
+        {
+            hostClientId = this.hostClientId
+        });
     }
 
     public void StartGameFromButton()
@@ -261,45 +345,114 @@ public class NetworkManager : MonoBehaviour
 
     public void SendStartGameRequest()
     {
-        SendMessageToServer(
-            "start_game_request",
-            new InformServerPayload
-            {
-                hostClientId = this.hostClientId
-            });
+        SendPlayerScreenCommand(
+            "characterScreen",
+            PlayerStateViewingCharacter,
+            GameManager.instance != null ? GameManager.instance.currentRound : 0,
+            "",
+            0,
+            "Your character is ready. Wait for the next step."
+        );
     }
 
     public void SendShowScenarioRequest()
     {
-        SendMessageToServer(
-            "show_scenario_request",
-            new InformServerPayload
-            {
-                hostClientId = this.hostClientId
-            });
+        SendPlayerScreenCommand(
+            "situationScreen",
+            PlayerStateViewingScenario,
+            GameManager.instance.currentRound,
+            "",
+            0,
+            "Look at the main screen."
+        );
     }
 
     public void SendStartVotingRequest()
     {
-        SendMessageToServer(
-            "start_voting_request",
-            new InformServerPayload
-            {
-                hostClientId = this.hostClientId
-            });
+        string voteType = GameManager.instance.currentScreen == GameScreens.EnjinUpdateScreen
+            ? "second_vote"
+            : "first_vote";
+
+        SendPlayerScreenCommand(
+            "votingScreen",
+            PlayerStateVoting,
+            GameManager.instance.currentRound,
+            voteType,
+            GameManager.instance.votingTime,
+            "Cast your vote."
+        );
     }
-    public void SendCharacterInfo(string playerID, string characterName, string characterDescription, string keyword1, string keyword2)
+    public void SendWaitingScreenCommand(string message)
+    {
+        SendPlayerScreenCommand(
+            "waitingScreen",
+            PlayerStateWaiting,
+            GameManager.instance != null ? GameManager.instance.currentRound : 0,
+            "",
+            0,
+            message
+        );
+    }
+    public void SendDiscussionTurnScreenCommand(string currentSpeakerPlayerID, string currentSpeakerName, int discussionDuration)
+    {
+        SendPlayerScreenCommand(
+            "discussionScreen",
+            PlayerStateWaiting,
+            GameManager.instance != null ? GameManager.instance.currentRound : 0,
+            "",
+            discussionDuration,
+            "Time to explain your choice.",
+            currentSpeakerPlayerID,
+            currentSpeakerName
+        );
+    }
+    public void SendGameOverScreenCommand()
+    {
+        SendPlayerScreenCommand(
+            "gameOverScreen",
+            PlayerStateWaiting,
+            GameManager.instance != null ? GameManager.instance.currentRound : 0,
+            "",
+            0,
+            "The game has ended."
+        );
+    }
+    private void SendPlayerScreenCommand(string screenId, string playerState, int roundNumber, string voteType, int votingDuration, string message)
+    {
+        SendPlayerScreenCommand(screenId, playerState, roundNumber, voteType, votingDuration, message, "", "");
+    }
+    private void SendPlayerScreenCommand(string screenId, string playerState, int roundNumber, string voteType, int votingDuration, string message, string currentSpeakerPlayerID, string currentSpeakerName)
     {
         SendMessageToServer(
-            "character_info",
-            new CharacterInfoPayload
+            "player_screen_command",
+            new PlayerScreenCommandPayload
             {
-                playerID = playerID,
-                characterName = characterName,
-                characterDescription = characterDescription,
-                keyword1 = keyword1,
-                keyword2 = keyword2
+                screenId = screenId,
+                playerState = playerState,
+                roundNumber = roundNumber,
+                totalRounds = GameManager.instance != null ? GameManager.instance.totalRounds : 0,
+                voteType = voteType,
+                votingDuration = votingDuration,
+                message = message,
+                currentSpeakerPlayerID = currentSpeakerPlayerID,
+                currentSpeakerName = currentSpeakerName
             });
+    }
+    public void SendCharacterInfo(string playerID, string characterName, string characterDescription, string keyword1, string keyword2, string faceImage, string fullImage, string backgroundColor)
+    {
+        SendMessageToServer(
+        "character_info",
+        new CharacterInfoPayload
+        {
+            playerID = playerID,
+            characterName = characterName,
+            characterDescription = characterDescription,
+            keyword1 = keyword1,
+            keyword2 = keyword2,
+            faceImage = faceImage,
+            fullImage = fullImage,
+            backgroundColor = backgroundColor
+        });
     }
     public void ConnectPlayer(string playerName, string playerID)
     {
@@ -314,6 +467,8 @@ public class NetworkManager : MonoBehaviour
         Player player = newPlayer.GetComponent<Player>();
         player.InitializePlayerData(playerName, playerID);
 
+        //Instantiate & Update UI elements
+        //Register player in a list of active players
         UIManager.instance.IncreaseDisplayedPlayerCount();
         UIManager.instance.UpdatePlayerCard(allPlayers.Count - 1, player);
 
@@ -321,35 +476,50 @@ public class NetworkManager : MonoBehaviour
             player.selectedCharacter.characterName,
             player.selectedCharacter.characterDescription,
             player.selectedCharacter.characterKeywords[0].ToString(),
-            player.selectedCharacter.characterKeywords[1].ToString()
+            player.selectedCharacter.characterKeywords[1].ToString(),
+            player.selectedCharacter.webFaceImage,
+            player.selectedCharacter.webFullImage,
+            player.selectedCharacter.webBackgroundColor
         );
     }
     public void RegisterFirstPlayerVote(string playerID, string playerVote)
     {
+        Debug.Log($"TRY REGISTER FIRST VOTE | playerID: {playerID}, vote: {playerVote}");
         foreach (GameObject player in allPlayers)
         {
             Player playerScript = player.GetComponent<Player>();
 
+            Debug.Log($"Checking player: {playerScript.GetPlayerName()} with ID: {playerScript.GetPlayerID()}");
+
             if (playerScript.GetPlayerID() == playerID)
             {
+                VoteTypes parsedVote = VoteTypes.NoVote;
+
                 switch (playerVote)
                 {
                     case "disagree":
-                        playerScript.SetFirstVote(VoteTypes.Disagree);
+                        parsedVote = VoteTypes.Disagree;
                         break;
                     case "mostly_disagree":
-                        playerScript.SetFirstVote(VoteTypes.MostlyDisagree);
+                        parsedVote = VoteTypes.MostlyDisagree;
                         break;
                     case "neutral":
-                        playerScript.SetFirstVote(VoteTypes.Neutral);
+                        parsedVote = VoteTypes.Neutral;
                         break;
                     case "mostly_agree":
-                        playerScript.SetFirstVote(VoteTypes.MostlyAgree);
+                        parsedVote = VoteTypes.MostlyAgree;
                         break;
                     case "agree":
-                        playerScript.SetFirstVote(VoteTypes.Agree);
+                        parsedVote = VoteTypes.Agree;
                         break;
+
+
                 }
+
+                playerScript.SetFirstVote(parsedVote);
+                playerScript.SaveFirstVoteForRound(GetCurrentRoundNumber(), parsedVote);
+
+                Debug.Log($"FIRST VOTE SAVED | player: {playerScript.GetPlayerName()}, ID: {playerScript.GetPlayerID()}, vote: {playerScript.GetFirstVote()}");
                 break;
             }
         }
@@ -361,12 +531,24 @@ public class NetworkManager : MonoBehaviour
             Player playerScript = player.GetComponent<Player>();
             if (playerScript.GetPlayerID() == playerID)
             {
-                if (playerVote == "yes") playerScript.SetSecondVote(true);
-                else if (playerVote == "no") playerScript.SetSecondVote(false);
+                if (playerVote == "yes")
+                {
+                    playerScript.SetSecondVote(true);
+                    playerScript.SaveSecondVoteForRound(GetCurrentRoundNumber(), true);
+                }
+                else if (playerVote == "no")
+                {
+                    playerScript.SetSecondVote(false);
+                    playerScript.SaveSecondVoteForRound(GetCurrentRoundNumber(), false);
+                }
                 if (GameUIManager.instance != null) GameUIManager.instance.InstantiateVotePlayerIcon(playerScript);
                 break;
             }
         }
+    }
+    private int GetCurrentRoundNumber()
+    {
+        return GameManager.instance != null ? GameManager.instance.currentRound : 0;
     }
     private void SendMessageToServer<T>(string type, T payload)
     {
@@ -405,5 +587,13 @@ public class NetworkManager : MonoBehaviour
     public List<GameObject> GetPlayerList()
     {
         return allPlayers;
+    }
+    public void ResetPlayerRoundVotes()
+    {
+        foreach (GameObject playerObject in allPlayers)
+        {
+            Player player = playerObject.GetComponent<Player>();
+            player.ResetRoundVotes();
+        }
     }
 }

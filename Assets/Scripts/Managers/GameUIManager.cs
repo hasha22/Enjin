@@ -116,12 +116,22 @@ public class GameUIManager : MonoBehaviour
             GameManager.instance.currentScreen = GameScreens.SituationExplanationScreen;
             GameManager.instance.currentRound++;
             ResetUI();
+            if (NetworkManager.instance != null)
+            {
+                NetworkManager.instance.ResetPlayerRoundVotes();
+            }
+
             currentScreen = GameManager.instance.currentScreen;
             currentRound = GameManager.instance.currentRound;
             UpdateCurrentScreenNumber(currentScreen);
 
             if (currentRound > totalRounds)
             {
+                if (NetworkManager.instance != null)
+                {
+                    NetworkManager.instance.SendGameOverScreenCommand();
+                }
+
                 ValueManager.instance.AssignOutcomeValues();
                 SceneManager.LoadScene("OutcomeScene");
                 return;
@@ -202,6 +212,27 @@ public class GameUIManager : MonoBehaviour
             continueButton.SetActive(true);
         }
         if (currentScreen == GameScreens.ResultsScreen) { ValueManager.instance.MakeBig(); } else { ValueManager.instance.MakeSmall(); }
+
+        NotifyPlayersForCurrentScreen(currentScreen);
+    }
+    private void NotifyPlayersForCurrentScreen(GameScreens currentScreen)
+    {
+        if (NetworkManager.instance == null) return;
+
+        switch (currentScreen)
+        {
+            case GameScreens.DiscussionScreen:
+                NetworkManager.instance.SendWaitingScreenCommand("Discussion is happening on the main screen.");
+                break;
+
+            case GameScreens.EnjinUpdateScreen:
+                NetworkManager.instance.SendWaitingScreenCommand("Look at the Enjin update on the main screen.");
+                break;
+
+            case GameScreens.ResultsScreen:
+                NetworkManager.instance.SendWaitingScreenCommand("Results are being shown on the main screen.");
+                break;
+        }
     }
     #region Screen Visulization Logic
     public void InstantiateKeywordCards()
@@ -293,24 +324,58 @@ public class GameUIManager : MonoBehaviour
     {
         iconCircle.SetActive(true);
         yield return null;
-        int playerAmount = 0;
+        List<Player> discussionPlayers = new List<Player>();
 
         if (NetworkManager.instance != null)
-        { playerAmount = NetworkManager.instance.allPlayers.Count; }
+        {
+            foreach (GameObject playerObject in NetworkManager.instance.allPlayers)
+            {
+                Player playerScript = playerObject.GetComponent<Player>();
+
+                if (playerScript.GetFirstVote() != VoteTypes.NoVote)
+                {
+                    discussionPlayers.Add(playerScript);
+                }
+            }
+        }
         else
         {
             TimerDone();
             iconCircle.SetActive(false);
             yield break;
         }
-        if (allPlayerIcons.Count != 0) iconCircle.transform.position = allPlayerIcons[0].transform.position;
-        for (int i = 0; i < playerAmount; i++)
+
+        if (discussionPlayers.Count == 0 || allPlayerIcons.Count == 0)
         {
+            TimerDone();
+            iconCircle.SetActive(false);
+            yield break;
+        }
+
+        if (allPlayerIcons.Count != 0) iconCircle.transform.position = allPlayerIcons[0].transform.position;
+        for (int i = 0; i < discussionPlayers.Count && i < allPlayerIcons.Count; i++)
+        {
+            Player currentSpeaker = discussionPlayers[i];
             GameObject speaker = allPlayerIcons[i];
+
+            if (NetworkManager.instance != null)
+            {
+                NetworkManager.instance.SendDiscussionTurnScreenCommand(
+                    currentSpeaker.GetPlayerID(),
+                    currentSpeaker.GetPlayerName(),
+                    GameManager.instance.discussionTime
+                );
+            }
+
             StartCoroutine(MoveCircle(iconCircle.transform, speaker.transform.position, 0.35f));
             TimerScript.instance.StartTimer(GameManager.instance.discussionTime);
             yield return new WaitForSeconds(GameManager.instance.discussionTime);
         }
+        if (NetworkManager.instance != null)
+        {
+            NetworkManager.instance.SendWaitingScreenCommand("Discussion is finished. Look at the main screen.");
+        }
+
         TimerDone();
         iconCircle.SetActive(false);
     }

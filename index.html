@@ -90,13 +90,13 @@
   <section id="votingScreen" class="screen">
     <div class="WaitingScreen">
       <div class="voting-content" id="votingContent">
-        <h1 class="voting-title">
+        <h1 class="voting-title" id="votingTitle">
           Round <span id="roundNumber">1</span>: Voting phase
         </h1>
 
         <p id="timer">Time left: --</p>
 
-        <div class="slider-container">
+        <div class="slider-container" id="firstVoteContent">
           <input
             type="range"
             min="1"
@@ -107,15 +107,24 @@
           >
 
           <div class="slider-labels">
-            <span class="slider-label">Mostly agree</span>
+            <span class="slider-label">Disagree</span>
             <span class="slider-label">Neutral</span>
-            <span class="slider-label">Mostly disagree</span>
+            <span class="slider-label">Agree</span>
           </div>
 
           <p id="voteValue">3</p>
+
+          <button class="submit-btn" id="submitVoteBtn">Submit Vote</button>
         </div>
 
-        <button class="submit-btn" id="submitVoteBtn">Submit Vote</button>
+        <div class="final-voting-content" id="secondVoteContent" style="display: none;">
+          <h1 class="voting-title">Final voting phase</h1>
+
+          <div class="final-vote-buttons">
+            <button class="final-vote-btn vote-btn" id="enactVoteBtn">Enact</button>
+            <button class="final-vote-btn pass-btn" id="rejectVoteBtn">Reject</button>
+          </div>
+        </div>
 
         <p data-role="status">Choose your position on the scale</p>
       </div>
@@ -124,6 +133,16 @@
         <p id="waitingText">Your vote has been saved. Waiting for the other players...</p>
       </div>
 
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 6. Discussion screen -->
+  <section id="discussionScreen" class="screen">
+    <div class="JoinRoom">
+      <h2 id="discussionTitle">Time to explain your choice</h2>
+      <label data-role="status">Look at the main screen.</label>
+      <p id="discussionTimer">Timer: --</p>
       <div data-role="log"></div>
     </div>
   </section>

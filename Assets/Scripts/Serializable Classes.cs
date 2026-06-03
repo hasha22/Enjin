@@ -32,6 +32,22 @@ public class CharacterInfoPayload
     public string characterDescription;
     public string keyword1;
     public string keyword2;
+    public string faceImage;
+    public string fullImage;
+    public string backgroundColor;
+}
+[System.Serializable]
+public class PlayerScreenCommandPayload
+{
+    public string screenId;
+    public string playerState;
+    public int roundNumber;
+    public int totalRounds;
+    public string voteType;
+    public int votingDuration;
+    public string message;
+    public string currentSpeakerPlayerID;
+    public string currentSpeakerName;
 }
 
 // Classes for converting incoming json to strings
@@ -47,6 +63,9 @@ public class PlayerVote1Envelope
     public string playerName;
     public string playerID;
     public string playerVote;
+    public int roundNumber;
+    public string voteType;
+    public string submitReason;
 }
 [System.Serializable]
 public class PlayerVote2Envelope
@@ -54,4 +73,26 @@ public class PlayerVote2Envelope
     public string playerName;
     public string playerID;
     public string playerVote;
+    public int roundNumber;
+    public string voteType;
+    public string submitReason;
+}
+[System.Serializable]
+public class PlayerScreenCommandSuccessEnvelope
+{
+    public string screenId;
+    public string playerState;
+    public int roundNumber;
+    public int totalRounds;
+    public string voteType;
+    public int votingDuration;
+    public string message;
+    public string currentSpeakerPlayerID;
+    public string currentSpeakerName;
+    public int playerCount;
+}
+[System.Serializable]
+public class FailureEnvelope
+{
+    public string reason;
 }
