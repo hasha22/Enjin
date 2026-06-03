@@ -129,19 +129,86 @@
         <p data-role="status">Choose your position on the scale</p>
       </div>
 
-      <div class="voting-content" id="waitingContent" style="display: none;">
-        <p id="waitingText">Your vote has been saved. Waiting for the other players...</p>
-      </div>
-
       <div data-role="log"></div>
     </div>
   </section>
 
-  <!-- 6. Discussion screen -->
+  <!-- 6. Vote saved / waiting for other players -->
+  <section id="voteSavedScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Vote saved</h2>
+      <label data-role="status">Waiting for the other players...</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 7. Waiting: situation -->
+  <section id="waitingSituationScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Round <span data-round-number>1</span></h2>
+      <label data-role="status">Look at the main screen to learn the situation.</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 8. Waiting: discussion -->
+  <section id="waitingDiscussionScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Discussion is happening</h2>
+      <label data-role="status">Look at the main screen.</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 9. Waiting: after discussion -->
+  <section id="waitingAfterDiscussionScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Discussion is finished</h2>
+      <label data-role="status">Look at the main screen.</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 10. Waiting: Enjin update -->
+  <section id="waitingEnjinUpdateScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Look at the Enjin update</h2>
+      <label data-role="status">The main screen is showing the improved Enjin policy.</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 11. Waiting: results -->
+  <section id="waitingResultsScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Results are being shown</h2>
+      <label data-role="status">Look at the main screen.</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 12. Game over -->
+  <section id="gameOverScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>The game has ended</h2>
+      <label data-role="status">Thank you for playing.</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 13. Discussion turn screen -->
   <section id="discussionScreen" class="screen">
     <div class="JoinRoom">
-      <h2 id="discussionTitle">Time to explain your choice</h2>
-      <label data-role="status">Look at the main screen.</label>
+      <div id="myTurnBlock">
+        <h2>Your turn!</h2>
+        <label data-role="status">Explain why you chose this position.</label>
+      </div>
+
+      <div id="otherSpeakerBlock">
+        <h2>Time to explain your choice</h2>
+        <label data-role="status">Now speaking: <span id="speakerName">another player</span>.</label>
+      </div>
+
       <p id="discussionTimer">Timer: --</p>
       <div data-role="log"></div>
     </div>

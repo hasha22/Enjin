@@ -254,11 +254,15 @@ html {
 
 [data-role="status"],
 [data-role="log"],
-#discussionTimer,
-#waitingText {
+#discussionTimer {
     max-width: min(680px, calc(100vw - 48px));
     overflow-wrap: anywhere;
     line-height: 1.35;
+}
+
+#myTurnBlock,
+#otherSpeakerBlock {
+    text-align: center;
 }
 
 .voting-title {

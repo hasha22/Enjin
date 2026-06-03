@@ -115,14 +115,12 @@ function handlePlayerScreenChanged(data) {
 
   if (data.screenId === "characterScreen") {
     renderCharacterWidgetSafely();
-    setStatus("Character received. Waiting for the next step.", "characterScreen");
     showScreen("characterScreen");
     return;
   }
 
   if (data.screenId === "situationScreen") {
     renderCharacterWidgetSafely();
-    setStatus("The current situation is being explained there.", "situationScreen");
     showScreen("situationScreen");
     return;
   }
@@ -146,44 +144,47 @@ function handlePlayerScreenChanged(data) {
   if (data.screenId === "waitingScreen") {
     clearDiscussionTimer();
     renderCharacterWidgetSafely();
-    showWaitingForOthersScreen(getWaitingScreenText(data));
-    showScreen("votingScreen");
+    showWaitingStateScreen(data);
     return;
   }
 
   if (data.screenId === "gameOverScreen") {
     clearInterval(countdownInterval);
     clearDiscussionTimer();
-    setStatus("The game has ended.", "connectedScreen");
-    showScreen("connectedScreen");
+    showScreen("gameOverScreen");
     return;
   }
 
   console.warn("Unknown screenId from Unity:", data.screenId);
 }
 
-function getWaitingScreenText(data) {
-  const round = Number(data.roundNumber || currentRound || 1);
+function showWaitingStateScreen(data) {
+  updateRoundPlaceholders(data.roundNumber || currentRound);
 
-  switch (data.playerState) {
-    case "waiting_for_situation":
-      return `Round ${round}. Look at the main screen to learn the situation.`;
-    case "waiting_for_discussion":
-      return "Discussion is happening on the main screen.";
-    case "waiting_after_discussion":
-      return "Discussion is finished. Look at the main screen.";
-    case "waiting_for_enjin_update":
-      return "Look at the Enjin update on the main screen.";
-    case "waiting_for_results":
-      return "Results are being shown on the main screen.";
-    default:
-      return "Look at the main screen.";
-  }
+  const screenByState = {
+    waiting_for_situation: "waitingSituationScreen",
+    waiting_for_discussion: "waitingDiscussionScreen",
+    waiting_after_discussion: "waitingAfterDiscussionScreen",
+    waiting_for_enjin_update: "waitingEnjinUpdateScreen",
+    waiting_for_results: "waitingResultsScreen"
+  };
+
+  showScreen(screenByState[data.playerState] || "waitingDiscussionScreen");
+}
+
+function updateRoundPlaceholders(roundNumber) {
+  const round = Number(roundNumber || currentRound || 1);
+
+  document.querySelectorAll("[data-round-number]").forEach(element => {
+    element.innerText = round;
+  });
 }
 
 function showDiscussionTurnScreen(data) {
-  const titleElement = document.getElementById("discussionTitle");
   const timerElement = document.getElementById("discussionTimer");
+  const myTurnBlock = document.getElementById("myTurnBlock");
+  const otherSpeakerBlock = document.getElementById("otherSpeakerBlock");
+  const speakerNameElement = document.getElementById("speakerName");
   const currentClientId = normalizeId(clientId || sessionStorage.getItem("clientId"));
   const currentPlayerName = normalizeId(sessionStorage.getItem("playerName"));
   const speakerId = normalizeId(data.currentSpeakerPlayerID);
@@ -191,21 +192,19 @@ function showDiscussionTurnScreen(data) {
   const isMyTurn = data.isCurrentSpeaker === true
     || (speakerId && speakerId === currentClientId)
     || (speakerNameId && speakerNameId === currentPlayerName);
-  const speakerName = data.currentSpeakerName || "another player";
   const duration = Number(data.votingDuration || 0);
 
-  if (titleElement) {
-    titleElement.innerText = isMyTurn
-      ? "Your turn!"
-      : "Time to explain your choice";
+  if (myTurnBlock) {
+    myTurnBlock.style.display = isMyTurn ? "block" : "none";
   }
 
-  setStatus(
-    isMyTurn
-      ? "Explain why you chose this position."
-      : "Now speaking: " + speakerName + ".",
-    "discussionScreen"
-  );
+  if (otherSpeakerBlock) {
+    otherSpeakerBlock.style.display = isMyTurn ? "none" : "block";
+  }
+
+  if (speakerNameElement && data.currentSpeakerName) {
+    speakerNameElement.innerText = data.currentSpeakerName;
+  }
 
   showScreen("discussionScreen");
   startDiscussionTimer(duration, timerElement);
@@ -376,14 +375,12 @@ function handleGameStarted(data) {
   savePlayerData(data);
 
   renderCharacterWidgetSafely();
-  setStatus("Character received. Waiting for the next step.", "characterScreen");
   showScreen("characterScreen");
 }
 
 function handleShowScenario(data) {
   savePlayerData(data);
 
-  setStatus("The current situation is being explained there.", "situationScreen");
   renderCharacterWidgetSafely();
   showScreen("situationScreen");
 }
@@ -400,7 +397,7 @@ function handleVotingStarted(data) {
 function handleVoteSaved(data) {
   console.log("Vote saved:", data);
   hasSubmittedVote = true;
-  showWaitingForOthersScreen("Your vote has been saved. Waiting for the other players...");
+  showWaitingForOthersScreen();
 }
 
 function handleVoteFailed(data) {
@@ -498,7 +495,6 @@ function resetVotingScreen() {
   const voteValue = document.getElementById("voteValue");
   const submitVoteBtn = document.getElementById("submitVoteBtn");
   const votingContent = document.getElementById("votingContent");
-  const waitingContent = document.getElementById("waitingContent");
   const firstVoteContent = document.getElementById("firstVoteContent");
   const secondVoteContent = document.getElementById("secondVoteContent");
   const roundNumber = document.getElementById("roundNumber");
@@ -534,10 +530,6 @@ function resetVotingScreen() {
 
   if (votingContent) {
     votingContent.style.display = "flex";
-  }
-
-  if (waitingContent) {
-    waitingContent.style.display = "none";
   }
 
   if (votingTitle) {
@@ -690,22 +682,8 @@ function submitVote(submitReason) {
   }));
 }
 
-function showWaitingForOthersScreen(message) {
-  const votingContent = document.getElementById("votingContent");
-  const waitingContent = document.getElementById("waitingContent");
-  const waitingText = document.getElementById("waitingText");
-
-  if (votingContent) {
-    votingContent.style.display = "none";
-  }
-
-  if (waitingContent) {
-    waitingContent.style.display = "flex";
-  }
-
-  if (waitingText && message) {
-    waitingText.innerText = message;
-  }
+function showWaitingForOthersScreen() {
+  showScreen("voteSavedScreen");
 }
 
 function showScreen(screenId) {
