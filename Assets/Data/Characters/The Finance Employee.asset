@@ -18,4 +18,7 @@ MonoBehaviour:
     is capable of judging work. You are more experienced in what the plans that are
     being made cost compared to other employees."
   characterImage: {fileID: 5249444126942463206, guid: 9eecc6ddc15febb40b89137f54203dcc, type: 3}
+  webFaceImage: FinanceEmployee_portrait.png
+  webFullImage: FinanceEmployee.png
+  webBackgroundColor: '#FFD700'
   characterKeywords: 0600000000000000

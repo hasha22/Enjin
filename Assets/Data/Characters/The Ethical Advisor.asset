@@ -17,4 +17,7 @@ MonoBehaviour:
     ethical standards, and it needs to be accessible to all employees. As long as
     AI usage stays ethical, it can be used to boost productivity.
   characterImage: {fileID: 4186442984283127803, guid: 912028b1e8f3ef54ca2c70e26c970df5, type: 3}
+  webFaceImage: EthicalAdvisor_portrait.png
+  webFullImage: EthicalAdvisor.png
+  webBackgroundColor: '#f735ea'
   characterKeywords: 0400000003000000
