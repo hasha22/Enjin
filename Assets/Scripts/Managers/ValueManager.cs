@@ -81,8 +81,8 @@ public class ValueManager : MonoBehaviour
     {
         markContainer.SetActive(false);
         RectTransform rect = sliderContainer.GetComponent<RectTransform>();
-        rect.anchoredPosition = new Vector2(-781, -445);
-        rect.localScale = new Vector2(1, 1);
+        rect.anchoredPosition = new Vector2(-762, -358);
+        rect.localScale = new Vector2(0.9f, 0.9f);
     }
     public void InstantlySetSliders()
     {
