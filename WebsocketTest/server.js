@@ -382,7 +382,7 @@ function send(clientSocket, type, dataObj = {})
   if (clientSocket.readyState !== WebSocket.OPEN) return;
 
   console.log(
-        "SENDING TO CLIENT:",
+        "SENDING TO CLIENT:", JSON.stringify(dataObj)
     );
 
   clientSocket.send(JSON.stringify({

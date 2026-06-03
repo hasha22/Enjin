@@ -230,7 +230,6 @@ public class NetworkManager : MonoBehaviour
                 {
                     Debug.LogWarning("GameUIManager instance is missing.");
                 }
-
                 break;
 
             case "start_voting_failed":
@@ -241,11 +240,11 @@ public class NetworkManager : MonoBehaviour
     public void SendHostRegister()
     {
         SendMessageToServer(
-        "host_register",
-        new InformServerPayload
-        {
-            hostClientId = this.hostClientId
-        });
+            "host_register",
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            });
     }
 
     public void StartGameFromButton()
@@ -262,11 +261,11 @@ public class NetworkManager : MonoBehaviour
     public void SendStartGameRequest()
     {
         SendMessageToServer(
-        "start_game_request",
-        new InformServerPayload
-        {
-            hostClientId = this.hostClientId
-        });
+            "start_game_request",
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            });
     }
 
     public void SendShowScenarioRequest()
@@ -291,15 +290,15 @@ public class NetworkManager : MonoBehaviour
     public void SendCharacterInfo(string playerID, string characterName, string characterDescription, string keyword1, string keyword2)
     {
         SendMessageToServer(
-        "character_info",
-        new CharacterInfoPayload
-        {
-            playerID = playerID,
-            characterName = characterName,
-            characterDescription = characterDescription,
-            keyword1 = keyword1,
-            keyword2 = keyword2
-        });
+            "character_info",
+            new CharacterInfoPayload
+            {
+                playerID = playerID,
+                characterName = characterName,
+                characterDescription = characterDescription,
+                keyword1 = keyword1,
+                keyword2 = keyword2
+            });
     }
     public void ConnectPlayer(string playerName, string playerID)
     {
@@ -314,8 +313,6 @@ public class NetworkManager : MonoBehaviour
         Player player = newPlayer.GetComponent<Player>();
         player.InitializePlayerData(playerName, playerID);
 
-        //Instantiate & Update UI elements
-        //Register player in a list of active players
         UIManager.instance.IncreaseDisplayedPlayerCount();
         UIManager.instance.UpdatePlayerCard(allPlayers.Count - 1, player);
 
@@ -328,12 +325,9 @@ public class NetworkManager : MonoBehaviour
     }
     public void RegisterFirstPlayerVote(string playerID, string playerVote)
     {
-        Debug.Log($"TRY REGISTER FIRST VOTE | playerID: {playerID}, vote: {playerVote}");
         foreach (GameObject player in allPlayers)
         {
             Player playerScript = player.GetComponent<Player>();
-
-            Debug.Log($"Checking player: {playerScript.GetPlayerName()} with ID: {playerScript.GetPlayerID()}");
 
             if (playerScript.GetPlayerID() == playerID)
             {
@@ -354,11 +348,7 @@ public class NetworkManager : MonoBehaviour
                     case "agree":
                         playerScript.SetFirstVote(VoteTypes.Agree);
                         break;
-
-
                 }
-
-                Debug.Log($"FIRST VOTE SAVED | player: {playerScript.GetPlayerName()}, ID: {playerScript.GetPlayerID()}, vote: {playerScript.GetFirstVote()}");
                 break;
             }
         }
