@@ -14,8 +14,6 @@ public class NetworkManager : MonoBehaviour
 
     [Header("Room Settings")]
     [SerializeField] private string serverUrl = "wss://enjin--enjin--qpbmsj2bcc7n.code.run";
-    [SerializeField] private bool useLocalServerInEditor = true;
-    [SerializeField] private string localServerUrl = "ws://localhost:5085";
     [SerializeField] private string roomCode = "ABCD";
     [SerializeField] private string hostClientId = "unity-host-1";
 
@@ -68,8 +66,7 @@ public class NetworkManager : MonoBehaviour
         if (isConnecting) return;
         isConnecting = true;
 
-        string targetServerUrl = GetTargetServerUrl();
-        websocket = new WebSocket(targetServerUrl);
+        websocket = new WebSocket(serverUrl);
 
         websocket.OnOpen += () =>
         {
@@ -102,16 +99,6 @@ public class NetworkManager : MonoBehaviour
         {
             isConnecting = false;
         }
-    }
-    private string GetTargetServerUrl()
-    {
-#if UNITY_EDITOR
-        if (useLocalServerInEditor && !string.IsNullOrWhiteSpace(localServerUrl))
-        {
-            return localServerUrl;
-        }
-#endif
-        return serverUrl;
     }
     private void HandleIncoming(string raw)
     {

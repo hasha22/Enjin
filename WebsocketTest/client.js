@@ -25,16 +25,6 @@ setupVotingControls();
 hideCharacterWidgetIfNeeded();
 
 function getServerUrl() {
-  const hostname = window.location.hostname || "localhost";
-  const isLocalPage = window.location.protocol === "file:"
-    || window.location.protocol === "http:"
-    || hostname === "localhost"
-    || hostname === "127.0.0.1";
-
-  if (isLocalPage) {
-    return `ws://${hostname}:5085`;
-  }
-
   return DEPLOYED_SERVER_URL;
 }
 
