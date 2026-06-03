@@ -41,6 +41,7 @@ function connectWebSocket() {
   };
 
   ws.onmessage = (event) => {
+    
     const { type, data } = parseServerMessage(event);
 
     console.log("Message from server:", type, data);
@@ -148,6 +149,43 @@ function buildCharacterObject(data)
 }
 
 function parseServerMessage(event) {
+  console.log("EVENT DATA TYPE:", typeof event.data);
+  console.log("EVENT DATA:", event.data);
+  
+  let msg;
+
+  try {
+    msg = typeof event.data === "string"
+      ? JSON.parse(event.data)
+      : event.data;
+  }
+  catch(error) {
+    console.error("FAILED TO PARSE EVENT.DATA", error);
+    return { type: null, data: {} };
+  }
+
+  console.log("PARSED MSG:", msg);
+
+  let data = {};
+
+  if (typeof msg.data === "string" && msg.data.length > 0) {
+    try {
+      data = JSON.parse(msg.data);
+    }
+    catch(error) {
+      console.warn("Could not parse msg.data:", msg.data);
+      data = {};
+    }
+  }
+  else if (msg.data && typeof msg.data === "object") {
+    data = msg.data;
+  }
+
+  return {
+    type: msg.type,
+    data: data
+  };
+  /*
   const msg = JSON.parse(event.data);
 
   let data = {};
@@ -167,6 +205,7 @@ function parseServerMessage(event) {
     type: msg.type,
     data: data
   };
+  */
 }
 
 function joinRoom() {
