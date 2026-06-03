@@ -222,19 +222,19 @@ public class GameUIManager : MonoBehaviour
         switch (currentScreen)
         {
             case GameScreens.SituationExplanationScreen:
-                NetworkManager.instance.SendWaitingScreenCommand($"Round {GameManager.instance.currentRound}. Look at the main screen to learn the situation.");
+                NetworkManager.instance.SendWaitingForSituationScreenCommand();
                 break;
 
             case GameScreens.DiscussionScreen:
-                NetworkManager.instance.SendWaitingScreenCommand("Discussion is happening on the main screen.");
+                NetworkManager.instance.SendWaitingForDiscussionScreenCommand();
                 break;
 
             case GameScreens.EnjinUpdateScreen:
-                NetworkManager.instance.SendWaitingScreenCommand("Look at the Enjin update on the main screen.");
+                NetworkManager.instance.SendWaitingForEnjinUpdateScreenCommand();
                 break;
 
             case GameScreens.ResultsScreen:
-                NetworkManager.instance.SendWaitingScreenCommand("Results are being shown on the main screen.");
+                NetworkManager.instance.SendWaitingForResultsScreenCommand();
                 break;
         }
     }
@@ -377,7 +377,7 @@ public class GameUIManager : MonoBehaviour
         }
         if (NetworkManager.instance != null)
         {
-            NetworkManager.instance.SendWaitingScreenCommand("Discussion is finished. Look at the main screen.");
+            NetworkManager.instance.SendWaitingAfterDiscussionScreenCommand();
         }
 
         TimerDone();

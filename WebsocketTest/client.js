@@ -115,14 +115,14 @@ function handlePlayerScreenChanged(data) {
 
   if (data.screenId === "characterScreen") {
     renderCharacterWidgetSafely();
-    setStatus(data.message || "Character received. Waiting for the next step.", "characterScreen");
+    setStatus("Character received. Waiting for the next step.", "characterScreen");
     showScreen("characterScreen");
     return;
   }
 
   if (data.screenId === "situationScreen") {
     renderCharacterWidgetSafely();
-    setStatus(data.message || "The current situation is being explained there.", "situationScreen");
+    setStatus("The current situation is being explained there.", "situationScreen");
     showScreen("situationScreen");
     return;
   }
@@ -146,7 +146,7 @@ function handlePlayerScreenChanged(data) {
   if (data.screenId === "waitingScreen") {
     clearDiscussionTimer();
     renderCharacterWidgetSafely();
-    showWaitingForOthersScreen(data.message);
+    showWaitingForOthersScreen(getWaitingScreenText(data));
     showScreen("votingScreen");
     return;
   }
@@ -154,12 +154,31 @@ function handlePlayerScreenChanged(data) {
   if (data.screenId === "gameOverScreen") {
     clearInterval(countdownInterval);
     clearDiscussionTimer();
-    setStatus(data.message || "The game has ended.", "connectedScreen");
+    setStatus("The game has ended.", "connectedScreen");
     showScreen("connectedScreen");
     return;
   }
 
   console.warn("Unknown screenId from Unity:", data.screenId);
+}
+
+function getWaitingScreenText(data) {
+  const round = Number(data.roundNumber || currentRound || 1);
+
+  switch (data.playerState) {
+    case "waiting_for_situation":
+      return `Round ${round}. Look at the main screen to learn the situation.`;
+    case "waiting_for_discussion":
+      return "Discussion is happening on the main screen.";
+    case "waiting_after_discussion":
+      return "Discussion is finished. Look at the main screen.";
+    case "waiting_for_enjin_update":
+      return "Look at the Enjin update on the main screen.";
+    case "waiting_for_results":
+      return "Results are being shown on the main screen.";
+    default:
+      return "Look at the main screen.";
+  }
 }
 
 function showDiscussionTurnScreen(data) {

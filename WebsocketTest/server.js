@@ -446,7 +446,6 @@ function sendPlayerScreenCommand(hostSocket, roomCode, payload)
     totalRounds: payload.totalRounds || 0,
     voteType: payload.voteType || "",
     votingDuration: payload.votingDuration || 0,
-    message: payload.message || "",
     currentSpeakerPlayerID: payload.currentSpeakerPlayerID || "",
     currentSpeakerName: payload.currentSpeakerName || ""
   };
@@ -630,8 +629,7 @@ function startGame(clientSocket, roomCode)
         room: roomCode,
         playerName: player.playerName,
         clientId: player.clientId,
-        character: player.character,
-        message: "The game has started!"
+        character: player.character
 
         
       });
@@ -683,8 +681,7 @@ function showScenario(clientSocket, roomCode)
       playerState: player.playerState,
       room: roomCode,
       playerName: player.playerName,
-      clientId: player.clientId,
-      message: "Look at the main screen"
+      clientId: player.clientId
     });
   }
 

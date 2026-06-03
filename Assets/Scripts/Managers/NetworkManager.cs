@@ -25,10 +25,16 @@ public class NetworkManager : MonoBehaviour
     [Header("Scene Transition")]
     [SerializeField] private SceneTransitionManager sceneTransitionManager;
 
-    private const string PlayerStateWaiting = "waiting";
     private const string PlayerStateVoting = "voting";
     private const string PlayerStateViewingCharacter = "viewing_character";
     private const string PlayerStateViewingScenario = "viewing_scenario";
+    private const string PlayerStateWaitingForSituation = "waiting_for_situation";
+    private const string PlayerStateWaitingForDiscussion = "waiting_for_discussion";
+    private const string PlayerStateWaitingAfterDiscussion = "waiting_after_discussion";
+    private const string PlayerStateWaitingForEnjinUpdate = "waiting_for_enjin_update";
+    private const string PlayerStateWaitingForResults = "waiting_for_results";
+    private const string PlayerStateDiscussionTurn = "discussion_turn";
+    private const string PlayerStateGameOver = "game_over";
 
     void Awake()
     {
@@ -337,8 +343,7 @@ public class NetworkManager : MonoBehaviour
             PlayerStateViewingCharacter,
             GameManager.instance != null ? GameManager.instance.currentRound : 0,
             "",
-            0,
-            "Your character is ready. Wait for the next step."
+            0
         );
     }
 
@@ -349,8 +354,7 @@ public class NetworkManager : MonoBehaviour
             PlayerStateViewingScenario,
             GameManager.instance.currentRound,
             "",
-            0,
-            "Look at the main screen."
+            0
         );
     }
 
@@ -365,30 +369,47 @@ public class NetworkManager : MonoBehaviour
             PlayerStateVoting,
             GameManager.instance.currentRound,
             voteType,
-            GameManager.instance.votingTime,
-            "Cast your vote."
+            GameManager.instance.votingTime
         );
     }
-    public void SendWaitingScreenCommand(string message)
+    public void SendWaitingForSituationScreenCommand()
+    {
+        SendWaitingScreenCommand(PlayerStateWaitingForSituation);
+    }
+    public void SendWaitingForDiscussionScreenCommand()
+    {
+        SendWaitingScreenCommand(PlayerStateWaitingForDiscussion);
+    }
+    public void SendWaitingAfterDiscussionScreenCommand()
+    {
+        SendWaitingScreenCommand(PlayerStateWaitingAfterDiscussion);
+    }
+    public void SendWaitingForEnjinUpdateScreenCommand()
+    {
+        SendWaitingScreenCommand(PlayerStateWaitingForEnjinUpdate);
+    }
+    public void SendWaitingForResultsScreenCommand()
+    {
+        SendWaitingScreenCommand(PlayerStateWaitingForResults);
+    }
+    private void SendWaitingScreenCommand(string playerState)
     {
         SendPlayerScreenCommand(
             "waitingScreen",
-            PlayerStateWaiting,
+            playerState,
             GameManager.instance != null ? GameManager.instance.currentRound : 0,
             "",
-            0,
-            message
+            0
         );
     }
     public void SendDiscussionTurnScreenCommand(string currentSpeakerPlayerID, string currentSpeakerName, int discussionDuration)
     {
         SendPlayerScreenCommand(
             "discussionScreen",
-            PlayerStateWaiting,
+            PlayerStateDiscussionTurn,
             GameManager.instance != null ? GameManager.instance.currentRound : 0,
             "",
             discussionDuration,
-            "Time to explain your choice.",
             currentSpeakerPlayerID,
             currentSpeakerName
         );
@@ -397,18 +418,17 @@ public class NetworkManager : MonoBehaviour
     {
         SendPlayerScreenCommand(
             "gameOverScreen",
-            PlayerStateWaiting,
+            PlayerStateGameOver,
             GameManager.instance != null ? GameManager.instance.currentRound : 0,
             "",
-            0,
-            "The game has ended."
+            0
         );
     }
-    private void SendPlayerScreenCommand(string screenId, string playerState, int roundNumber, string voteType, int votingDuration, string message)
+    private void SendPlayerScreenCommand(string screenId, string playerState, int roundNumber, string voteType, int votingDuration)
     {
-        SendPlayerScreenCommand(screenId, playerState, roundNumber, voteType, votingDuration, message, "", "");
+        SendPlayerScreenCommand(screenId, playerState, roundNumber, voteType, votingDuration, "", "");
     }
-    private void SendPlayerScreenCommand(string screenId, string playerState, int roundNumber, string voteType, int votingDuration, string message, string currentSpeakerPlayerID, string currentSpeakerName)
+    private void SendPlayerScreenCommand(string screenId, string playerState, int roundNumber, string voteType, int votingDuration, string currentSpeakerPlayerID, string currentSpeakerName)
     {
         SendMessageToServer(
             "player_screen_command",
@@ -420,7 +440,6 @@ public class NetworkManager : MonoBehaviour
                 totalRounds = GameManager.instance != null ? GameManager.instance.totalRounds : 0,
                 voteType = voteType,
                 votingDuration = votingDuration,
-                message = message,
                 currentSpeakerPlayerID = currentSpeakerPlayerID,
                 currentSpeakerName = currentSpeakerName
             });

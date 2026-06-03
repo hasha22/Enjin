@@ -42,7 +42,6 @@ public class PlayerScreenCommandPayload
     public int totalRounds;
     public string voteType;
     public int votingDuration;
-    public string message;
     public string currentSpeakerPlayerID;
     public string currentSpeakerName;
 }
@@ -83,7 +82,6 @@ public class PlayerScreenCommandSuccessEnvelope
     public int totalRounds;
     public string voteType;
     public int votingDuration;
-    public string message;
     public string currentSpeakerPlayerID;
     public string currentSpeakerName;
     public int playerCount;
