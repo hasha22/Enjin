@@ -41,6 +41,7 @@ function connectWebSocket() {
   };
 
   ws.onmessage = (event) => {
+     console.log("RAW WS MESSAGE:", event.data);
     const { type, data } = parseServerMessage(event);
 
     console.log("Message from server:", type, data);
@@ -71,7 +72,6 @@ function connectWebSocket() {
       case "vote_saved":
         handleVoteSaved(data);
         break;
-
       case "vote_failed":
         handleVoteFailed(data);
         break;

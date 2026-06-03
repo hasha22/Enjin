@@ -379,16 +379,17 @@ function assignCharacterInfo(roomCode, playerID, characterName, characterDescrip
 //Helpers
 function send(clientSocket, type, dataObj = {}) 
 {
-  if (clientSocket.readyState !== WebSocket.OPEN) return;
+   if (clientSocket.readyState !== WebSocket.OPEN) return;
 
-  console.log(
-        "SENDING TO CLIENT:", JSON.stringify(dataObj)
-    );
-
-  clientSocket.send(JSON.stringify({
+  const message =
+  {
     type,
-    data: JSON.stringify(dataObj) 
-  }));
+    data: dataObj
+  };
+
+  console.log("FULL MESSAGE:", JSON.stringify(message));
+
+  clientSocket.send(JSON.stringify(message));
 }
 function getRoom(roomCode) 
 {
