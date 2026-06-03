@@ -221,6 +221,10 @@ public class GameUIManager : MonoBehaviour
 
         switch (currentScreen)
         {
+            case GameScreens.SituationExplanationScreen:
+                NetworkManager.instance.SendWaitingScreenCommand($"Round {GameManager.instance.currentRound}. Look at the main screen to learn the situation.");
+                break;
+
             case GameScreens.DiscussionScreen:
                 NetworkManager.instance.SendWaitingScreenCommand("Discussion is happening on the main screen.");
                 break;
