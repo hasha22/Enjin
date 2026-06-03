@@ -16,5 +16,5 @@ MonoBehaviour:
   characterDescription: You support Enjin usage, but it needs to comply with certain
     ethical standards, and it needs to be accessible to all employees. As long as
     AI usage stays ethical, it can be used to boost productivity.
-  characterImage: {fileID: -2061224471429768862, guid: 07a3fc911a9ec64479af716da9d1f704, type: 3}
+  characterImage: {fileID: 4186442984283127803, guid: 912028b1e8f3ef54ca2c70e26c970df5, type: 3}
   characterKeywords: 0400000003000000

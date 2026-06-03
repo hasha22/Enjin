@@ -112,29 +112,29 @@ function buildCharacterObject(data)
     switch(data.characterName)
     {
         case "AIArtist":
-            faceImage = "Char1Face.png";
-            fullImage = "Char1.png";
+            faceImage = "AIArtist_portrait.png";
+            fullImage = "AIArtist.png";
             backgroundColor = "#99C998";
             break;
         case "CulturalOrganizer":
-            faceImage = "Char2Face.png";
-            fullImage = "Char2.png";
+            faceImage = "CulturalOrganizer_portrait.png";
+            fullImage = "CulturalOrganizer.png";
             backgroundColor = "#7EA5D8";
             break;
         case "EthicalAdvisor":
-            faceImage = "Char2Face.png";
-            fullImage = "Char2.png";
-            backgroundColor = "#D9A066";
+            faceImage = "EthicalAdvisor_portrait.png";
+            fullImage = "EthicalAdvisor.png";
+            backgroundColor = "#f735ea";
             break;
         case "FinanceEmployee":
-            faceImage = "Char2Face.png";
-            fullImage = "Char2.png";
-            backgroundColor = "#D9A066";
+            faceImage = "FinanceEmployee_portrait.png";
+            fullImage = "FinanceEmployee.png";
+            backgroundColor = "#FFD700";
             break;
         case "UIDesigner":
-            faceImage = "Char1Face.png";
-            fullImage = "Char1.png";
-            backgroundColor = "#D9A066";
+            faceImage = "UIDesigner_portrait.png";
+            fullImage = "UIDesigner.png";
+            backgroundColor = "#088F8F";
             break;
     }
 
@@ -151,7 +151,7 @@ function buildCharacterObject(data)
 function parseServerMessage(event) {
   console.log("EVENT DATA TYPE:", typeof event.data);
   console.log("EVENT DATA:", event.data);
-  
+
   let msg;
 
   try {

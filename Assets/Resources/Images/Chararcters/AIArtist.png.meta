@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 89c34fa896a2d414aa6dc42a7037adbf
+guid: fa7c659050be43841b0d7a01d59fc90a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4536204365335896002
-    second: techie_portrait_0
+      213: 8007934450580335257
+    second: AIArtist_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: techie_portrait_0
+      name: AIArtist_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 269
         y: 0
-        width: 904
-        height: 870
+        width: 1717
+        height: 2013
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2cf1c6026d5d3fe30800000000000000
-      internalID: 4536204365335896002
+      spriteID: 99a247774f5e12f60800000000000000
+      internalID: 8007934450580335257
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      techie_portrait_0: 4536204365335896002
+      AIArtist_0: 8007934450580335257
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

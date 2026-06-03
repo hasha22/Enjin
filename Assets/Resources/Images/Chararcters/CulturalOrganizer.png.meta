@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 07a3fc911a9ec64479af716da9d1f704
+guid: 17288f444a81af544987a60df89ab035
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2061224471429768862
-    second: diplomat_portrait_0
+      213: 6895357147242547498
+    second: CulturalOrganizer_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: diplomat_portrait_0
+      name: CulturalOrganizer_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 466
         y: 0
-        width: 897
-        height: 897
+        width: 1498
+        height: 2019
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 269161a934f0563e0800000000000000
-      internalID: -2061224471429768862
+      spriteID: a29c7d0daca31bf50800000000000000
+      internalID: 6895357147242547498
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      diplomat_portrait_0: -2061224471429768862
+      CulturalOrganizer_0: 6895357147242547498
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

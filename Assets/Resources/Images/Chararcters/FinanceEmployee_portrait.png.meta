@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 0bdff69d0fa52c04ca8e0ee199ed2d3a
+guid: 9eecc6ddc15febb40b89137f54203dcc
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 385842667736303426
-    second: CHAR_Techie_01SKETCH_0
+      213: 5249444126942463206
+    second: FinanceEmployee_portrait_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CHAR_Techie_01SKETCH_0
+      name: FinanceEmployee_portrait_0
       rect:
         serializedVersion: 2
-        x: 269
+        x: 25
         y: 0
-        width: 1717
-        height: 2013
+        width: 932
+        height: 912
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2478c9dacd9ca5500800000000000000
-      internalID: 385842667736303426
+      spriteID: 6e48aa6ee95c9d840800000000000000
+      internalID: 5249444126942463206
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      CHAR_Techie_01SKETCH_0: 385842667736303426
+      FinanceEmployee_portrait_0: 5249444126942463206
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

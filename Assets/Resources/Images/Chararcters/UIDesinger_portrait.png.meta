@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: c8015fc35ba5e9642b9e3f38335092fa
+guid: ab44052cc8e819242b39c6b40bd78e3a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7911120368022730285
-    second: CHAR_Warehouse_01SKETCH_0
+      213: 2869412758006590874
+    second: UIDesinger_portrait_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CHAR_Warehouse_01SKETCH_0
+      name: UIDesinger_portrait_0
       rect:
         serializedVersion: 2
-        x: 54
+        x: 29
         y: 0
-        width: 2086
-        height: 2100
+        width: 782
+        height: 826
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d263a5f4f02f9cd60800000000000000
-      internalID: 7911120368022730285
+      spriteID: a9de4fa53b332d720800000000000000
+      internalID: 2869412758006590874
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      CHAR_Warehouse_01SKETCH_0: 7911120368022730285
+      UIDesinger_portrait_0: 2869412758006590874
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

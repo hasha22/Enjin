@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 8c91ed982f5794a4d89d0d441459b883
+guid: 96fab6e1165f6b24ba97496bc0205cdb
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6742729917043940465
-    second: CHAR_Fashion_01SKETCH_0
+      213: 4387868834690506990
+    second: CulturalOrganizer_portrait_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CHAR_Fashion_01SKETCH_0
+      name: CulturalOrganizer_portrait_0
       rect:
         serializedVersion: 2
-        x: 408
+        x: 0
         y: 0
-        width: 1647
-        height: 2091
+        width: 997
+        height: 979
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 17c9dc1922df29d50800000000000000
-      internalID: 6742729917043940465
+      spriteID: ee02cbc0577d4ec30800000000000000
+      internalID: 4387868834690506990
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      CHAR_Fashion_01SKETCH_0: 6742729917043940465
+      CulturalOrganizer_portrait_0: 4387868834690506990
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

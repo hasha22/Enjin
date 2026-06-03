@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 33cf40c5e24575d4a92616252f3d83bb
+guid: a70d025b7f863274a96e57c37afd52fb
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4020285079633742000
-    second: farmer_portrait_0
+      213: -867089712224553946
+    second: EthicalAdvisor_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: farmer_portrait_0
+      name: EthicalAdvisor_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 435
         y: 0
-        width: 997
-        height: 979
+        width: 1272
+        height: 2159
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 057b0ac35041538c0800000000000000
-      internalID: -4020285079633742000
+      spriteID: 624b572308a77f3f0800000000000000
+      internalID: -867089712224553946
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      farmer_portrait_0: -4020285079633742000
+      EthicalAdvisor_0: -867089712224553946
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 98f7203d4e79d62499f9777837944997
+guid: 912028b1e8f3ef54ca2c70e26c970df5
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5443384988955413790
-    second: CHAR_Athlete_01SKETCH_0
+      213: 4186442984283127803
+    second: EthicalAdvisor_portrait_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CHAR_Athlete_01SKETCH_0
+      name: EthicalAdvisor_portrait_0
       rect:
         serializedVersion: 2
-        x: 214
+        x: 0
         y: 0
-        width: 1766
-        height: 2122
+        width: 897
+        height: 897
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e1d8162aec9ca8b40800000000000000
-      internalID: 5443384988955413790
+      spriteID: bff3f96a6bb391a30800000000000000
+      internalID: 4186442984283127803
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      CHAR_Athlete_01SKETCH_0: 5443384988955413790
+      EthicalAdvisor_portrait_0: 4186442984283127803
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
