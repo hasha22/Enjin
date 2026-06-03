@@ -74,6 +74,6 @@ public class UIManager : MonoBehaviour
     }
     public void SetRoomCode(string code)
     {
-        roomCode.text = code;
+        roomCode.text = $"Room code: {code}";
     }
 }

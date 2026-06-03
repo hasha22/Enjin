@@ -14,7 +14,7 @@ public class NetworkManager : MonoBehaviour
 
     [Header("Room Settings")]
     [SerializeField] private string serverUrl = "wss://enjin--enjin--qpbmsj2bcc7n.code.run";
-    [SerializeField] private string roomCode = "ABCD";
+    [SerializeField] private string roomCode = "DCBA";
     [SerializeField] private string hostClientId = "unity-host-1";
 
     [Header("Players")]
@@ -36,6 +36,8 @@ public class NetworkManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        UIManager.instance.SetRoomCode(roomCode);
     }
 
     async void Start()
@@ -43,7 +45,6 @@ public class NetworkManager : MonoBehaviour
         Application.runInBackground = true;
         await Connect();
 
-        UIManager.instance.SetRoomCode(roomCode);
     }
 
     void Update()
