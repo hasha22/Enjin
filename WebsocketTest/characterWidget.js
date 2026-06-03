@@ -57,62 +57,96 @@
 
       .character-widget-root .modal-content,
       .character-widget-root .character-widget-modal-content {
-        width: 500px;
-        height: 500px;
+        width: min(560px, 95vw);
+        height: min(520px, 88vh);
         background-color: #D9D9D9;
         border: 5px solid #99C998;
         border-radius: 20px;
         display: flex;
+        flex-direction: row;
         justify-content: flex-start;
-        align-items: center;
-        padding: 10px;
+        align-items: stretch;
+        padding: 0;
         overflow: hidden;
       }
 
-      .character-widget-root .modal-content img,
-      .character-widget-root .character-widget-modal-content img {
-        max-width: 50%;
-        max-height: 100%;
-        object-fit: contain;
-        border-radius: 15px;
+      /* Left: full-height character image fills entire left half */
+      .character-widget-root .modal-content img.full-character-image,
+      .character-widget-root .character-widget-modal-content img.full-character-image {
+        width: 50%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center;
+        border-radius: 14px 0 0 14px;
+        flex: 0 0 50%;
+        display: block;
+        align-self: stretch;
       }
 
       .character-widget-root .modal-right-section,
       .character-widget-root .character-widget-right-section {
-        width: 70%;
+        flex: 1 1 0;
+        min-width: 0;
         height: 100%;
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 15px;
-        padding: 20px;
-      }
-
-      .character-widget-root .text-box,
-      .character-widget-root .character-widget-text-box {
-        width: 80%;
-        background-color: #FFFFFF;
-        border-radius: 15px;
-        padding: 20px;
-        text-align: center;
-        font-family: 'Dobra', serif;
-        font-size: 16px;
-        color: #333333;
-        min-height: 60px;
-        display: flex;
-        align-items: center;
         justify-content: flex-start;
+        align-items: stretch;
+        gap: 8px;
+        padding: 12px 14px;
+        box-sizing: border-box;
+        overflow: hidden;
       }
 
+      /* Top-right: factors box — sized to its own content, capped at 38% of panel height */
+      .character-widget-root #box1Text,
+      .character-widget-root .character-widget-text-box.factors-box {
+        background-color: #FFFFFF;
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-family: 'Dobra', serif;
+        font-size: clamp(10px, 2.5vw, 14px);
+        color: #333333;
+        line-height: 1.4;
+        flex: 0 0 auto;
+        max-height: 38%;
+        overflow-y: auto;
+        word-break: break-word;
+        white-space: pre-wrap;
+        box-sizing: border-box;
+      }
+
+      /* Bottom-right: keyword label (small) */
+      .character-widget-root #box2Text,
+      .character-widget-root .character-widget-text-box.desc-box {
+        border-radius: 12px;
+        padding: 6px 12px;
+        font-family: 'Dobra', serif;
+        font-size: clamp(10px, 2.5vw, 13px);
+        font-weight: 600;
+        color: #333333;
+        line-height: 1.3;
+        flex: 0 0 auto;
+        word-break: break-word;
+        white-space: pre-wrap;
+        box-sizing: border-box;
+      }
+
+      /* Bottom-right: main character description — fills remaining space */
       .character-widget-root .modal-text,
       .character-widget-root .character-widget-modal-text {
-        width: 85%;
-        text-align: center;
         font-family: 'Dobra', serif;
-        font-size: 14px;
+        font-size: clamp(10px, 2.5vw, 13px);
         color: #333333;
-        margin-top: 10px;
+        line-height: 1.5;
+        flex: 1 1 0;
+        min-height: 0;
+        overflow-y: auto;
+        word-break: break-word;
+        white-space: pre-wrap;
+        text-align: left;
+        margin: 0;
+        padding: 2px 0;
       }
     `;
 
@@ -180,7 +214,7 @@
     box2Text.id = "box2Text";
     box2Text.className = "text-box character-widget-text-box";
 
-    const modalDescription = document.createElement("p");
+    const modalDescription = document.createElement("div");
     modalDescription.id = "modalDescription";
     modalDescription.className = "modal-text character-widget-modal-text";
 
