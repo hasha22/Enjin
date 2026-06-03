@@ -8,8 +8,5 @@ public class Character : ScriptableObject
     [TextArea(3, 10)]
     public string characterDescription;
     public Sprite characterImage;
-    public string webFaceImage;
-    public string webFullImage;
-    public string webBackgroundColor;
     public List<CharacterKeywords> characterKeywords;
 }

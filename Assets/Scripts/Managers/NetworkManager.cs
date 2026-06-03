@@ -438,7 +438,7 @@ public class NetworkManager : MonoBehaviour
                 currentSpeakerName = currentSpeakerName
             });
     }
-    public void SendCharacterInfo(string playerID, string characterName, string characterDescription, string keyword1, string keyword2, string faceImage, string fullImage, string backgroundColor)
+    public void SendCharacterInfo(string playerID, string characterName, string characterDescription, string keyword1, string keyword2)
     {
         SendMessageToServer(
         "character_info",
@@ -448,10 +448,7 @@ public class NetworkManager : MonoBehaviour
             characterName = characterName,
             characterDescription = characterDescription,
             keyword1 = keyword1,
-            keyword2 = keyword2,
-            faceImage = faceImage,
-            fullImage = fullImage,
-            backgroundColor = backgroundColor
+            keyword2 = keyword2
         });
     }
     public void ConnectPlayer(string playerName, string playerID)
@@ -476,10 +473,7 @@ public class NetworkManager : MonoBehaviour
             player.selectedCharacter.characterName,
             player.selectedCharacter.characterDescription,
             player.selectedCharacter.characterKeywords[0].ToString(),
-            player.selectedCharacter.characterKeywords[1].ToString(),
-            player.selectedCharacter.webFaceImage,
-            player.selectedCharacter.webFullImage,
-            player.selectedCharacter.webBackgroundColor
+            player.selectedCharacter.characterKeywords[1].ToString()
         );
     }
     public void RegisterFirstPlayerVote(string playerID, string playerVote)

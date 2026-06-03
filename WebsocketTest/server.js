@@ -289,10 +289,7 @@ wss.on("connection", (clientSocket) => {
           payload.characterName,
           payload.characterDescription,
           payload.keyword1,
-          payload.keyword2,
-          payload.faceImage,
-          payload.fullImage,
-          payload.backgroundColor
+          payload.keyword2
         );
         return;
       }
@@ -359,7 +356,7 @@ wss.on("connection", (clientSocket) => {
     }}
   });
 });
-function assignCharacterInfo(roomCode, playerID, characterName, characterDescription, keyword1, keyword2, faceImage, fullImage, backgroundColor)
+function assignCharacterInfo(roomCode, playerID, characterName, characterDescription, keyword1, keyword2)
 {
     const room = rooms.get(roomCode);
 
@@ -384,10 +381,7 @@ function assignCharacterInfo(roomCode, playerID, characterName, characterDescrip
         characterName,
         characterDescription,
         keyword1,
-        keyword2,
-        faceImage,
-        fullImage,
-        backgroundColor
+        keyword2
     };
 
     console.log(
@@ -400,10 +394,7 @@ function assignCharacterInfo(roomCode, playerID, characterName, characterDescrip
         characterName,
         characterDescription,
         keyword1,
-        keyword2,
-        faceImage,
-        fullImage,
-        backgroundColor
+        keyword2
     });
      console.log(
         `Assigned ${characterName} to ${player.playerName}`

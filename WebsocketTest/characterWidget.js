@@ -36,23 +36,6 @@
         cursor: pointer;
       }
 
-      .character-widget-root .character-widget-initials {
-        display: none;
-        width: 92px;
-        height: 92px;
-        border-radius: 50%;
-        align-items: center;
-        justify-content: center;
-        color: #333333;
-        cursor: pointer;
-        font-family: 'Dobra', serif;
-        font-size: 18px;
-        font-weight: bold;
-        text-align: center;
-        padding: 8px;
-        box-sizing: border-box;
-      }
-
       .character-widget-root .modal,
       .character-widget-root .character-widget-modal {
         display: none;
@@ -74,9 +57,8 @@
 
       .character-widget-root .modal-content,
       .character-widget-root .character-widget-modal-content {
-        width: min(560px, calc(100vw - 48px));
-        max-height: calc(100vh - 64px);
-        min-height: 360px;
+        width: 500px;
+        height: 500px;
         background-color: #D9D9D9;
         border: 5px solid #99C998;
         border-radius: 20px;
@@ -84,8 +66,7 @@
         justify-content: flex-start;
         align-items: center;
         padding: 10px;
-        overflow: auto;
-        box-sizing: border-box;
+        overflow: hidden;
       }
 
       .character-widget-root .modal-content img,
@@ -99,14 +80,13 @@
       .character-widget-root .modal-right-section,
       .character-widget-root .character-widget-right-section {
         width: 70%;
-        min-height: 100%;
+        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 12px;
-        padding: 16px;
-        box-sizing: border-box;
+        gap: 15px;
+        padding: 20px;
       }
 
       .character-widget-root .text-box,
@@ -114,16 +94,15 @@
         width: 80%;
         background-color: #FFFFFF;
         border-radius: 15px;
-        padding: 14px;
+        padding: 20px;
         text-align: center;
         font-family: 'Dobra', serif;
         font-size: 16px;
         color: #333333;
-        min-height: 48px;
+        min-height: 60px;
         display: flex;
         align-items: center;
-        justify-content: center;
-        box-sizing: border-box;
+        justify-content: flex-start;
       }
 
       .character-widget-root .modal-text,
@@ -132,32 +111,8 @@
         text-align: center;
         font-family: 'Dobra', serif;
         font-size: 14px;
-        line-height: 1.35;
         color: #333333;
-        margin: 4px 0 0;
-      }
-
-      @media (max-width: 560px) {
-        .character-widget-root .modal-content,
-        .character-widget-root .character-widget-modal-content {
-          flex-direction: column;
-          width: calc(100vw - 32px);
-          min-height: 0;
-          padding: 14px;
-        }
-
-        .character-widget-root .modal-content img,
-        .character-widget-root .character-widget-modal-content img {
-          max-width: 70%;
-          max-height: 220px;
-        }
-
-        .character-widget-root .modal-right-section,
-        .character-widget-root .character-widget-right-section {
-          width: 100%;
-          min-height: 0;
-          padding: 8px;
-        }
+        margin-top: 10px;
       }
     `;
 
@@ -199,14 +154,6 @@
     profileImage.src = "";
 
     circle.appendChild(profileImage);
-
-    const initials = document.createElement("button");
-    initials.id = "characterInitials";
-    initials.className = "character-widget-initials";
-    initials.type = "button";
-    initials.textContent = "";
-
-    circle.appendChild(initials);
 
     const modal = document.createElement("div");
     modal.id = "imageModal";
@@ -254,21 +201,14 @@
 
   function attachCharacterWidgetEvents() {
     const profileImage = document.getElementById("profileImage");
-    const characterInitials = document.getElementById("characterInitials");
     const imageModal = document.getElementById("imageModal");
 
     if (!profileImage || !imageModal) return;
     if (profileImage.dataset.characterWidgetEventsAttached === "true") return;
 
-    const openModal = function () {
+    profileImage.addEventListener("click", function () {
       imageModal.classList.add("active");
-    };
-
-    profileImage.addEventListener("click", openModal);
-
-    if (characterInitials) {
-      characterInitials.addEventListener("click", openModal);
-    }
+    });
 
     imageModal.addEventListener("click", function (event) {
       if (event.target === imageModal) {
@@ -303,7 +243,6 @@
     if (root) root.style.display = "block";
 
     const profileImage = document.getElementById("profileImage");
-    const characterInitials = document.getElementById("characterInitials");
     const characterCircle = document.getElementById("characterCircle");
     const fullImage = document.getElementById("fullImage");
     const box1Text = document.getElementById("box1Text");
@@ -317,16 +256,6 @@
 
     if (profileImage && character.faceImage) {
       profileImage.src = character.faceImage;
-      profileImage.style.display = "block";
-      profileImage.alt = character.characterName || "profile";
-    } else if (profileImage) {
-      profileImage.removeAttribute("src");
-      profileImage.style.display = "none";
-    }
-
-    if (characterInitials) {
-      characterInitials.textContent = getCharacterInitials(character.characterName);
-      characterInitials.style.display = character.faceImage ? "none" : "flex";
     }
 
     if (characterCircle && character.backgroundColor) {
@@ -335,10 +264,6 @@
 
     if (fullImage && character.fullImage) {
       fullImage.src = character.fullImage;
-      fullImage.style.display = "block";
-    } else if (fullImage) {
-      fullImage.removeAttribute("src");
-      fullImage.style.display = "none";
     }
 
     if (box1Text) {
@@ -356,18 +281,6 @@
     if (modalDescription) {
       modalDescription.textContent = character.modalDescription || "";
     }
-  }
-
-  function getCharacterInitials(characterName) {
-    if (!characterName) return "Character";
-
-    return String(characterName)
-      .replace(/([a-z])([A-Z])/g, "$1 $2")
-      .split(/\s+/)
-      .filter(Boolean)
-      .slice(0, 2)
-      .map(part => part[0].toUpperCase())
-      .join("");
   }
 
   window.renderCharacterWidget = renderCharacterWidget;

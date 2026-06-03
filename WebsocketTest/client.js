@@ -240,7 +240,7 @@ function clearDiscussionTimer() {
 function handleCharacterInfo(data)
 {
    console.log("CHARACTER_INFO RECEIVED:", data);
-  const character = normalizeCharacterData(data);
+  const character = buildCharacterObject(data);
   console.log("Built character:", character);
 
   sessionStorage.setItem(
@@ -251,42 +251,49 @@ function handleCharacterInfo(data)
 
     renderCharacterWidgetSafely();
 }
-function normalizeCharacterData(characterData) {
-  if (!characterData) {
-    return null;
-  }
-
-  if (characterData.faceImage || characterData.fullImage || characterData.modalDescription) {
-    return {
-      ...characterData,
-      box1Text: characterData.box1Text || formatCharacterKeyword(characterData.keyword1),
-      box2Text: characterData.box2Text || formatCharacterKeyword(characterData.keyword2),
-      modalDescription: characterData.modalDescription || characterData.characterDescription || "No character description received."
-    };
-  }
-
-  return buildCharacterObject(characterData);
-}
-
 function buildCharacterObject(data)
 {
+    let faceImage = "";
+    let fullImage = "";
+    let backgroundColor = "#99C998";
+
+    switch(data.characterName)
+    {
+        case "AIArtist":
+            faceImage = "AIArtist_portrait.png";
+            fullImage = "AIArtist.png";
+            backgroundColor = "#99C998";
+            break;
+        case "CulturalOrganizer":
+            faceImage = "CulturalOrganizer_portrait.png";
+            fullImage = "CulturalOrganizer.png";
+            backgroundColor = "#7EA5D8";
+            break;
+        case "EthicalAdvisor":
+            faceImage = "EthicalAdvisor_portrait.png";
+            fullImage = "EthicalAdvisor.png";
+            backgroundColor = "#f735ea";
+            break;
+        case "FinanceEmployee":
+            faceImage = "FinanceEmployee_portrait.png";
+            fullImage = "FinanceEmployee.png";
+            backgroundColor = "#FFD700";
+            break;
+        case "UIDesigner":
+            faceImage = "UIDesigner_portrait.png";
+            fullImage = "UIDesigner.png";
+            backgroundColor = "#088F8F";
+            break;
+    }
+
     return {
-        characterName: data.characterName || "",
-        faceImage: data.faceImage || "",
-        fullImage: data.fullImage || "",
-        box1Text: formatCharacterKeyword(data.keyword1),
-        box2Text: formatCharacterKeyword(data.keyword2),
-        modalDescription: data.characterDescription || "No character description received.",
-        backgroundColor: data.backgroundColor || "#99C998"
+        faceImage,
+        fullImage,
+        box1Text: data.keyword1,
+        box2Text: data.keyword2,
+        modalDescription: data.characterDescription,
+        backgroundColor
     };
-}
-
-function formatCharacterKeyword(keyword) {
-  if (!keyword) return "";
-
-  return String(keyword)
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
-    .trim();
 }
 
 function parseServerMessage(event) {
@@ -432,7 +439,7 @@ function savePlayerData(data) {
   }
 
   if (data.character) {
-    const character = normalizeCharacterData(data.character);
+    const character = buildCharacterObject(data.character);
 
     if (character) {
       sessionStorage.setItem("character", JSON.stringify(character));

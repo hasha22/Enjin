@@ -32,9 +32,6 @@ public class CharacterInfoPayload
     public string characterDescription;
     public string keyword1;
     public string keyword2;
-    public string faceImage;
-    public string fullImage;
-    public string backgroundColor;
 }
 [System.Serializable]
 public class PlayerScreenCommandPayload
