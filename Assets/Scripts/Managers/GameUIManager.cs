@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Collections;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -12,6 +14,8 @@ public class GameUIManager : MonoBehaviour
     [Header("Screen References")]
     public List<GameObject> allScreens = new List<GameObject>();
     private List<GameObject> trashCan = new List<GameObject>();
+    public GameObject sidebarContainer;
+    public GameObject sidebarPlayerIcon;
 
     [Header("Text References")]
     [SerializeField] private TextMeshProUGUI titleText;
@@ -88,7 +92,8 @@ public class GameUIManager : MonoBehaviour
     }
     private void Start()
     {
-        roundIndicator.text = $"{GameManager.instance.currentRound}/{GameManager.instance.totalRounds}";
+        roundIndicator.text = RoundIndicatorTextMaker(GameManager.instance.totalRounds, GameManager.instance.currentRound);
+        InstantiateSidebarIcons();
 
         //sets automatically to screen 0 (character intro)
         foreach (GameObject screen in allScreens)
@@ -137,7 +142,7 @@ public class GameUIManager : MonoBehaviour
                 return;
             }
             GameManager.instance.DetermineTopic();
-            roundIndicator.text = $"{currentRound}/{totalRounds}";
+            roundIndicator.text = RoundIndicatorTextMaker(GameManager.instance.totalRounds, GameManager.instance.currentRound);
         }
 
         //Turns the correct screen on and the rest off
@@ -239,6 +244,18 @@ public class GameUIManager : MonoBehaviour
         }
     }
     #region Screen Visulization Logic
+    public void InstantiateSidebarIcons()
+    {
+        if (NetworkManager.instance == null || NetworkManager.instance.allPlayers.Count == 0) return;
+        foreach (GameObject playerObject in NetworkManager.instance.allPlayers)
+        {
+            GameObject prefab = Instantiate(sidebarPlayerIcon, sidebarContainer.transform);
+            Image imgComponent = prefab.GetComponent<Image>();
+            Player playerScript = playerObject.GetComponent<Player>();
+            imgComponent.sprite = playerScript.selectedCharacter.characterImage;
+        }
+    }
+
     public void InstantiateKeywordCards()
     {
         Topic currentTopic = GameManager.instance.GetCurrentTopic();
@@ -478,5 +495,20 @@ public class GameUIManager : MonoBehaviour
         }
         GameAudioManager.instance.typingSource.Stop();
     }
+
+    private string RoundIndicatorTextMaker(int roundAmount, int currentRoundNumber)
+    {
+        string output = "Round ";
+        string trimmedOutput = "";
+        for (int x = 1; x <= roundAmount; x++)
+        {
+            if (currentRoundNumber == x){ output += $"<color=#f729ea>{x}</color>-";}
+            else{ output += $"{x}-";}
+            trimmedOutput = output.Substring(0, output.Length - 1);
+        }
+        return trimmedOutput;
+    }
+
+
     #endregion
 }
