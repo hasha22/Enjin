@@ -185,7 +185,7 @@ public class GameUIManager : MonoBehaviour
         }
         else if (currentScreen == GameScreens.DiscussionScreen)
         {
-            voting1Screen.SetActive(true);
+            voting1Screen.SetActive(false);
             voting2Screen.SetActive(false);
             voting1Title.gameObject.SetActive(false);
 
@@ -244,7 +244,6 @@ public class GameUIManager : MonoBehaviour
     #region Screen Visulization Logic
     public void InstantiateSidebarIcons()
     {
-        return;
         if (NetworkManager.instance == null || NetworkManager.instance.allPlayers.Count == 0) return;
         foreach (GameObject playerObject in NetworkManager.instance.allPlayers)
         {
