@@ -1,7 +1,8 @@
 // PLAYTEST VERSION
 // One HTML page, one WebSocket, no reconnect between screens.
 
-const SERVER_URL = "wss://enjin--enjin--qpbmsj2bcc7n.code.run/";
+const DEPLOYED_SERVER_URL = "wss://enjin--enjin--qpbmsj2bcc7n.code.run/";
+const SERVER_URL = getServerUrl();
 
 let ws = null;
 let joinedRoomCode = null;
@@ -12,14 +13,20 @@ let votingDuration = 60;
 let votingStartedAt = Date.now();
 
 let currentVoteType = "first_vote";
+let selectedSecondVote = null;
 
 let hasSubmittedVote = false;
 let countdownInterval = null;
+let discussionCountdownInterval = null;
 let currentScreenId = "joinScreen";
 
 connectWebSocket();
 setupVotingControls();
 hideCharacterWidgetIfNeeded();
+
+function getServerUrl() {
+  return DEPLOYED_SERVER_URL;
+}
 
 function connectWebSocket() {
   ws = new WebSocket(SERVER_URL);
@@ -41,7 +48,6 @@ function connectWebSocket() {
   };
 
   ws.onmessage = (event) => {
-    
     const { type, data } = parseServerMessage(event);
 
     console.log("Message from server:", type, data);
@@ -50,6 +56,7 @@ function connectWebSocket() {
       case "join_room_success":
         handleJoinRoomSuccess(data);
         break;
+
       case "join_room_failed":
         joinedRoomCode = null;
         log("Join failed: " + (data.reason || "Unknown reason"));
@@ -78,6 +85,9 @@ function connectWebSocket() {
       case "character_info":
         handleCharacterInfo(data);
         break;
+      case "player_screen_changed":
+        handlePlayerScreenChanged(data);
+        break;
       case "error":
         log("Server error");
         break;
@@ -88,14 +98,164 @@ function connectWebSocket() {
     }
   };
 }
+function handlePlayerScreenChanged(data) {
+  savePlayerData(data);
+
+  if (data.roundNumber) {
+    currentRound = Number(data.roundNumber);
+  }
+
+  if (data.voteType) {
+    currentVoteType = data.voteType;
+  }
+
+  if (data.votingDuration) {
+    votingDuration = Number(data.votingDuration);
+  }
+
+  if (data.screenId === "characterScreen") {
+    renderCharacterWidgetSafely();
+    showScreen("characterScreen");
+    return;
+  }
+
+  if (data.screenId === "situationScreen") {
+    renderCharacterWidgetSafely();
+    showScreen("situationScreen");
+    return;
+  }
+
+  if (data.screenId === "votingScreen") {
+    clearDiscussionTimer();
+    resetVotingScreen();
+    renderCharacterWidgetSafely();
+    showScreen("votingScreen");
+    startVotingTimer();
+    return;
+  }
+
+  if (data.screenId === "discussionScreen") {
+    clearInterval(countdownInterval);
+    renderCharacterWidgetSafely();
+    showDiscussionTurnScreen(data);
+    return;
+  }
+
+  if (data.screenId === "waitingScreen") {
+    clearDiscussionTimer();
+    renderCharacterWidgetSafely();
+    showWaitingStateScreen(data);
+    return;
+  }
+
+  if (data.screenId === "gameOverScreen") {
+    clearInterval(countdownInterval);
+    clearDiscussionTimer();
+    showScreen("gameOverScreen");
+    return;
+  }
+
+  console.warn("Unknown screenId from Unity:", data.screenId);
+}
+
+function showWaitingStateScreen(data) {
+  updateRoundPlaceholders(data.roundNumber || currentRound);
+
+  const screenByState = {
+    waiting_for_situation: "waitingSituationScreen",
+    waiting_for_discussion: "waitingDiscussionScreen",
+    waiting_after_discussion: "waitingAfterDiscussionScreen",
+    waiting_for_enjin_update: "waitingEnjinUpdateScreen",
+    waiting_for_results: "waitingResultsScreen"
+  };
+
+  showScreen(screenByState[data.playerState] || "waitingDiscussionScreen");
+}
+
+function updateRoundPlaceholders(roundNumber) {
+  const round = Number(roundNumber || currentRound || 1);
+
+  document.querySelectorAll("[data-round-number]").forEach(element => {
+    element.innerText = round;
+  });
+}
+
+function showDiscussionTurnScreen(data) {
+  const timerElement = document.getElementById("discussionTimer");
+  const myTurnBlock = document.getElementById("myTurnBlock");
+  const otherSpeakerBlock = document.getElementById("otherSpeakerBlock");
+  const speakerNameElement = document.getElementById("speakerName");
+  const currentClientId = normalizeId(clientId || sessionStorage.getItem("clientId"));
+  const currentPlayerName = normalizeId(sessionStorage.getItem("playerName"));
+  const speakerId = normalizeId(data.currentSpeakerPlayerID);
+  const speakerNameId = normalizeId(data.currentSpeakerName);
+  const isMyTurn = data.isCurrentSpeaker === true
+    || (speakerId && speakerId === currentClientId)
+    || (speakerNameId && speakerNameId === currentPlayerName);
+  const duration = Number(data.votingDuration || 0);
+
+  if (myTurnBlock) {
+    myTurnBlock.style.display = isMyTurn ? "block" : "none";
+  }
+
+  if (otherSpeakerBlock) {
+    otherSpeakerBlock.style.display = isMyTurn ? "none" : "block";
+  }
+
+  if (speakerNameElement && data.currentSpeakerName) {
+    speakerNameElement.innerText = data.currentSpeakerName;
+  }
+
+  showScreen("discussionScreen");
+  startDiscussionTimer(duration, timerElement);
+}
+
+function normalizeId(value) {
+  return typeof value === "string" ? value.trim().toLowerCase() : "";
+}
+
+function startDiscussionTimer(duration, timerElement) {
+  clearDiscussionTimer();
+
+  let remainingSeconds = Math.max(Number(duration || 0), 0);
+
+  function renderDiscussionTimer() {
+    if (!timerElement) {
+      return;
+    }
+
+    const minutes = Math.floor(remainingSeconds / 60);
+    const seconds = remainingSeconds % 60;
+    timerElement.innerText = "Timer: " + minutes + "m " + seconds + "s";
+  }
+
+  renderDiscussionTimer();
+
+  discussionCountdownInterval = setInterval(() => {
+    remainingSeconds = Math.max(remainingSeconds - 1, 0);
+    renderDiscussionTimer();
+
+    if (remainingSeconds <= 0) {
+      clearDiscussionTimer();
+    }
+  }, 1000);
+}
+
+function clearDiscussionTimer() {
+  clearInterval(discussionCountdownInterval);
+  discussionCountdownInterval = null;
+}
 function handleCharacterInfo(data)
 {
+   console.log("CHARACTER_INFO RECEIVED:", data);
   const character = buildCharacterObject(data);
+  console.log("Built character:", character);
 
   sessionStorage.setItem(
         "character",
         JSON.stringify(character)
     );
+    console.log("STORED CHARACTER:", sessionStorage.getItem("character"));
 
     renderCharacterWidgetSafely();
 }
@@ -145,33 +305,18 @@ function buildCharacterObject(data)
 }
 
 function parseServerMessage(event) {
-
-  let msg;
-
-  try {
-    msg = typeof event.data === "string"
-      ? JSON.parse(event.data)
-      : event.data;
-  }
-  catch(error) {
-    console.error("FAILED TO PARSE EVENT.DATA", error);
-    return { type: null, data: {} };
-  }
-
-  console.log("PARSED MSG:", msg);
+  const msg = JSON.parse(event.data);
 
   let data = {};
 
   if (typeof msg.data === "string" && msg.data.length > 0) {
     try {
       data = JSON.parse(msg.data);
-    }
-    catch(error) {
-      console.warn("Could not parse msg.data:", msg.data);
+    } catch (error) {
+      console.warn("Could not parse msg.data as JSON:", msg.data);
       data = {};
     }
-  }
-  else if (msg.data && typeof msg.data === "object") {
+  } else if (msg.data && typeof msg.data === "object") {
     data = msg.data;
   }
 
@@ -203,6 +348,7 @@ function joinRoom() {
   sessionStorage.setItem("roomCode", roomCode);
   sessionStorage.setItem("playerName", playerName);
   sessionStorage.setItem("clientId", clientId);
+  sessionStorage.removeItem("character");
 
   ws.send(JSON.stringify({
     type: "join_room_request",
@@ -226,21 +372,26 @@ function handleJoinRoomSuccess(data) {
 }
 
 function handleGameStarted(data) {
+  savePlayerData(data);
 
-  setStatus("Character received. Waiting for the next step.", "characterScreen");
+  renderCharacterWidgetSafely();
   showScreen("characterScreen");
 }
 
 function handleShowScenario(data) {
+  savePlayerData(data);
 
-  setStatus("The current situation is being explained there.", "situationScreen");
+  renderCharacterWidgetSafely();
   showScreen("situationScreen");
 }
 
 function handleVotingStarted(data) {
+  savePlayerData(data);
 
   resetVotingScreen();
+  renderCharacterWidgetSafely();
   showScreen("votingScreen");
+  startVotingTimer();
 }
 
 function handleVoteSaved(data) {
@@ -255,10 +406,20 @@ function handleVoteFailed(data) {
   hasSubmittedVote = false;
 
   const submitVoteBtn = document.getElementById("submitVoteBtn");
+  const enactVoteBtn = document.getElementById("enactVoteBtn");
+  const rejectVoteBtn = document.getElementById("rejectVoteBtn");
 
   if (submitVoteBtn) {
     submitVoteBtn.disabled = false;
     submitVoteBtn.innerText = "Submit Vote";
+  }
+
+  if (enactVoteBtn) {
+    enactVoteBtn.disabled = false;
+  }
+
+  if (rejectVoteBtn) {
+    rejectVoteBtn.disabled = false;
   }
 
   setStatus("Vote failed: " + (data.reason || "Unknown reason"), "votingScreen");
@@ -277,6 +438,18 @@ function savePlayerData(data) {
   if (data.clientId) {
     clientId = data.clientId;
     sessionStorage.setItem("clientId", data.clientId);
+  }
+
+  if (data.playerState) {
+    sessionStorage.setItem("playerState", data.playerState);
+  }
+
+  if (data.character) {
+    const character = buildCharacterObject(data.character);
+
+    if (character) {
+      sessionStorage.setItem("character", JSON.stringify(character));
+    }
   }
 }
 
@@ -298,16 +471,44 @@ function setupVotingControls() {
       submitVote("manual");
     });
   }
+
+  if (enactVoteBtn) {
+    enactVoteBtn.addEventListener("click", () => {
+      selectedSecondVote = "yes";
+      submitVote("manual");
+    });
+  }
+
+  if (rejectVoteBtn) {
+    rejectVoteBtn.addEventListener("click", () => {
+      selectedSecondVote = "no";
+      submitVote("manual");
+    });
+  }
 }
 
 function resetVotingScreen() {
   hasSubmittedVote = false;
+  selectedSecondVote = null;
 
   const voteSlider = document.getElementById("voteSlider");
   const voteValue = document.getElementById("voteValue");
   const submitVoteBtn = document.getElementById("submitVoteBtn");
   const votingContent = document.getElementById("votingContent");
-  const waitingContent = document.getElementById("waitingContent");
+  const firstVoteContent = document.getElementById("firstVoteContent");
+  const secondVoteContent = document.getElementById("secondVoteContent");
+  const roundNumber = document.getElementById("roundNumber");
+  const votingTitle = document.getElementById("votingTitle");
+  const timerElement = document.getElementById("timer");
+  const enactVoteBtn = document.getElementById("enactVoteBtn");
+  const rejectVoteBtn = document.getElementById("rejectVoteBtn");
+  const isSecondVote = currentVoteType === "second_vote";
+
+  votingStartedAt = Date.now();
+
+  if (roundNumber) {
+    roundNumber.innerText = currentRound;
+  }
 
   if (voteSlider && voteValue) {
     voteSlider.value = 3;
@@ -319,25 +520,105 @@ function resetVotingScreen() {
     submitVoteBtn.innerText = "Submit Vote";
   }
 
+  if (enactVoteBtn) {
+    enactVoteBtn.disabled = false;
+  }
+
+  if (rejectVoteBtn) {
+    rejectVoteBtn.disabled = false;
+  }
+
   if (votingContent) {
     votingContent.style.display = "flex";
   }
 
-  if (waitingContent) {
-    waitingContent.style.display = "none";
+  if (votingTitle) {
+    votingTitle.style.display = isSecondVote ? "none" : "block";
   }
 
-  setStatus("Choose your position on the scale", "votingScreen");
+  if (timerElement) {
+    timerElement.style.display = "block";
+  }
+
+  if (firstVoteContent) {
+    firstVoteContent.style.display = isSecondVote ? "none" : "flex";
+  }
+
+  if (secondVoteContent) {
+    secondVoteContent.style.display = isSecondVote ? "flex" : "none";
+  }
+
+  const statusText = isSecondVote
+    ? "Choose whether to enact or reject the policy"
+    : "Choose your position on the scale";
+
+  setStatus(statusText, "votingScreen");
+}
+
+function startVotingTimer() {
+  clearInterval(countdownInterval);
+
+  updateTimerText();
+
+  countdownInterval = setInterval(() => {
+    updateTimerText();
+
+    const remainingSeconds = getRemainingSeconds();
+
+    if (remainingSeconds <= 0) {
+      clearInterval(countdownInterval);
+
+      if (!hasSubmittedVote) {
+        if (currentVoteType === "second_vote") {
+          handleSecondVoteTimeout();
+        } else {
+          submitVote("timeout");
+        }
+      }
+    }
+  }, 250);
+}
+
+function handleSecondVoteTimeout() {
+  const enactVoteBtn = document.getElementById("enactVoteBtn");
+  const rejectVoteBtn = document.getElementById("rejectVoteBtn");
+
+  hasSubmittedVote = true;
+
+  if (enactVoteBtn) {
+    enactVoteBtn.disabled = true;
+  }
+
+  if (rejectVoteBtn) {
+    rejectVoteBtn.disabled = true;
+  }
+
+  setStatus("Time is up. Waiting for the main screen.", "votingScreen");
+}
+
+function getRemainingSeconds() {
+  const now = Date.now();
+  const elapsedSeconds = Math.floor((now - votingStartedAt) / 1000);
+  return Math.max(votingDuration - elapsedSeconds, 0);
+}
+
+function updateTimerText() {
+  const remainingSeconds = getRemainingSeconds();
+  const timerElement = document.getElementById("timer");
+
+  if (timerElement) {
+    timerElement.innerText = "Time left: " + remainingSeconds + "s";
+  }
 }
 
 function mapSliderValueToFirstVote(sliderValue) {
   const value = Number(sliderValue);
 
-  if (value === 1) return "mostly_disagree";
-  if (value === 2) return "disagree";
+  if (value === 1) return "disagree";
+  if (value === 2) return "mostly_disagree";
   if (value === 3) return "neutral";
-  if (value === 4) return "agree";
-  if (value === 5) return "mostly_agree";
+  if (value === 4) return "mostly_agree";
+  if (value === 5) return "agree";
 
   return "neutral";
 }
@@ -349,8 +630,10 @@ function submitVote(submitReason) {
 
   const voteSlider = document.getElementById("voteSlider");
   const submitVoteBtn = document.getElementById("submitVoteBtn");
+  const enactVoteBtn = document.getElementById("enactVoteBtn");
+  const rejectVoteBtn = document.getElementById("rejectVoteBtn");
 
-  if (!voteSlider) {
+  if (currentVoteType !== "second_vote" && !voteSlider) {
     return;
   }
 
@@ -361,12 +644,29 @@ function submitVote(submitReason) {
 
   hasSubmittedVote = true;
 
-  const vote = mapSliderValueToFirstVote(voteSlider.value);
-  const roomCode = joinedRoomCode;
+  const vote = currentVoteType === "second_vote"
+    ? selectedSecondVote
+    : mapSliderValueToFirstVote(voteSlider.value);
+
+  if (!vote) {
+    hasSubmittedVote = false;
+    setStatus("Choose an option before submitting.", "votingScreen");
+    return;
+  }
+
+  const roomCode = joinedRoomCode || sessionStorage.getItem("roomCode");
 
   if (submitVoteBtn) {
     submitVoteBtn.disabled = true;
     submitVoteBtn.innerText = "Saving...";
+  }
+
+  if (enactVoteBtn) {
+    enactVoteBtn.disabled = true;
+  }
+
+  if (rejectVoteBtn) {
+    rejectVoteBtn.disabled = true;
   }
 
   setStatus("Saving your vote...", "votingScreen");
@@ -378,20 +678,12 @@ function submitVote(submitReason) {
     roundNumber: currentRound,
     voteType: currentVoteType,
     voteValue: vote,
+    submitReason: submitReason
   }));
 }
 
 function showWaitingForOthersScreen() {
-  const votingContent = document.getElementById("votingContent");
-  const waitingContent = document.getElementById("waitingContent");
-
-  if (votingContent) {
-    votingContent.style.display = "none";
-  }
-
-  if (waitingContent) {
-    waitingContent.style.display = "flex";
-  }
+  showScreen("voteSavedScreen");
 }
 
 function showScreen(screenId) {

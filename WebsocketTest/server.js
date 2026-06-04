@@ -264,6 +264,7 @@ wss.on("connection", (clientSocket) => {
         const submitReason = msg.submitReason || "manual";
         const voteValue = msg.voteValue;
         const voteType = msg.voteType;
+        const roundNumber = Number(msg.roundNumber || 0);
 
         if (!roomCode || !clientId) {
           send(clientSocket, "vote_failed", {
@@ -272,7 +273,7 @@ wss.on("connection", (clientSocket) => {
           return;
         }
 
-        submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, voteType);
+        submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, voteType, roundNumber);
         return;
       }
 
@@ -281,8 +282,32 @@ wss.on("connection", (clientSocket) => {
         console.log("Received character_info on server.");
 
         const roomCode = normalize(msg.room || msg.roomCode);
-        const payload = msg.data;
-        assignCharacterInfo(roomCode, payload.playerID, payload.characterName, payload.characterDescription, payload.keyword1, payload.keyword2);
+        const payload = parsePayload(msg.data);
+        assignCharacterInfo(
+          roomCode,
+          payload.playerID,
+          payload.characterName,
+          payload.characterDescription,
+          payload.keyword1,
+          payload.keyword2
+        );
+        return;
+      }
+
+      if (msg.type === "player_screen_command")
+      {
+        const roomCode = normalize(msg.room || msg.roomCode);
+        const payload = parsePayload(msg.data);
+
+        if (!roomCode)
+        {
+          send(clientSocket, "player_screen_command_failed", {
+            reason: "Room code is missing"
+          });
+          return;
+        }
+
+        sendPlayerScreenCommand(clientSocket, roomCode, payload);
         return;
       }
     });
@@ -376,13 +401,86 @@ function assignCharacterInfo(roomCode, playerID, characterName, characterDescrip
     );
 
 }
+function sendPlayerScreenCommand(hostSocket, roomCode, payload)
+{
+  const room = rooms.get(roomCode);
+
+  if (!room)
+  {
+    send(hostSocket, "player_screen_command_failed", {
+      reason: "Room not found"
+    });
+    return;
+  }
+
+  if (room.host !== hostSocket)
+  {
+    send(hostSocket, "player_screen_command_failed", {
+      reason: "Only host can control player screens"
+    });
+    return;
+  }
+
+  if (!payload || typeof payload.screenId !== "string" || payload.screenId.trim() === "")
+  {
+    send(hostSocket, "player_screen_command_failed", {
+      reason: "screenId is required"
+    });
+    return;
+  }
+
+  const connectedPlayers = [...room.players].filter(player => player.connected);
+
+  if (connectedPlayers.length === 0)
+  {
+    send(hostSocket, "player_screen_command_failed", {
+      reason: "No connected players in the room"
+    });
+    return;
+  }
+
+  room.lastPlayerScreen = {
+    screenId: payload.screenId,
+    playerState: payload.playerState || PLAYER_STATE.WAITING,
+    roundNumber: payload.roundNumber || 0,
+    totalRounds: payload.totalRounds || 0,
+    voteType: payload.voteType || "",
+    votingDuration: payload.votingDuration || 0,
+    currentSpeakerPlayerID: payload.currentSpeakerPlayerID || "",
+    currentSpeakerName: payload.currentSpeakerName || ""
+  };
+
+  for (const player of connectedPlayers)
+  {
+    player.playerState = room.lastPlayerScreen.playerState;
+
+    send(player.socket, "player_screen_changed", {
+      ...room.lastPlayerScreen,
+      room: roomCode,
+      playerName: player.playerName,
+      clientId: player.clientId,
+      isCurrentSpeaker: player.clientId === room.lastPlayerScreen.currentSpeakerPlayerID,
+      character: player.character
+    });
+  }
+
+  send(hostSocket, "player_screen_command_success", {
+    ...room.lastPlayerScreen,
+    room: roomCode,
+    playerCount: connectedPlayers.length
+  });
+
+  console.log(
+    `[Room: ${roomCode}] Sent player screen ${payload.screenId} to ${connectedPlayers.length} players`
+  );
+}
 //Helpers
 function send(clientSocket, type, dataObj = {}) 
 {
   if (clientSocket.readyState !== WebSocket.OPEN) return;
 
   console.log(
-        "SENDING TO CLIENT:", JSON.stringify(dataObj)
+        "SENDING TO CLIENT:",
     );
 
   clientSocket.send(JSON.stringify({
@@ -396,11 +494,30 @@ function getRoom(roomCode)
     rooms.set(roomCode, {
       host: null,
       players: new Set(),
-        currentRound: 0,
-        roundVotes: {}
+      lastPlayerScreen: null
     });
   }
   return rooms.get(roomCode);
+}
+function parsePayload(payload)
+{
+  if (!payload) return {};
+
+  if (typeof payload === "string")
+  {
+    try
+    {
+      return JSON.parse(payload);
+    }
+    catch
+    {
+      return {};
+    }
+  }
+
+  if (typeof payload === "object") return payload;
+
+  return {};
 }
 function normalize(str) 
 {
@@ -443,7 +560,8 @@ function reconnectPlayer(clientSocket, roomCode, clientId)
         playerName: player.playerName,
         clientId: player.clientId,
         playerState: player.playerState,
-        character: player.character
+        character: player.character,
+        lastPlayerScreen: room.lastPlayerScreen
       });
 
       if (room.host) 
@@ -511,8 +629,7 @@ function startGame(clientSocket, roomCode)
         room: roomCode,
         playerName: player.playerName,
         clientId: player.clientId,
-        character: player.character,
-        message: "The game has started!"
+        character: player.character
 
         
       });
@@ -564,8 +681,7 @@ function showScenario(clientSocket, roomCode)
       playerState: player.playerState,
       room: roomCode,
       playerName: player.playerName,
-      clientId: player.clientId,
-      message: "Look at the main screen"
+      clientId: player.clientId
     });
   }
 
@@ -627,7 +743,7 @@ function startVoting(hostSocket, roomCode, voteType) {
 }
 
 
-function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, voteType) {
+function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, voteType, roundNumber) {
   const room = rooms.get(roomCode);
 
   if (!room) {
@@ -649,15 +765,6 @@ function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, v
   if (player.socket !== clientSocket) {
     send(clientSocket, "vote_failed", {
       reason: "This socket does not belong to this player"
-    });
-    return;
-  }
-
-  const roundNumber = room.currentRound;
-
-  if (!roundNumber || roundNumber <= 0) {
-    send(clientSocket, "vote_failed", {
-      reason: "Voting has not started yet"
     });
     return;
   }
@@ -687,8 +794,8 @@ function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, v
 
   send(clientSocket, "vote_saved", {
     room: roomCode,
-    currentRound: roundNumber,
-    roundNumber: roundNumber,
+    currentRound: roundNumber || 0,
+    roundNumber: roundNumber || 0,
     voteType: voteType,
     voteValue: voteValue,
     playerState: player.playerState
@@ -701,7 +808,10 @@ function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, v
   send(room.host, messageType, {
     playerName: player.playerName,
     playerID: clientId,
-    playerVote: voteValue
+    playerVote: voteValue,
+    roundNumber: roundNumber || 0,
+    voteType: voteType,
+    submitReason: submitReason
   });
 
   console.log(
