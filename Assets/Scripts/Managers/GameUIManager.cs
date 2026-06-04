@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.Collections;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -246,6 +244,7 @@ public class GameUIManager : MonoBehaviour
     #region Screen Visulization Logic
     public void InstantiateSidebarIcons()
     {
+        return;
         if (NetworkManager.instance == null || NetworkManager.instance.allPlayers.Count == 0) return;
         foreach (GameObject playerObject in NetworkManager.instance.allPlayers)
         {
@@ -502,8 +501,8 @@ public class GameUIManager : MonoBehaviour
         string trimmedOutput = "";
         for (int x = 1; x <= roundAmount; x++)
         {
-            if (currentRoundNumber == x){ output += $"<color=#f729ea>{x}</color>-";}
-            else{ output += $"{x}-";}
+            if (currentRoundNumber == x) { output += $"<color=#f729ea>{x}</color>-"; }
+            else { output += $"{x}-"; }
             trimmedOutput = output.Substring(0, output.Length - 1);
         }
         return trimmedOutput;
