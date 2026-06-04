@@ -47,14 +47,13 @@ public class NetworkManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        UIManager.instance.SetRoomCode(roomCode);
     }
 
     async void Start()
     {
         Application.runInBackground = true;
         await Connect();
-
-        UIManager.instance.SetRoomCode(roomCode);
     }
 
     void Update()
