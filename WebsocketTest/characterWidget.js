@@ -59,8 +59,6 @@
       .character-widget-root .character-widget-modal-content {
         width: 500px;
         height: 500px;
-        background-color: #D9D9D9;
-        border: 5px solid #99C998;
         border-radius: 20px;
         display: flex;
         justify-content: flex-start;
