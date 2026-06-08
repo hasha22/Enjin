@@ -92,7 +92,6 @@
       .character-widget-root .text-box,
       .character-widget-root .character-widget-text-box {
         width: 80%;
-        background-color: #FFFFFF;
         border-radius: 15px;
         padding: 20px;
         text-align: center;
@@ -180,7 +179,7 @@
     box2Text.id = "box2Text";
     box2Text.className = "text-box character-widget-text-box";
     box2Text.style.backgroundColor = keywordColor2;
-    
+
     const modalDescription = document.createElement("p");
     modalDescription.id = "modalDescription";
     modalDescription.className = "modal-text character-widget-modal-text";
