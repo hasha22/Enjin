@@ -35,4 +35,8 @@ public class Player : MonoBehaviour
     {
         firstVote = vote;
     }
+    public void SetSecondVote(bool vote)
+    {
+        secondVote = vote;
+    }
 }

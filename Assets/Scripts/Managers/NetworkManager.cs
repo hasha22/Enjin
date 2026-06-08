@@ -357,7 +357,6 @@ public class NetworkManager : MonoBehaviour
                         break;
                 }
                 playerScript.SetFirstVote(parsedVote);
-                playerScript.SaveFirstVoteForRound(GetCurrentRoundNumber(), parsedVote);
 
                 Debug.Log($"FIRST VOTE SAVED | player: {playerScript.GetPlayerName()}, ID: {playerScript.GetPlayerID()}, vote: {playerScript.GetFirstVote()}");
                 break;
@@ -374,12 +373,10 @@ public class NetworkManager : MonoBehaviour
                 if (playerVote == "yes")
                 {
                     playerScript.SetSecondVote(true);
-                    playerScript.SaveSecondVoteForRound(GetCurrentRoundNumber(), true);
                 }
                 else if (playerVote == "no")
                 {
                     playerScript.SetSecondVote(false);
-                    playerScript.SaveSecondVoteForRound(GetCurrentRoundNumber(), false);
                 }
                 if (GameUIManager.instance != null) GameUIManager.instance.InstantiateVotePlayerIcon(playerScript);
                 break;
@@ -411,7 +408,6 @@ public class NetworkManager : MonoBehaviour
         foreach (GameObject playerObject in allPlayers)
         {
             Player player = playerObject.GetComponent<Player>();
-            player.ResetRoundVotes();
         }
     }
     #endregion

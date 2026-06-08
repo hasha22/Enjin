@@ -63,10 +63,6 @@ public class GameManager : MonoBehaviour
         foreach (GameObject player in NetworkManager.instance.allPlayers)
         {
             Player playerScript = player.GetComponent<Player>();
-            if (!playerScript.HasSecondVote())
-            {
-                continue;
-            }
 
             if (playerScript.GetSecondVote()) { votedYes.Add(playerScript); }
             else { votedNo.Add(playerScript); }
