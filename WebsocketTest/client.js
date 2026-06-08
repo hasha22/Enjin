@@ -56,42 +56,32 @@ function connectWebSocket() {
       case "join_room_success":
         handleJoinRoomSuccess(data);
         break;
-
       case "join_room_failed":
         joinedRoomCode = null;
         log("Join failed: " + (data.reason || "Unknown reason"));
         setStatus("Join failed: " + (data.reason || "Unknown reason"));
         break;
-
       case "game_started":
         handleGameStarted(data);
-        break;
-
-      case "show_scenario":
-        handleShowScenario(data);
-        break;
-
-      case "voting_started":
-        handleVotingStarted(data);
-        break;
-
-      case "vote_saved":
-        handleVoteSaved(data);
-        break;
-
-      case "vote_failed":
-        handleVoteFailed(data);
         break;
       case "character_info":
         handleCharacterInfo(data);
         break;
-      case "player_screen_changed":
-        handlePlayerScreenChanged(data);
+      case "show_scenario":
+        handleShowScenario(data);
+        break;
+      case "voting_started":
+        handleVotingStarted(data);
+        break;
+      case "vote_saved":
+        handleVoteSaved(data);
+        break;
+      case "vote_failed":
+        handleVoteFailed(data);
         break;
       case "error":
         log("Server error");
         break;
-
       default:
         console.log("Unhandled message type:", type, data);
         break;
@@ -99,68 +89,23 @@ function connectWebSocket() {
   };
 }
 function handlePlayerScreenChanged(data) {
-  savePlayerData(data);
-
-  if (data.roundNumber) {
-    currentRound = Number(data.roundNumber);
-  }
-
-  if (data.voteType) {
-    currentVoteType = data.voteType;
-  }
-
-  if (data.votingDuration) {
-    votingDuration = Number(data.votingDuration);
-  }
-
-  if (data.screenId === "characterScreen") {
-    renderCharacterWidgetSafely();
-    showScreen("characterScreen");
-    return;
-  }
-
-  if (data.screenId === "situationScreen") {
-    renderCharacterWidgetSafely();
-    showScreen("situationScreen");
-    return;
-  }
-
-  if (data.screenId === "votingScreen") {
-    clearDiscussionTimer();
-    resetVotingScreen();
-    renderCharacterWidgetSafely();
-    showScreen("votingScreen");
-    startVotingTimer();
-    return;
-  }
-
-  if (data.screenId === "discussionScreen") {
-    clearInterval(countdownInterval);
-    renderCharacterWidgetSafely();
-    showDiscussionTurnScreen(data);
-    return;
-  }
-
+  //FIX THIS
   if (data.screenId === "waitingScreen") {
     clearDiscussionTimer();
     renderCharacterWidgetSafely();
-    showWaitingStateScreen(data);
+    showWaitingScreen(data);
     return;
   }
-
+  //FIX THIS
   if (data.screenId === "gameOverScreen") {
     clearInterval(countdownInterval);
     clearDiscussionTimer();
     showScreen("gameOverScreen");
     return;
   }
-
-  console.warn("Unknown screenId from Unity:", data.screenId);
 }
 
-function showWaitingStateScreen(data) {
-  updateRoundPlaceholders(data.roundNumber || currentRound);
-
+function showWaitingScreen(data) {
   const screenByState = {
     waiting_for_situation: "waitingSituationScreen",
     waiting_for_discussion: "waitingDiscussionScreen",
@@ -169,7 +114,7 @@ function showWaitingStateScreen(data) {
     waiting_for_results: "waitingResultsScreen"
   };
 
-  showScreen(screenByState[data.playerState] || "waitingDiscussionScreen");
+  showScreen(screenByState[data.playerState]);
 }
 
 function updateRoundPlaceholders(roundNumber) {
@@ -376,7 +321,6 @@ function joinRoom() {
 
 function handleJoinRoomSuccess(data) {
   joinedRoomCode = data.room;
-
   savePlayerData(data);
 
   setStatus("Connected to lobby! Waiting for game to start", "connectedScreen");
@@ -386,26 +330,20 @@ function handleJoinRoomSuccess(data) {
 }
 
 function handleGameStarted(data) {
-  savePlayerData(data);
-
   renderCharacterWidgetSafely();
   showScreen("characterScreen");
 }
 
 function handleShowScenario(data) {
-  savePlayerData(data);
-
-  renderCharacterWidgetSafely();
   showScreen("situationScreen");
 }
 
 function handleVotingStarted(data) {
-  savePlayerData(data);
+  currentVoteType = data.voteType;
 
   resetVotingScreen();
   renderCharacterWidgetSafely();
-  showScreen("votingScreen");
-  startVotingTimer();
+  showScreen("votingscreen");
 }
 
 function handleVoteSaved(data) {
@@ -714,7 +652,6 @@ function showScreen(screenId) {
 
   targetScreen.classList.add("active");
   currentScreenId = screenId;
-  hideCharacterWidgetIfNeeded();
 }
 
 function renderCharacterWidgetSafely() {

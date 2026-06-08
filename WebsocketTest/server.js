@@ -103,7 +103,7 @@ wss.on("connection", (clientSocket) => {
       return;
     }
 
-    // Host connection
+    // Host connection - WORKS
     if (msg.type === "host_register") 
     {
       const roomCode = normalize(msg.room || msg.roomCode);
@@ -116,7 +116,7 @@ wss.on("connection", (clientSocket) => {
       return registerHost(clientSocket, roomCode);
     }
 
-    // Client Connection
+    // Client Connection - WORKS
     if (msg.type === "join_room_request") 
     {
       const roomCode = normalize(msg.room);
@@ -135,7 +135,7 @@ wss.on("connection", (clientSocket) => {
     }
 
 
-      // Reconnection Attempt
+    // Reconnection Attempt - REVIEW THIS
     if (msg.type === "reconnect_request")
     {
       const roomCode = normalize(msg.room);
@@ -150,7 +150,7 @@ wss.on("connection", (clientSocket) => {
 
       return reconnectPlayer(clientSocket, roomCode, clientId);
     }
-
+    //ACCOUNTED FOR
     if (msg.type === "start_game_request")
     {
       const roomCode = normalize(msg.room);
@@ -166,7 +166,7 @@ wss.on("connection", (clientSocket) => {
 
       return startGame(clientSocket, roomCode);
     }
-
+    //ACCOUNTED FOR
     if (msg.type === "show_scenario_request")
       {
         const roomCode = normalize(msg.room);
@@ -182,7 +182,7 @@ wss.on("connection", (clientSocket) => {
         console.log("Showing scenario from host:", payload.hostClientId);
         return showScenario(clientSocket, roomCode);
       }
-
+    //REVISE
     if (msg.type === "start_voting_request") {
         const roomCode = normalize(msg.room || msg.roomCode);
         const payload = msg.data;
@@ -193,12 +193,12 @@ wss.on("connection", (clientSocket) => {
           });
           return;
         }
-        console.log("Succesfully starting the voting round on host ", payload.hostClientId);
+        console.log("Attempting to start voting round on host ", payload.hostClientId);
 
-        startVoting(clientSocket, roomCode);
+        startVoting(clientSocket, roomCode, payload.votingRound);
         return;
       }
-
+      //REVIEW THIS
       if (msg.type === "submit_vote") {
         const roomCode = normalize(msg.room || msg.roomCode);
         const clientId = msg.clientId;
@@ -217,7 +217,7 @@ wss.on("connection", (clientSocket) => {
         submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, voteType);
         return;
       }
-
+      //ACCOUNTED FOR
       if(msg.type === "character_info")
       {
         console.log("Received character_info on server.");
@@ -235,7 +235,7 @@ wss.on("connection", (clientSocket) => {
         );
         return;
       }
-
+      //REFACTOR THIS
       if (msg.type === "player_screen_command")
       {
         const roomCode = normalize(msg.room || msg.roomCode);
@@ -559,17 +559,8 @@ function startGame(clientSocket, roomCode)
     player.playerState = PLAYER_STATE.VIEWING_CHARACTER;
     if (player.connected)
     {
-      send(player.socket, "game_started", {
-        nextPage: "CharacterScreen.html",
-        playerState: PLAYER_STATE.VIEWING_CHARACTER,
-        room: roomCode,
-        playerName: player.playerName,
-        clientId: player.clientId,
-        character: player.character,
-        message: "The game has started!"
-
-        
-      });
+      console.log("sent game_started request");
+      send(player.socket, "game_started");
     }
   }
   send(room.host, "start_game_success", {
@@ -582,22 +573,6 @@ function startGame(clientSocket, roomCode)
 function showScenario(clientSocket, roomCode)
 {
   const room = rooms.get(roomCode);
-
-  if (!room)
-  {
-    send(clientSocket, "show_scenario_failed", {
-      reason: "Room not found"
-    });
-    return;
-  }
-
-  if (room.host !== clientSocket)
-  {
-    send(clientSocket, "show_scenario_failed", {
-      reason: "Only host can show scenario"
-    });
-    return;
-  }
 
   const connectedPlayers = [...room.players].filter(player => player.connected);
 
@@ -613,14 +588,7 @@ function showScenario(clientSocket, roomCode)
   {
     player.playerState = PLAYER_STATE.VIEWING_SCENARIO;
 
-    send(player.socket, "show_scenario", {
-      nextPage: "SituationScreen.html",
-      playerState: player.playerState,
-      room: roomCode,
-      playerName: player.playerName,
-      clientId: player.clientId,
-      message: "Look at the main screen"
-    });
+    send(player.socket, "show_scenario");
   }
 
   send(room.host, "show_scenario_success", {
@@ -634,20 +602,6 @@ function showScenario(clientSocket, roomCode)
 
 function startVoting(hostSocket, roomCode, voteType) {
   const room = rooms.get(roomCode);
-
-  if (!room) {
-    send(hostSocket, "start_voting_failed", {
-      reason: "Room not found"
-    });
-    return;
-  }
-
-  if (room.host !== hostSocket) {
-    send(hostSocket, "start_voting_failed", {
-      reason: "Only host can start voting"
-    });
-    return;
-  }
 
   const connectedPlayers = [...room.players].filter(player => player.connected);
 
@@ -663,11 +617,6 @@ function startVoting(hostSocket, roomCode, voteType) {
 
     if (player.socket.readyState === WebSocket.OPEN) {
       send(player.socket, "voting_started", {
-        room: roomCode,
-        playerName: player.playerName,
-        clientId: player.clientId,
-        playerState: player.playerState,
-        character: player.character,
         voteType: voteType
       });
     }

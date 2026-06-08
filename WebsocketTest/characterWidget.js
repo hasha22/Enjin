@@ -171,12 +171,12 @@
     const box1Text = document.createElement("div");
     box1Text.id = "box1Text";
     box1Text.className = "text-box character-widget-text-box";
-    box1Text.style.backgroundColor = keywordColor1;
+    //box1Text.style.backgroundColor = keywordColor1;
 
     const box2Text = document.createElement("div");
     box2Text.id = "box2Text";
     box2Text.className = "text-box character-widget-text-box";
-    box2Text.style.backgroundColor = keywordColor2;
+    //box2Text.style.backgroundColor = keywordColor2;
 
     const modalDescription = document.createElement("p");
     modalDescription.id = "modalDescription";
