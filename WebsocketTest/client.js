@@ -341,7 +341,7 @@ function handleVotingStarted(data) {
   console.log("showing voting screen", data.voteType);
 
   resetVotingScreen();
-  showScreen("votingcreen");
+  showScreen("votingScreen");
 }
 
 function handleVoteSaved(data) {
