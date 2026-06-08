@@ -9,7 +9,6 @@ public class Envelope
     public string type;
     public string data;
 }
-
 // Payload for sending data (generic)
 [System.Serializable]
 public class OutgoingMessage<T>
@@ -23,6 +22,16 @@ public class OutgoingMessage<T>
 public class InformServerPayload
 {
     public string hostClientId;
+}
+[System.Serializable]
+public class StartVotingPayload
+{
+    public string hostClientId;
+    public string votingRound;
+}
+public class WaitingScreenPayload
+{
+    public string gameScreen;
 }
 [System.Serializable]
 public class CharacterInfoPayload

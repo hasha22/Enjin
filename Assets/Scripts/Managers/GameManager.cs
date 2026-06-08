@@ -103,76 +103,72 @@ public class GameManager : MonoBehaviour
     }
 
 
-public void ContinueButtonPressed()
-{
-    Debug.Log("Continue button pressed. Current screen: " + currentScreen);
-
-    switch (currentScreen)
+    public void ContinueButtonPressed()
     {
-        case GameScreens.CharacterIntroScreen:
-            ContinueToScenario();
-            break;
+        Debug.Log("Continue button pressed. Current screen: " + currentScreen);
 
-        case GameScreens.SituationExplanationScreen:
-            StartVotingPhase();
-            break;
+        switch (currentScreen)
+        {
+            case GameScreens.CharacterIntroScreen:
+                ContinueToScenario();
+                break;
+            case GameScreens.SituationExplanationScreen:
+                StartVotingPhase();
+                break;
+            case GameScreens.EnjinUpdateScreen:
+                StartVotingPhase();
+                break;
+            case GameScreens.SecondPolicyVotingScreen:
+                DeterminePolicyOutcome();
+                ContinueToNextUnityScreen();
+                break;
+            case GameScreens.FirstPolicyVotingScreen:
+            case GameScreens.DiscussionScreen:
+            case GameScreens.ResultsScreen:
+                ContinueToNextUnityScreen();
+                break;
 
-        case GameScreens.EnjinUpdateScreen:
-            StartVotingPhase();
-            break;
-
-        case GameScreens.SecondPolicyVotingScreen:
-            DeterminePolicyOutcome();
-            ContinueToNextUnityScreen();
-            break;
-
-        case GameScreens.FirstPolicyVotingScreen:
-        case GameScreens.DiscussionScreen:
-        case GameScreens.ResultsScreen:
-            ContinueToNextUnityScreen();
-            break;
-
-        default:
-            Debug.LogWarning("No Continue action assigned for screen: " + currentScreen);
-            break;
+            default:
+                Debug.LogWarning("No Continue action assigned for screen: " + currentScreen);
+                break;
+        }
     }
-}
 
-public void ContinueToNextUnityScreen()
-{
-    if (GameUIManager.instance != null)
+    public void ContinueToNextUnityScreen()
     {
-        GameUIManager.instance.NextScreen();
+        if (GameUIManager.instance != null)
+        {
+            GameUIManager.instance.NextScreen();
+        }
+        else
+        {
+            Debug.LogWarning("GameUIManager instance is missing.");
+        }
     }
-    else
-    {
-        Debug.LogWarning("GameUIManager instance is missing.");
-    }
-}
 
-public void StartVotingPhase()
-{
-    if (NetworkManager.instance != null)
+    public void StartVotingPhase()
     {
-        NetworkManager.instance.SendStartVotingRequest();
+        if (NetworkManager.instance != null)
+        {
+            NetworkManager.instance.SendStartVotingRequest();
+        }
+        else
+        {
+            Debug.LogWarning("NetworkManager instance is missing.");
+        }
     }
-    else
-    {
-        Debug.LogWarning("NetworkManager instance is missing.");
-    }
-}
 
-public void ContinueToScenario()
-{
-    if (NetworkManager.instance != null)
+    public void ContinueToScenario()
     {
-        NetworkManager.instance.SendShowScenarioRequest();
+        if (NetworkManager.instance != null)
+        {
+            NetworkManager.instance.SendShowScenarioRequest();
+        }
+        else
+        {
+            Debug.LogWarning("NetworkManager instance is missing.");
+        }
     }
-    else
-    {
-        Debug.LogWarning("NetworkManager instance is missing.");
-    }
-}
     public Topic GetCurrentTopic()
     {
         return currentTopic;

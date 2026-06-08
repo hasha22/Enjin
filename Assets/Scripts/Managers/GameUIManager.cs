@@ -130,11 +130,6 @@ public class GameUIManager : MonoBehaviour
 
             if (currentRound > totalRounds)
             {
-                if (NetworkManager.instance != null)
-                {
-                    NetworkManager.instance.SendGameOverScreenCommand();
-                }
-
                 ValueManager.instance.AssignOutcomeValues();
                 SceneManager.LoadScene("OutcomeScene");
                 return;
@@ -216,30 +211,6 @@ public class GameUIManager : MonoBehaviour
         }
         if (currentScreen == GameScreens.ResultsScreen) { ValueManager.instance.MakeBig(); } else { ValueManager.instance.MakeSmall(); }
 
-        NotifyPlayersForCurrentScreen(currentScreen);
-    }
-    private void NotifyPlayersForCurrentScreen(GameScreens currentScreen)
-    {
-        if (NetworkManager.instance == null) return;
-
-        switch (currentScreen)
-        {
-            case GameScreens.SituationExplanationScreen:
-                NetworkManager.instance.SendWaitingForSituationScreenCommand();
-                break;
-
-            case GameScreens.DiscussionScreen:
-                NetworkManager.instance.SendWaitingForDiscussionScreenCommand();
-                break;
-
-            case GameScreens.EnjinUpdateScreen:
-                NetworkManager.instance.SendWaitingForEnjinUpdateScreenCommand();
-                break;
-
-            case GameScreens.ResultsScreen:
-                NetworkManager.instance.SendWaitingForResultsScreenCommand();
-                break;
-        }
     }
     #region Screen Visulization Logic
     public void InstantiateSidebarIcons()
@@ -382,24 +353,10 @@ public class GameUIManager : MonoBehaviour
             Player currentSpeaker = discussionPlayers[i];
             GameObject speaker = allPlayerIcons[i];
 
-            if (NetworkManager.instance != null)
-            {
-                NetworkManager.instance.SendDiscussionTurnScreenCommand(
-                    currentSpeaker.GetPlayerID(),
-                    currentSpeaker.GetPlayerName(),
-                    GameManager.instance.discussionTime
-                );
-            }
-
             StartCoroutine(MoveCircle(iconCircle.transform, speaker.transform.position, 0.35f));
             TimerScript.instance.StartTimer(GameManager.instance.discussionTime);
             yield return new WaitForSeconds(GameManager.instance.discussionTime);
         }
-        if (NetworkManager.instance != null)
-        {
-            NetworkManager.instance.SendWaitingAfterDiscussionScreenCommand();
-        }
-
         TimerDone();
         iconCircle.SetActive(false);
     }
