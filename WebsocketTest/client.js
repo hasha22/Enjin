@@ -263,28 +263,6 @@ function buildCharacterObject(data)
     };
 }
 
-function parseServerMessage(event) {
-  const msg = JSON.parse(event.data);
-
-  let data = {};
-
-  if (typeof msg.data === "string" && msg.data.length > 0) {
-    try {
-      data = JSON.parse(msg.data);
-    } catch (error) {
-      console.warn("Could not parse msg.data as JSON:", msg.data);
-      data = {};
-    }
-  } else if (msg.data && typeof msg.data === "object") {
-    data = msg.data;
-  }
-
-  return {
-    type: msg.type,
-    data: data
-  };
-}
-
 function joinRoom() {
   const roomInput = document.getElementById("roomCode");
   const nameInput = document.getElementById("playerName");
@@ -320,6 +298,7 @@ function joinRoom() {
 }
 
 function handleJoinRoomSuccess(data) {
+  renderCharacterWidgetSafely();
   joinedRoomCode = data.room;
   savePlayerData(data);
 
@@ -330,7 +309,6 @@ function handleJoinRoomSuccess(data) {
 }
 
 function handleGameStarted(data) {
-  renderCharacterWidgetSafely();
   showScreen("characterScreen");
 }
 
@@ -342,8 +320,7 @@ function handleVotingStarted(data) {
   currentVoteType = data.voteType;
 
   resetVotingScreen();
-  renderCharacterWidgetSafely();
-  showScreen("votingscreen");
+  showScreen("votingcreen");
 }
 
 function handleVoteSaved(data) {
@@ -652,6 +629,8 @@ function showScreen(screenId) {
 
   targetScreen.classList.add("active");
   currentScreenId = screenId;
+
+   hideCharacterWidgetIfNeeded();
 }
 
 function renderCharacterWidgetSafely() {
