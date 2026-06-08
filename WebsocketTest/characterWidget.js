@@ -268,17 +268,12 @@
 
     if (box1Text) {
       box1Text.textContent = character.box1Text || "";
-      if (character.keywordColor1) {
-        box1Text.style.backgroundColor = character.keywordColor1;
-      }
+      box1Text.style.backgroundColor = character.keywordColor1 || "#000000";
     }
 
     if (box2Text) {
       box2Text.textContent = character.box2Text || "";
-
-      if (character.keywordColor2) {
-        box2Text.style.backgroundColor = character.keywordColor2;
-      }
+      box2Text.style.backgroundColor = character.keywordColor2 || "#000000";
     }
 
     if (modalDescription) {
