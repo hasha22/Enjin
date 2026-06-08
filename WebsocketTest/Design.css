@@ -8,10 +8,7 @@
     display: block;
 }
 
-body:has(#joinScreen.active) .game-ui,
-body:has(#gameOverScreen.active) .game-ui {
-    display: none;
-}
+
 
 @font-face {
     font-family: 'Dobra';
