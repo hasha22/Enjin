@@ -98,6 +98,12 @@ public class GameManager : MonoBehaviour
                 GameUIManager.instance.NextScreen();
                 NetworkManager.instance.SendStartVotingRequest();
                 break;
+            case GameScreens.FirstPolicyVotingScreen:
+                GameUIManager.instance.NextScreen();
+                break;
+            case GameScreens.DiscussionScreen:
+                GameUIManager.instance.NextScreen();
+                break;
             case GameScreens.SecondPolicyVotingScreen:
                 DeterminePolicyOutcome();
                 GameUIManager.instance.NextScreen();
