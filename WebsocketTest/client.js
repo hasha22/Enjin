@@ -310,7 +310,6 @@ function buildCharacterObject(data)
         box1Text: data.keyword1,
         box2Text: data.keyword2,
         modalDescription: data.characterDescription,
-        backgroundColor,
         keywordColor1,
         keywordColor2
     };
