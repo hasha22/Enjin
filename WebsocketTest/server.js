@@ -559,6 +559,7 @@ function startGame(clientSocket, roomCode)
     player.playerState = PLAYER_STATE.VIEWING_CHARACTER;
     if (player.connected)
     {
+      console.log("sent game_started request");
       send(player.socket, "game_started");
     }
   }

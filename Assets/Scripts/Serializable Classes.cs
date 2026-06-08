@@ -2,13 +2,6 @@ public class SerializableClasses
 {
 
 }
-// Envelope for receiving data
-[System.Serializable]
-public class Envelope
-{
-    public string type;
-    public string data;
-}
 // Payload for sending data (generic)
 [System.Serializable]
 public class OutgoingMessage<T>
@@ -29,10 +22,6 @@ public class StartVotingPayload
     public string hostClientId;
     public string votingRound;
 }
-public class WaitingScreenPayload
-{
-    public string gameScreen;
-}
 [System.Serializable]
 public class CharacterInfoPayload
 {
@@ -42,19 +31,14 @@ public class CharacterInfoPayload
     public string keyword1;
     public string keyword2;
 }
-[System.Serializable]
-public class PlayerScreenCommandPayload
-{
-    public string screenId;
-    public string playerState;
-    public int roundNumber;
-    public int totalRounds;
-    public string voteType;
-    public int votingDuration;
-    public string currentSpeakerPlayerID;
-    public string currentSpeakerName;
-}
 
+// Envelope for receiving data (generic)
+[System.Serializable]
+public class Envelope
+{
+    public string type;
+    public string data;
+}
 // Classes for converting incoming json to strings
 [System.Serializable]
 public class PlayerJoinEnvelope
@@ -81,22 +65,4 @@ public class PlayerVote2Envelope
     public int roundNumber;
     public string voteType;
     public string submitReason;
-}
-[System.Serializable]
-public class PlayerScreenCommandSuccessEnvelope
-{
-    public string screenId;
-    public string playerState;
-    public int roundNumber;
-    public int totalRounds;
-    public string voteType;
-    public int votingDuration;
-    public string currentSpeakerPlayerID;
-    public string currentSpeakerName;
-    public int playerCount;
-}
-[System.Serializable]
-public class FailureEnvelope
-{
-    public string reason;
 }
