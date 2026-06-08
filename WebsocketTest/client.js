@@ -48,7 +48,6 @@ function connectWebSocket() {
   };
 
   ws.onmessage = (event) => {
-    const { type, data } = parseServerMessage(event);
 
     console.log("Message from server:", type, data);
 
