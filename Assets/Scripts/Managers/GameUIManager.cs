@@ -329,16 +329,11 @@ public class GameUIManager : MonoBehaviour
     {
         GameObject newKeyword = null;
 
-        Debug.Log(isVoting1);
-
         if (isVoting1) newKeyword = Instantiate(discussionKeywordCard, container);
         else newKeyword = Instantiate(votingKeywordCard, container);
 
         TextMeshProUGUI text = newKeyword.GetComponentInChildren<TextMeshProUGUI>();
-        Image image = newKeyword.GetComponentInChildren<Image>();
-
-        if (text == null) Debug.Log("Text is null");
-        if (image == null) Debug.Log("Image is null");
+        Image image = newKeyword.GetComponent<Image>();
 
         (image.color, text.text) = DetermineKeywordCardColorAndName((int)keyword);
 
