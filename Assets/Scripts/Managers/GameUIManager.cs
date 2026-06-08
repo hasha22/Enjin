@@ -119,10 +119,6 @@ public class GameUIManager : MonoBehaviour
             GameManager.instance.currentScreen = GameScreens.SituationExplanationScreen;
             GameManager.instance.currentRound++;
             ResetUI();
-            if (NetworkManager.instance != null)
-            {
-                NetworkManager.instance.ResetPlayerRoundVotes();
-            }
 
             currentScreen = GameManager.instance.currentScreen;
             currentRound = GameManager.instance.currentRound;
@@ -299,8 +295,6 @@ public class GameUIManager : MonoBehaviour
     private void InstantiateKeywordInContainer(Transform container, PolicyKeywords keyword, bool isVoting1 = true)
     {
         GameObject newKeyword = null;
-
-        Debug.Log(isVoting1);
 
         if (isVoting1) newKeyword = Instantiate(discussionKeywordCard, container);
         else newKeyword = Instantiate(votingKeywordCard, container);

@@ -49,7 +49,7 @@ function connectWebSocket() {
 
   ws.onmessage = (event) => {
     const { type, data } = parseServerMessage(event);
-    
+
     switch (type) {
       case "join_room_success":
         handleJoinRoomSuccess(data);
@@ -337,6 +337,8 @@ function handleShowScenario(data) {
 
 function handleVotingStarted(data) {
   currentVoteType = data.voteType;
+
+  console.log("showing voting screen", data.voteType);
 
   resetVotingScreen();
   showScreen("votingcreen");

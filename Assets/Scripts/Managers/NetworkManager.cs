@@ -191,14 +191,12 @@ public class NetworkManager : MonoBehaviour
                 Debug.LogWarning("Start game failed: " + msg.data);
                 break;
             case "show_scenario_success":
-                GameUIManager.instance.NextScreen();
                 Debug.Log("Showing next screen.");
                 break;
             case "show_scenario_failed":
                 Debug.Log("Show scenario failed: " + msg.data);
                 break;
             case "start_voting_success":
-                GameUIManager.instance.NextScreen();
                 Debug.Log("Server confirmed: voting started");
                 break;
             case "start_voting_failed":
@@ -316,7 +314,6 @@ public class NetworkManager : MonoBehaviour
         Player player = newPlayer.GetComponent<Player>();
         player.InitializePlayerData(playerName, playerID);
 
-        UIManager.instance.IncreaseDisplayedPlayerCount();
         UIManager.instance.UpdatePlayerCard(allPlayers.Count - 1, player);
 
         SendCharacterInfo(player.GetPlayerID(),
@@ -385,10 +382,6 @@ public class NetworkManager : MonoBehaviour
     }
     #endregion
     #region HELPERS
-    private int GetCurrentRoundNumber()
-    {
-        return GameManager.instance != null ? GameManager.instance.currentRound : 0;
-    }
     public void StartGameFromButton()
     {
         if (allPlayers.Count == 0)
@@ -402,13 +395,6 @@ public class NetworkManager : MonoBehaviour
     public List<GameObject> GetPlayerList()
     {
         return allPlayers;
-    }
-    public void ResetPlayerRoundVotes()
-    {
-        foreach (GameObject playerObject in allPlayers)
-        {
-            Player player = playerObject.GetComponent<Player>();
-        }
     }
     #endregion
 }

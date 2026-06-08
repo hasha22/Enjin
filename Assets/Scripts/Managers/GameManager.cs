@@ -18,7 +18,6 @@ public class GameManager : MonoBehaviour
     public int discussionTime;
     public int totalRounds;
     public float typingSpeed;
-
     void Awake()
     {
         if (instance == null)
@@ -55,10 +54,8 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
-
     public void DeterminePolicyOutcome()
     {
-        Debug.Log("test");
         List<Player> votedYes = new List<Player>();
         List<Player> votedNo = new List<Player>();
         foreach (GameObject player in NetworkManager.instance.allPlayers)
@@ -74,7 +71,6 @@ public class GameManager : MonoBehaviour
             int morale = currentTopic.formulatedPolicy.moraleValue;
             int ethic = currentTopic.formulatedPolicy.ethicValue;
             int profit = currentTopic.formulatedPolicy.profitValue;
-            LogPolicyOutcome("formulatedPolicy", enj, morale, ethic, profit);
             ValueManager.instance.ChangeValue(enj, morale, ethic, profit);
         }
         else
@@ -83,87 +79,35 @@ public class GameManager : MonoBehaviour
             int morale = currentTopic.enjinPolicy.moraleValue;
             int ethic = currentTopic.enjinPolicy.ethicValue;
             int profit = currentTopic.enjinPolicy.profitValue;
-            LogPolicyOutcome("enjinPolicy", enj, morale, ethic, profit);
             ValueManager.instance.ChangeValue(enj, morale, ethic, profit);
         }
-
-
     }
-    private void LogPolicyOutcome(string policyName, int enj, int morale, int ethic, int profit)
+    public void OnContinueButtonPressed()
     {
-        Debug.Log($"Applying {policyName}: Enjin {enj}, Morale {morale}, Ethics {ethic}, Profit {profit}");
-
-        if (enj == 0 && morale == 0 && ethic == 0 && profit == 0)
-        {
-            Debug.LogWarning("Policy outcome values are all 0, so the bar will not visually move.");
-        }
-    }
-
-
-    public void ContinueButtonPressed()
-    {
-        Debug.Log("Continue button pressed. Current screen: " + currentScreen);
-
         switch (currentScreen)
         {
             case GameScreens.CharacterIntroScreen:
-                ContinueToScenario();
+                GameUIManager.instance.NextScreen();
+                NetworkManager.instance.SendShowScenarioRequest();
                 break;
             case GameScreens.SituationExplanationScreen:
-                StartVotingPhase();
+                GameUIManager.instance.NextScreen();
+                NetworkManager.instance.SendStartVotingRequest();
                 break;
             case GameScreens.EnjinUpdateScreen:
-                StartVotingPhase();
+                GameUIManager.instance.NextScreen();
+                NetworkManager.instance.SendStartVotingRequest();
                 break;
             case GameScreens.SecondPolicyVotingScreen:
                 DeterminePolicyOutcome();
-                ContinueToNextUnityScreen();
+                GameUIManager.instance.NextScreen();
                 break;
-            case GameScreens.FirstPolicyVotingScreen:
-            case GameScreens.DiscussionScreen:
             case GameScreens.ResultsScreen:
-                ContinueToNextUnityScreen();
+                GameUIManager.instance.NextScreen();
                 break;
-
             default:
                 Debug.LogWarning("No Continue action assigned for screen: " + currentScreen);
                 break;
-        }
-    }
-
-    public void ContinueToNextUnityScreen()
-    {
-        if (GameUIManager.instance != null)
-        {
-            GameUIManager.instance.NextScreen();
-        }
-        else
-        {
-            Debug.LogWarning("GameUIManager instance is missing.");
-        }
-    }
-
-    public void StartVotingPhase()
-    {
-        if (NetworkManager.instance != null)
-        {
-            NetworkManager.instance.SendStartVotingRequest();
-        }
-        else
-        {
-            Debug.LogWarning("NetworkManager instance is missing.");
-        }
-    }
-
-    public void ContinueToScenario()
-    {
-        if (NetworkManager.instance != null)
-        {
-            NetworkManager.instance.SendShowScenarioRequest();
-        }
-        else
-        {
-            Debug.LogWarning("NetworkManager instance is missing.");
         }
     }
     public Topic GetCurrentTopic()
