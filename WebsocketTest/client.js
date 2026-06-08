@@ -48,9 +48,8 @@ function connectWebSocket() {
   };
 
   ws.onmessage = (event) => {
-
-    console.log("Message from server:", type, data);
-
+    const { type, data } = parseServerMessage(event);
+    
     switch (type) {
       case "join_room_success":
         handleJoinRoomSuccess(data);
@@ -85,6 +84,27 @@ function connectWebSocket() {
         console.log("Unhandled message type:", type, data);
         break;
     }
+  };
+}
+function parseServerMessage(event) {
+  const msg = JSON.parse(event.data);
+
+  let data = {};
+
+  if (typeof msg.data === "string" && msg.data.length > 0) {
+    try {
+      data = JSON.parse(msg.data);
+    } catch (error) {
+      console.warn("Could not parse msg.data as JSON:", msg.data);
+      data = {};
+    }
+  } else if (msg.data && typeof msg.data === "object") {
+    data = msg.data;
+  }
+
+  return {
+    type: msg.type,
+    data: data
   };
 }
 function handlePlayerScreenChanged(data) {
