@@ -264,6 +264,8 @@ function buildCharacterObject(data)
     let faceImage = "";
     let fullImage = "";
     let backgroundColor = "";
+    let keywordColor1 = "";
+    let keywordColor2 = "";
 
     switch(data.characterName)
     {
@@ -271,36 +273,36 @@ function buildCharacterObject(data)
             faceImage = "AIArtist_portrait.png";
             fullImage = "AIArtist.png";
             backgroundColor = "#99C998";
-            keywordColor1 = "00FFB5";
-            keywordColor2 = "FFF100";
+            keywordColor1 = "#00FFB5";
+            keywordColor2 = "#FFF100";
             break;
         case "CulturalOrganizer":
             faceImage = "CulturalOrganizer_portrait.png";
             fullImage = "CulturalOrganizer.png";
             backgroundColor = "#7EA5D8";
-            keywordColor1 = "FF006F";
-            keywordColor2 = "9B00F3";
+            keywordColor1 = "#FF006F";
+            keywordColor2 = "#9B00F3";
             break;
         case "EthicalAdvisor":
             faceImage = "EthicalAdvisor_portrait.png";
             fullImage = "EthicalAdvisor.png";
             backgroundColor = "#f735ea";
-            keywordColor1 = "9B00F3";
-            keywordColor2 = "FF006F";
+            keywordColor1 = "#9B00F3";
+            keywordColor2 = "#FF006F";
             break;
         case "FinanceEmployee":
             faceImage = "FinanceEmployee_portrait.png";
             fullImage = "FinanceEmployee.png";
             backgroundColor = "#FFD700";
-            keywordColor1 = "FFF100";
-            keywordColor2 = "00FFB5";
+            keywordColor1 = "#FFF100";
+            keywordColor2 = "#00FFB5";
             break;
         case "UIDesigner":
             faceImage = "UIDesigner_portrait.png";
             fullImage = "UIDesigner.png";
             backgroundColor = "#088F8F";
-            keywordColor1 = "FF006F";
-            keywordColor2 = "00FFB5";
+            keywordColor1 = "#FF006F";
+            keywordColor2 = "#00FFB5";
             break;
     }
 
