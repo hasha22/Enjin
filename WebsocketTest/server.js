@@ -214,7 +214,7 @@ wss.on("connection", (clientSocket) => {
           return;
         }
 
-        submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, voteType, roundNumber);
+        submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, voteType);
         return;
       }
 
@@ -681,7 +681,7 @@ function startVoting(hostSocket, roomCode, voteType) {
 }
 
 
-function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, voteType, roundNumber) {
+function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, voteType) {
   const room = rooms.get(roomCode);
 
   if (!room) {
