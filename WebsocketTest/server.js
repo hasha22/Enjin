@@ -202,7 +202,6 @@ wss.on("connection", (clientSocket) => {
       if (msg.type === "submit_vote") {
         const roomCode = normalize(msg.room || msg.roomCode);
         const clientId = msg.clientId;
-        const submitReason = msg.submitReason || "manual";
         const voteValue = msg.voteValue;
         const voteType = msg.voteType;
         const roundNumber = Number(msg.roundNumber || 0);
@@ -214,7 +213,7 @@ wss.on("connection", (clientSocket) => {
           return;
         }
 
-        submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, voteType);
+        submitVote(clientSocket, roomCode, clientId, voteValue, voteType);
         return;
       }
       //ACCOUNTED FOR
@@ -630,40 +629,10 @@ function startVoting(hostSocket, roomCode, voteType) {
 }
 
 
-function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, voteType) {
+function submitVote(clientSocket, roomCode, clientId, voteValue, voteType) {
   const room = rooms.get(roomCode);
-
-  if (!room) {
-    send(clientSocket, "vote_failed", {
-      reason: "Room not found"
-    });
-    return;
-  }
-
   const player = [...room.players].find(player => player.clientId === clientId);
-
-  if (!player) {
-    send(clientSocket, "vote_failed", {
-      reason: "Player not found"
-    });
-    return;
-  }
-
-  if (player.socket !== clientSocket) {
-    send(clientSocket, "vote_failed", {
-      reason: "This socket does not belong to this player"
-    });
-    return;
-  }
-
   const roundNumber = room.currentRound;
-
-  if (!roundNumber || roundNumber <= 0) {
-    send(clientSocket, "vote_failed", {
-      reason: "Voting has not started yet"
-    });
-    return;
-  }
 
   if (typeof voteValue !== "string" || voteValue.trim() === "") {
     send(clientSocket, "vote_failed", {
@@ -675,13 +644,6 @@ function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, v
   if (voteType !== "first_vote" && voteType !== "second_vote") {
     send(clientSocket, "vote_failed", {
       reason: "Vote type is invalid"
-    });
-    return;
-  }
-
-  if (!room.host || room.host.readyState !== WebSocket.OPEN) {
-    send(clientSocket, "vote_failed", {
-      reason: "Unity host is not connected"
     });
     return;
   }
@@ -702,12 +664,8 @@ function submitVote(clientSocket, roomCode, clientId, voteValue, submitReason, v
     : "player_vote_2";
 
   send(room.host, messageType, {
-    playerName: player.playerName,
     playerID: clientId,
     playerVote: voteValue,
-    roundNumber: roundNumber || 0,
-    voteType: voteType,
-    submitReason: submitReason
 
   });
 

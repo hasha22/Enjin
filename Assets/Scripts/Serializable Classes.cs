@@ -49,20 +49,12 @@ public class PlayerJoinEnvelope
 [System.Serializable]
 public class PlayerVote1Envelope
 {
-    public string playerName;
     public string playerID;
     public string playerVote;
-    public int roundNumber;
-    public string voteType;
-    public string submitReason;
 }
 [System.Serializable]
 public class PlayerVote2Envelope
 {
-    public string playerName;
     public string playerID;
     public string playerVote;
-    public int roundNumber;
-    public string voteType;
-    public string submitReason;
 }

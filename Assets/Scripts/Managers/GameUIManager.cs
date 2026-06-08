@@ -354,14 +354,6 @@ public class GameUIManager : MonoBehaviour
         TimerDone();
         iconCircle.SetActive(false);
     }
-    private IEnumerator FinalVoting(Player playerScript)
-    {
-        yield return null;
-        if (timer.activeSelf == true)
-        {
-            InstantiateVotePlayerIcon(playerScript);
-        }
-    }
     #endregion
     #region Helper Methods
     public void TimerDone()

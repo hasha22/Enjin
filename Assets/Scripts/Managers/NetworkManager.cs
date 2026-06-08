@@ -60,10 +60,6 @@ public class NetworkManager : MonoBehaviour
 #if !UNITY_WEBGL || UNITY_EDITOR
         websocket?.DispatchMessageQueue();
 #endif
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            RegisterSecondPlayerVote("1", "yes");
-        }
     }
     #endregion
     #region WEBSOCKET CONNECTIVITY
@@ -329,11 +325,9 @@ public class NetworkManager : MonoBehaviour
         {
             Player playerScript = player.GetComponent<Player>();
 
-            Debug.Log($"Checking player: {playerScript.GetPlayerName()} with ID: {playerScript.GetPlayerID()}");
-
             if (playerScript.GetPlayerID() == playerID)
             {
-                VoteTypes parsedVote = VoteTypes.NoVote;
+                VoteTypes parsedVote = VoteTypes.Neutral;
 
                 switch (playerVote)
                 {
@@ -375,7 +369,7 @@ public class NetworkManager : MonoBehaviour
                 {
                     playerScript.SetSecondVote(false);
                 }
-                if (GameUIManager.instance != null) GameUIManager.instance.InstantiateVotePlayerIcon(playerScript);
+                GameUIManager.instance.InstantiateVotePlayerIcon(playerScript);
                 break;
             }
         }

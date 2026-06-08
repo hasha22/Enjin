@@ -107,22 +107,6 @@ function parseServerMessage(event) {
     data: data
   };
 }
-function handlePlayerScreenChanged(data) {
-  //FIX THIS
-  if (data.screenId === "waitingScreen") {
-    clearDiscussionTimer();
-    renderCharacterWidgetSafely();
-    showWaitingScreen(data);
-    return;
-  }
-  //FIX THIS
-  if (data.screenId === "gameOverScreen") {
-    clearInterval(countdownInterval);
-    clearDiscussionTimer();
-    showScreen("gameOverScreen");
-    return;
-  }
-}
 
 function showWaitingScreen(data) {
   const screenByState = {
@@ -341,6 +325,7 @@ function handleVotingStarted(data) {
   console.log("showing voting screen", data.voteType);
 
   resetVotingScreen();
+  startVotingTimer();
   showScreen("votingScreen");
 }
 
@@ -418,21 +403,21 @@ function setupVotingControls() {
 
   if (submitVoteBtn) {
     submitVoteBtn.addEventListener("click", () => {
-      submitVote("manual");
+      submitVote();
     });
   }
 
   if (enactVoteBtn) {
     enactVoteBtn.addEventListener("click", () => {
       selectedSecondVote = "yes";
-      submitVote("manual");
+      submitVote();
     });
   }
 
   if (rejectVoteBtn) {
     rejectVoteBtn.addEventListener("click", () => {
       selectedSecondVote = "no";
-      submitVote("manual");
+      submitVote();
     });
   }
 }
@@ -522,7 +507,7 @@ function startVotingTimer() {
         if (currentVoteType === "second_vote") {
           handleSecondVoteTimeout();
         } else {
-          submitVote("timeout");
+          submitVote();
         }
       }
     }
@@ -573,7 +558,7 @@ function mapSliderValueToFirstVote(sliderValue) {
   return "neutral";
 }
 
-function submitVote(submitReason) {
+function submitVote() {
   if (hasSubmittedVote) {
     return;
   }
@@ -625,10 +610,8 @@ function submitVote(submitReason) {
     type: "submit_vote",
     room: roomCode,
     clientId: clientId,
-    roundNumber: currentRound,
     voteType: currentVoteType,
     voteValue: vote,
-    submitReason: submitReason
   }));
 }
 
