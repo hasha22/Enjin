@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour
 
     public void DeterminePolicyOutcome()
     {
+        Debug.Log("test");
         List<Player> votedYes = new List<Player>();
         List<Player> votedNo = new List<Player>();
         foreach (GameObject player in NetworkManager.instance.allPlayers)
