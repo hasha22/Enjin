@@ -100,6 +100,7 @@ public class GameManager : MonoBehaviour
                 break;
             case GameScreens.FirstPolicyVotingScreen:
                 GameUIManager.instance.NextScreen();
+                NetworkManager.instance.SendStartDiscussionRequest();
                 break;
             case GameScreens.DiscussionScreen:
                 GameUIManager.instance.NextScreen();

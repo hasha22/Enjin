@@ -33,6 +33,7 @@ public class NetworkManager : MonoBehaviour
     private const string FIRST_VOTE = "first_vote";
     private const string SECOND_VOTE = "second_vote";
     private const string CHARACTER_INFO = "character_info";
+    private const string START_DISCUSSION_REQUEST = "start_discussion_request";
     #region UNITY METHODS
 
     void Awake()
@@ -282,6 +283,17 @@ public class NetworkManager : MonoBehaviour
         Debug.Log($"Sending {type}: {json}");
 
         Send(json);
+    }
+
+    public void SendStartDiscussionRequest()
+    {
+        SendMessageToServer(
+            START_DISCUSSION_REQUEST,
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            }
+        );
     }
     private void Send(string json)
     {
