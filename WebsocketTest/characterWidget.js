@@ -1,120 +1,5 @@
 (function () {
   const ROOT_ID = "characterWidgetRoot";
-  const STYLE_ID = "characterWidgetStyles";
-
-  function injectCharacterWidgetStyles() {
-    if (document.getElementById(STYLE_ID)) return;
-
-    const style = document.createElement("style");
-    style.id = STYLE_ID;
-    style.textContent = `
-      .character-widget-root {
-        position: fixed;
-        top: 6px;
-        left: 6px;
-        z-index: 2000;
-        font-family: 'Dobra', serif;
-      }
-
-      .character-widget-root .circle,
-      .character-widget-root .character-widget-circle {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 4px;
-      }
-
-      .character-widget-root .circle-image,
-      .character-widget-root .character-widget-face-image {
-        width: 92px;
-        height: 92px;
-        border-radius: 50%;
-        object-fit: cover;
-        cursor: pointer;
-      }
-
-      .character-widget-root .modal,
-      .character-widget-root .character-widget-modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        justify-content: center;
-        align-items: center;
-        z-index: 3000;
-      }
-
-      .character-widget-root .modal.active,
-      .character-widget-root .character-widget-modal.active {
-        display: flex;
-      }
-
-      .character-widget-root .modal-content,
-      .character-widget-root .character-widget-modal-content {
-        width: 500px;
-        height: 500px;
-        border-radius: 20px;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        padding: 10px;
-        overflow: hidden;
-      }
-
-      .character-widget-root .modal-content img,
-      .character-widget-root .character-widget-modal-content img {
-        max-width: 50%;
-        max-height: 100%;
-        object-fit: contain;
-        border-radius: 15px;
-      }
-
-      .character-widget-root .modal-right-section,
-      .character-widget-root .character-widget-right-section {
-        width: 70%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 15px;
-        padding: 20px;
-      }
-
-      .character-widget-root .text-box,
-      .character-widget-root .character-widget-text-box {
-        width: 80%;
-        border-radius: 15px;
-        padding: 20px;
-        text-align: center;
-        font-family: 'Dobra', serif;
-        font-size: 16px;
-        color: #333333;
-        min-height: 60px;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-      }
-
-      .character-widget-root .modal-text,
-      .character-widget-root .character-widget-modal-text {
-        width: 85%;
-        text-align: center;
-        font-family: 'Dobra', serif;
-        font-size: 14px;
-        color: #333333;
-        margin-top: 10px;
-      }
-    `;
-
-    document.head.appendChild(style);
-  }
 
   function getSavedCharacter() {
     const savedCharacter = sessionStorage.getItem("character");
@@ -224,7 +109,6 @@
   }
 
   function renderCharacterWidget() {
-    injectCharacterWidgetStyles();
     createCharacterWidgetShell();
     attachCharacterWidgetEvents();
 
@@ -237,8 +121,6 @@
       console.log("No character found in sessionStorage");
       return;
     }
-
-    if (root) root.style.display = "block";
 
     const profileImage = document.getElementById("profileImage");
     const characterCircle = document.getElementById("characterCircle");

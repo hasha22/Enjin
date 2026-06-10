@@ -173,6 +173,7 @@ body:has(#gameOverScreen.active) .game-ui {
   cursor: pointer;
 }
 
+
 .modal {
   display: none;
   position: fixed;
@@ -191,8 +192,8 @@ body:has(#gameOverScreen.active) .game-ui {
 }
 
 .modal-content {
-  width: 500px;
-  height: 500px;
+  width: 20%;
+  height: 20%;
   background-color: #f4f4ee;
   border: 5px solid #f735ea;
   border-radius: 20px;
@@ -219,6 +220,19 @@ body:has(#gameOverScreen.active) .game-ui {
   align-items: center;
   gap: 15px;
   padding: 20px;
+}
+
+.character-widget-root .character-widget-modal-content {
+  width: 500px;
+  height: 500px;
+}
+
+.character-widget-root {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 5000;
+  font-family: "Dobra", serif;
 }
 
 .VotingScreenFrame {
@@ -608,21 +622,21 @@ body:has(#gameOverScreen.active) .game-ui {
 }
 
 .line-1 {
-  width: 100px;
-  transform: translateX(230px);
+  width: 40px;
+  transform: translateX(200px);
 }
 
 .line-2 {
-  width: 160px;
-  transform: translateX(170px);
+  width: 100px;
+  transform: translateX(140px);
 }
 
 .line-3 {
-  width: 220px;
-  transform: translateX(110px);
+  width: 160px;
+  transform: translateX(80px);
 }
 
 .line-4 {
-  width: 280px;
-  transform: translateX(50px);
+  width: 220px;
+  transform: translateX(20px);
 }

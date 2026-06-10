@@ -652,6 +652,8 @@ function showScreen(screenId) {
 
   targetScreen.classList.add("active");
   currentScreenId = screenId;
+
+  hideCharacterWidgetIfNeeded();
 }
 
 function renderCharacterWidgetSafely() {
