@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Playtest Client</title>
+  <link rel="stylesheet" href="WebsocketTest/Design.css">
+
+  <style>
+    /* PLAYTEST QUICK FIX: one page, many screens */
+    .screen {
+      display: none;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    [data-role="status"] {
+      color: #4a9eff;
+      font-size: 24px;
+      font-weight: bold;
+      font-family: 'Dobra', serif;
+      margin-top: 10px;
+    }
+
+    [data-role="log"] {
+      color: #333333;
+      font-family: 'Dobra', serif;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  
+  
+  <div class="game-ui">
+    <button type="button" class="collapsible">Keyword Cheat Sheet</button>
+
+    <div class="content">
+      <div class="bars-wrapper">
+        <div class="container">
+          <div class="Innovation"></div>
+        </div>
+
+        <div class="container">
+          <div class="RiskManagement"></div>
+        </div>
+
+        <div class="container">
+          <div class="WorkerSatisfaction"></div>
+        </div>
+
+        <div class="container">
+          <div class="Profit"></div>
+        </div>
+      </div>
+
+      <div class="line-wrapper">
+        <div class="line line-1"><span>Innovation</span></div>
+        <div class="line line-2"><span>Risk Management</span></div>
+        <div class="line line-3"><span>Worker Satisfaction</span></div>
+        <div class="line line-4"><span>Profit</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. Join screen -->
+  <section id="joinScreen" class="screen active">
+    <div class="JoinRoom">
+      <h2>Room Player Client</h2>
+
+      <div class="join-form">
+        <label>
+          Player name:
+          <input id="playerName" maxlength="24" placeholder="Your name">
+        </label>
+
+        <label>
+          Room code:
+          <input id="roomCode" value="ABCD" maxlength="10">
+        </label>
+
+        <button class="join-btn" onclick="joinRoom()">Join Room</button>
+
+        <p data-role="status">Not joined</p>
+        <div data-role="log"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Connected / lobby screen -->
+  <section id="connectedScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Game Lobby</h2>
+      <label data-role="status">Connected to lobby!<br>Waiting for game to start</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 3. Character screen -->
+  <section id="characterScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Waiting Screen</h2>
+      <label data-role="status">Waiting for the next step</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 4. Situation screen -->
+  <section id="situationScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Look at the main screen</h2>
+      <label data-role="status">The current situation is being explained there.</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 5. Voting screen -->
+  <section id="votingScreen" class="screen">
+    <div class="WaitingScreen">
+      <div class="voting-content" id="votingContent">
+        <h1 class="voting-title" id="votingTitle">
+          Round <span id="roundNumber">1</span>: Voting phase
+        </h1>
+
+        <p id="timer">Time left: --</p>
+
+        <div class="slider-container" id="firstVoteContent">
+          <input
+            type="range"
+            min="1"
+            max="5"
+            value="3"
+            class="voting-slider"
+            id="voteSlider"
+          >
+
+          <div class="slider-labels">
+            <span class="slider-label">Disagree</span>
+            <span class="slider-label">Neutral</span>
+            <span class="slider-label">Agree</span>
+          </div>
+
+          <p id="voteValue">3</p>
+
+          <button class="submit-btn" id="submitVoteBtn">Submit Vote</button>
+        </div>
+
+        <div class="final-voting-content" id="secondVoteContent" style="display: none;">
+          <h1 class="voting-title">Final voting phase</h1>
+
+          <div class="final-vote-buttons">
+            <button class="final-vote-btn vote-btn" id="enactVoteBtn">Enact</button>
+            <button class="final-vote-btn pass-btn" id="rejectVoteBtn">Reject</button>
+          </div>
+        </div>
+
+        <p data-role="status">Choose your position on the scale</p>
+      </div>
+
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 6. Vote saved / waiting for other players -->
+  <section id="voteSavedScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Vote saved</h2>
+      <label data-role="status">Waiting for the other players...</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 7. Waiting: situation -->
+  <section id="waitingSituationScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Round <span data-round-number>1</span></h2>
+      <label data-role="status">Look at the main screen to learn the situation.</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 8. Waiting: discussion -->
+  <section id="waitingDiscussionScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Discussion is happening</h2>
+      <label data-role="status">Look at the main screen.</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 9. Waiting: after discussion -->
+  <section id="waitingAfterDiscussionScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Discussion is finished</h2>
+      <label data-role="status">Look at the main screen.</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 10. Waiting: Enjin update -->
+  <section id="waitingEnjinUpdateScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Look at the Enjin update</h2>
+      <label data-role="status">The main screen is showing the improved Enjin policy.</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 11. Waiting: results -->
+  <section id="waitingResultsScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>Results are being shown</h2>
+      <label data-role="status">Look at the main screen.</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 12. Game over -->
+  <section id="gameOverScreen" class="screen">
+    <div class="JoinRoom">
+      <h2>The game has ended</h2>
+      <label data-role="status">Thank you for playing.</label>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  <!-- 13. Discussion turn screen -->
+  <section id="discussionScreen" class="screen">
+    <div class="JoinRoom">
+      <div id="myTurnBlock">
+        <h2>Your turn!</h2>
+        <label data-role="status">Explain why you chose this position.</label>
+      </div>
+
+      <div id="otherSpeakerBlock">
+        <h2>Time to explain your choice</h2>
+        <label data-role="status">Now speaking: <span id="speakerName">another player</span>.</label>
+      </div>
+
+      <p id="discussionTimer">Timer: --</p>
+      <div data-role="log"></div>
+    </div>
+  </section>
+
+  
+
+  <script src="WebsocketTest/characterWidget.js"></script>
+  <script src="WebsocketTest/client.js"></script>
+
+  <script>
+
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = "360px";
+    } 
+  });
+}
+</script>
+</body>
+</html>

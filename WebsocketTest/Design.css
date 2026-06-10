@@ -4,6 +4,21 @@
     box-sizing: border-box;
 }
 
+<<<<<<< Updated upstream
+=======
+.game-ui {
+    position: absolute;
+    left: 5px;
+    bottom: 5px;
+    z-index: 999;
+}
+
+/* body:has(#joinScreen.active) .game-ui,
+body:has(#gameOverScreen.active) .game-ui {
+    display: none;
+} */
+
+>>>>>>> Stashed changes
 @font-face {
     font-family: 'Dobra';
     src: url('Abel-Regular.ttf') format('truetype');
@@ -379,4 +394,161 @@ html {
 
 .pass-btn:hover {
     background-color: #d90f0b;
+<<<<<<< Updated upstream
 }
+=======
+}
+
+.SituationScreen {
+    width: 100%;
+    height: 100vh;
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+    font-family: 'Dobra', serif;
+}
+
+.SituationScreen h1 {
+    color: #4a9eff;
+    font-size: 42px;
+    margin-bottom: 20px;
+}
+
+.SituationScreen p {
+    color: #333333;
+    font-size: 24px;
+    max-width: 320px;
+}
+
+.bars-wrapper {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+
+
+.container {
+    background-color: rgb(192, 192, 192);
+    width: 40px;
+    height: 300px;
+    border-radius: 10px;
+
+    display: flex;
+    align-items: flex-end;
+
+    overflow: hidden;
+}
+
+.Innovation {
+    width: 100%;
+    height: 60%;
+    background-color: #00FFB5;
+    border-radius: 10px;
+}
+
+.RiskManagement {
+    width: 100%;
+    height: 60%;
+    background-color: #FF006F;
+    border-radius: 10px;
+}
+
+.WorkerSatisfaction {
+    width: 100%;
+    height: 60%;
+    background-color: #9B00F3;
+    border-radius: 10px;
+}
+
+.Profit {
+    width: 100%;
+    height: 60%;
+    background-color: #FFF100;
+    border-radius: 10px;
+}
+
+
+.line-wrapper {
+    position: absolute;
+    left: 20px;
+    bottom: 60px;
+
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 60px;
+}
+
+.line {
+    height: 2px;
+    background: black;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    color: black;
+    font-family: 'Abel-Regular.ttf', serif;
+    font-size: 18px;
+    white-space: nowrap;
+}
+
+.line span {
+    margin-left: calc(100% + 10px);
+}
+
+.line-1 {
+    width: 100px;
+    transform: translateX(180px);
+}
+
+.line-2 {
+    width: 160px;
+    transform: translateX(120px);
+}
+
+.line-3 {
+    width: 220px;
+    transform: translateX(60px);
+}
+
+.line-4 {
+    width: 280px;
+    transform: translateX(0px);
+}
+
+.collapsible {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 600px;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+/* .active, .collapsible:hover {
+} */
+
+.content {
+  position: relative;
+  width: 600px;
+  height: 360px;
+  padding: 0 18px;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}
+>>>>>>> Stashed changes
