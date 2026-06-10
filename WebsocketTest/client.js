@@ -346,7 +346,7 @@ function handleVotingStarted(data) {
 
   resetVotingScreen();
   renderCharacterWidgetSafely();
-  showScreen("votingscreen");
+  showScreen("votingScreen");
 }
 
 function handleVoteSaved(data) {
