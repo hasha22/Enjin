@@ -5,10 +5,16 @@
 }
 
 .game-ui {
-    display: block;
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    z-index: 999;
 }
 
-
+/* body:has(#joinScreen.active) .game-ui,
+body:has(#gameOverScreen.active) .game-ui {
+    display: none;
+} */
 
 @font-face {
     font-family: 'Dobra';
@@ -468,14 +474,16 @@ html {
 }
 
 .bars-wrapper {
-    position: fixed;
-    left: 20px;
-    bottom: 20px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
 
     display: flex;
     gap: 20px;
     align-items: flex-end;
 }
+
+
 
 .container {
     background-color: rgb(192, 192, 192);
@@ -517,12 +525,11 @@ html {
     border-radius: 10px;
 }
 
-/* STAIR LINES */
 
 .line-wrapper {
-    position: fixed;
-    left: 40px;
-    bottom: 80px;
+    position: absolute;
+    left: 20px;
+    bottom: 60px;
 
     display: flex;
     flex-direction: column-reverse;
@@ -531,14 +538,14 @@ html {
 
 .line {
     height: 2px;
-    background: white;
+    background: black;
 
     display: flex;
     justify-content: flex-start;
     align-items: center;
 
-    color: white;
-    font-family: 'Dobra', serif;
+    color: black;
+    font-family: 'Abel-Regular.ttf', serif;
     font-size: 18px;
     white-space: nowrap;
 }
