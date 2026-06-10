@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
         {
             Player playerScript = player.GetComponent<Player>();
 
-            if (playerScript.GetSecondVote()) { votedYes.Add(playerScript); }
+            if (playerScript.GetSecondVote() == FinalVoteTypes.Yes) { votedYes.Add(playerScript); }
             else { votedNo.Add(playerScript); }
         }
         if (votedYes.Count > votedNo.Count)
@@ -82,6 +82,8 @@ public class GameManager : MonoBehaviour
             ValueManager.instance.ChangeValue(enj, morale, ethic, profit);
         }
     }
+
+
     public void OnContinueButtonPressed()
     {
         switch (currentScreen)
@@ -105,8 +107,8 @@ public class GameManager : MonoBehaviour
                 GameUIManager.instance.NextScreen();
                 break;
             case GameScreens.SecondPolicyVotingScreen:
-                DeterminePolicyOutcome();
                 GameUIManager.instance.NextScreen();
+                DeterminePolicyOutcome();
                 break;
             case GameScreens.ResultsScreen:
                 GameUIManager.instance.NextScreen();

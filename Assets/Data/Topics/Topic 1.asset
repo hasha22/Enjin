@@ -24,10 +24,10 @@ MonoBehaviour:
     policyDescription: Workers should be able to decide for themselves if and how
       they use Enjin.
     keywords: 0300000002000000
-    enjinValue: 0
-    moraleValue: 0
-    ethicValue: 0
-    profitValue: 0
+    enjinValue: 3
+    moraleValue: -1
+    ethicValue: -4
+    profitValue: 2
   enjinPolicy:
     policyName: Enjin V1.0
     policyDescription: Our first commerical model, Enjin 1.0 is now your new best
