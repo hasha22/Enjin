@@ -79,6 +79,9 @@ function connectWebSocket() {
       case "vote_failed":
         handleVoteFailed(data);
         break;
+      case "discussion_started":
+        handleDiscussionStarted(data);
+        break;
       case "error":
         log("Server error");
         break;
@@ -343,7 +346,7 @@ function handleVotingStarted(data) {
 
   resetVotingScreen();
   renderCharacterWidgetSafely();
-  showScreen("votingscreen");
+  showScreen("votingScreen");
 }
 
 function handleVoteSaved(data) {
@@ -376,6 +379,8 @@ function handleVoteFailed(data) {
 
   setStatus("Vote failed: " + (data.reason || "Unknown reason"), "votingScreen");
 }
+
+
 
 function savePlayerData(data) {
   if (data.room) {
@@ -714,6 +719,10 @@ function setStatus(text, screenId) {
   } else {
     console.log(text);
   }
+}
+
+function handleDiscussionStarted(data) {
+  showDiscussionTurnScreen(data);
 }
 
 window.joinRoom = joinRoom;
