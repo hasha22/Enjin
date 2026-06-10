@@ -15,7 +15,10 @@ MonoBehaviour:
   characterName: FinanceEmployee
   characterDescription: "You understand the hype around Enjin, but you don\u2019t
     exactly understand how it works yet. You don\u2019t know for certain if Enjin
-    is capable of judging work. You are more experienced in what the plans that are
-    being made cost compared to other employees."
+    is capable of judging work or making decisions. You are more experienced in what
+    it means to plan for the future and how much it will cost the company to adapt.\n\nIs
+    it really true that using Enjin will bost productivity all-around the company?
+    Or will implementing Enjin end up costing more than hiring employees? Get in
+    character!"
   characterImage: {fileID: 5249444126942463206, guid: 9eecc6ddc15febb40b89137f54203dcc, type: 3}
   characterKeywords: 0600000000000000

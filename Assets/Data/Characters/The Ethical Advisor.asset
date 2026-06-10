@@ -13,8 +13,14 @@ MonoBehaviour:
   m_Name: The Ethical Advisor
   m_EditorClassIdentifier: Assembly-CSharp::Character
   characterName: EthicalAdvisor
-  characterDescription: You support Enjin usage, but it needs to comply with certain
+  characterDescription: 'You support Enjin usage, but it needs to comply with certain
     ethical standards, and it needs to be accessible to all employees. As long as
     AI usage stays ethical, it can be used to boost productivity.
+
+
+    Think about
+    how implementing Enjin will affect people''s relationship to their work. Is using
+    Enjin detracting from a person''s ability to express themselves? What will potential
+    clients think of a company that uses Enjin unrestricted? Get in character!'
   characterImage: {fileID: 4186442984283127803, guid: 912028b1e8f3ef54ca2c70e26c970df5, type: 3}
   characterKeywords: 0400000003000000

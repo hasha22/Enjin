@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Playtest Client</title>
-  <link rel="stylesheet" href="WebsocketTest/Design.css">
+
+  <link rel="stylesheet" href="WebsocketTest/Design.css" />
 
   <style>
     /* PLAYTEST QUICK FIX: one page, many screens */
+
     .screen {
       display: none;
       min-height: 100vh;
@@ -22,44 +25,50 @@
       color: #4a9eff;
       font-size: 24px;
       font-weight: bold;
-      font-family: 'Dobra', serif;
+      font-family: "Dobra", serif;
       margin-top: 10px;
     }
 
     [data-role="log"] {
       color: #333333;
-      font-family: 'Dobra', serif;
+      font-family: "Dobra", serif;
       margin-top: 12px;
     }
   </style>
 </head>
 
 <body>
+  <div class="game-ui">
+    <button type="button" class="collapsible">
+    <span class="cheat-arrow"></span>
+    Keyword Cheat Sheet
+    </button>
 
-   <div class="game-ui">
-    <div class="bars-wrapper">
-      <div class="container">
-        <div class="Innovation"></div>
+    <div class="content">
+      <div class="bars-wrapper">
+        <div class="container">
+          <div class="Innovation"></div>
+        </div>
+
+        <div class="container">
+          <div class="RiskManagement"></div>
+        </div>
+
+        <div class="container">
+          <div class="WorkerSatisfaction"></div>
+        </div>
+
+        <div class="container">
+          <div class="Profit"></div>
+        </div>
       </div>
 
-      <div class="container">
-        <div class="RiskManagement"></div>
+      <div class="line-wrapper">
+        <div class="line line-1"><span>Profit</span></div>
+        <div class="line line-2"><span>Worker Satisfaction</span></div>
+        <div class="line line-3"><span>Risk Management</span></div>
+        <div class="line line-4"><span>Innovation</span></div>
       </div>
-
-      <div class="container">
-        <div class="WorkerSatisfaction"></div>
-      </div>
-
-      <div class="container">
-        <div class="Profit"></div>
-      </div>
-    </div>
-
-    <div class="line-wrapper">
-      <div class="line line-1"><span>Innovation</span></div>
-      <div class="line line-2"><span>Risk Management</span></div>
-      <div class="line line-3"><span>Worker Satisfaction</span></div>
-      <div class="line line-4"><span>Profit</span></div>
     </div>
   </div>
 
@@ -71,12 +80,12 @@
       <div class="join-form">
         <label>
           Player name:
-          <input id="playerName" maxlength="24" placeholder="Your name">
+          <input id="playerName" maxlength="24" placeholder="Your name" />
         </label>
 
         <label>
           Room code:
-          <input id="roomCode" value="ABCD" maxlength="10">
+          <input id="roomCode" value="ABCD" maxlength="10" />
         </label>
 
         <button class="join-btn" onclick="joinRoom()">Join Room</button>
@@ -91,7 +100,10 @@
   <section id="connectedScreen" class="screen">
     <div class="JoinRoom">
       <h2>Game Lobby</h2>
-      <label data-role="status">Connected to lobby!<br>Waiting for game to start</label>
+      <label data-role="status">
+        Connected to lobby!<br />
+        Waiting for game to start
+      </label>
       <div data-role="log"></div>
     </div>
   </section>
@@ -109,7 +121,9 @@
   <section id="situationScreen" class="screen">
     <div class="JoinRoom">
       <h2>Look at the main screen</h2>
-      <label data-role="status">The current situation is being explained there.</label>
+      <label data-role="status">
+        The current situation is being explained there.
+      </label>
       <div data-role="log"></div>
     </div>
   </section>
@@ -132,7 +146,7 @@
             value="3"
             class="voting-slider"
             id="voteSlider"
-          >
+          />
 
           <div class="slider-labels">
             <span class="slider-label">Disagree</span>
@@ -142,15 +156,26 @@
 
           <p id="voteValue">3</p>
 
-          <button class="submit-btn" id="submitVoteBtn">Submit Vote</button>
+          <button class="submit-btn" id="submitVoteBtn">
+            Submit Vote
+          </button>
         </div>
 
-        <div class="final-voting-content" id="secondVoteContent" style="display: none;">
+        <div
+          class="final-voting-content"
+          id="secondVoteContent"
+          style="display: none;"
+        >
           <h1 class="voting-title">Final voting phase</h1>
 
           <div class="final-vote-buttons">
-            <button class="final-vote-btn vote-btn" id="enactVoteBtn">Enact</button>
-            <button class="final-vote-btn pass-btn" id="rejectVoteBtn">Reject</button>
+            <button class="final-vote-btn vote-btn" id="enactVoteBtn">
+              Enact
+            </button>
+
+            <button class="final-vote-btn pass-btn" id="rejectVoteBtn">
+              Reject
+            </button>
           </div>
         </div>
 
@@ -174,7 +199,9 @@
   <section id="waitingSituationScreen" class="screen">
     <div class="JoinRoom">
       <h2>Round <span data-round-number>1</span></h2>
-      <label data-role="status">Look at the main screen to learn the situation.</label>
+      <label data-role="status">
+        Look at the main screen to learn the situation.
+      </label>
       <div data-role="log"></div>
     </div>
   </section>
@@ -201,7 +228,9 @@
   <section id="waitingEnjinUpdateScreen" class="screen">
     <div class="JoinRoom">
       <h2>Look at the Enjin update</h2>
-      <label data-role="status">The main screen is showing the improved Enjin policy.</label>
+      <label data-role="status">
+        The main screen is showing the improved Enjin policy.
+      </label>
       <div data-role="log"></div>
     </div>
   </section>
@@ -229,12 +258,16 @@
     <div class="JoinRoom">
       <div id="myTurnBlock">
         <h2>Your turn!</h2>
-        <label data-role="status">Explain why you chose this position.</label>
+        <label data-role="status">
+          Explain why you chose this position.
+        </label>
       </div>
 
       <div id="otherSpeakerBlock">
         <h2>Time to explain your choice</h2>
-        <label data-role="status">Now speaking: <span id="speakerName">another player</span>.</label>
+        <label data-role="status">
+          Now speaking: <span id="speakerName">another player</span>.
+        </label>
       </div>
 
       <p id="discussionTimer">Timer: --</p>
@@ -242,9 +275,25 @@
     </div>
   </section>
 
-  
-
   <script src="WebsocketTest/characterWidget.js"></script>
   <script src="WebsocketTest/client.js"></script>
+
+  <script>
+    var coll = document.getElementsByClassName("collapsible");
+
+    for (var i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function () {
+        this.classList.toggle("active");
+
+        var content = this.nextElementSibling;
+
+        if (content.style.maxHeight) {
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "600px";
+        }
+      });
+    }
+  </script>
 </body>
 </html>
