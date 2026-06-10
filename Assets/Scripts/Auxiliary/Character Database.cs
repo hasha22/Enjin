@@ -9,7 +9,6 @@ public class CharacterDatabase : MonoBehaviour
     [Header("Characters")]
     [SerializeField] private List<Character> allCharacters = new List<Character>();
     private HashSet<Character> assignedCharacters = new HashSet<Character>();
-
     private void Awake()
     {
         if (instance == null)

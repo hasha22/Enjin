@@ -119,10 +119,6 @@ public class GameUIManager : MonoBehaviour
             GameManager.instance.currentScreen = GameScreens.SituationExplanationScreen;
             GameManager.instance.currentRound++;
             ResetUI();
-            if (NetworkManager.instance != null)
-            {
-                NetworkManager.instance.ResetPlayerRoundVotes();
-            }
 
             currentScreen = GameManager.instance.currentScreen;
             currentRound = GameManager.instance.currentRound;
@@ -300,8 +296,6 @@ public class GameUIManager : MonoBehaviour
     {
         GameObject newKeyword = null;
 
-        Debug.Log(isVoting1);
-
         if (isVoting1) newKeyword = Instantiate(discussionKeywordCard, container);
         else newKeyword = Instantiate(votingKeywordCard, container);
 
@@ -359,14 +353,6 @@ public class GameUIManager : MonoBehaviour
         }
         TimerDone();
         iconCircle.SetActive(false);
-    }
-    private IEnumerator FinalVoting(Player playerScript)
-    {
-        yield return null;
-        if (timer.activeSelf == true)
-        {
-            InstantiateVotePlayerIcon(playerScript);
-        }
     }
     #endregion
     #region Helper Methods

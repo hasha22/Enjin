@@ -50,8 +50,6 @@ function connectWebSocket() {
   ws.onmessage = (event) => {
     const { type, data } = parseServerMessage(event);
 
-    console.log("Message from server:", type, data);
-
     switch (type) {
       case "join_room_success":
         handleJoinRoomSuccess(data);
@@ -88,21 +86,26 @@ function connectWebSocket() {
     }
   };
 }
-function handlePlayerScreenChanged(data) {
-  //FIX THIS
-  if (data.screenId === "waitingScreen") {
-    clearDiscussionTimer();
-    renderCharacterWidgetSafely();
-    showWaitingScreen(data);
-    return;
+function parseServerMessage(event) {
+  const msg = JSON.parse(event.data);
+
+  let data = {};
+
+  if (typeof msg.data === "string" && msg.data.length > 0) {
+    try {
+      data = JSON.parse(msg.data);
+    } catch (error) {
+      console.warn("Could not parse msg.data as JSON:", msg.data);
+      data = {};
+    }
+  } else if (msg.data && typeof msg.data === "object") {
+    data = msg.data;
   }
-  //FIX THIS
-  if (data.screenId === "gameOverScreen") {
-    clearInterval(countdownInterval);
-    clearDiscussionTimer();
-    showScreen("gameOverScreen");
-    return;
-  }
+
+  return {
+    type: msg.type,
+    data: data
+  };
 }
 
 function showWaitingScreen(data) {
@@ -263,28 +266,6 @@ function buildCharacterObject(data)
     };
 }
 
-function parseServerMessage(event) {
-  const msg = JSON.parse(event.data);
-
-  let data = {};
-
-  if (typeof msg.data === "string" && msg.data.length > 0) {
-    try {
-      data = JSON.parse(msg.data);
-    } catch (error) {
-      console.warn("Could not parse msg.data as JSON:", msg.data);
-      data = {};
-    }
-  } else if (msg.data && typeof msg.data === "object") {
-    data = msg.data;
-  }
-
-  return {
-    type: msg.type,
-    data: data
-  };
-}
-
 function joinRoom() {
   const roomInput = document.getElementById("roomCode");
   const nameInput = document.getElementById("playerName");
@@ -320,6 +301,7 @@ function joinRoom() {
 }
 
 function handleJoinRoomSuccess(data) {
+  renderCharacterWidgetSafely();
   joinedRoomCode = data.room;
   savePlayerData(data);
 
@@ -330,7 +312,6 @@ function handleJoinRoomSuccess(data) {
 }
 
 function handleGameStarted(data) {
-  renderCharacterWidgetSafely();
   showScreen("characterScreen");
 }
 
@@ -341,9 +322,11 @@ function handleShowScenario(data) {
 function handleVotingStarted(data) {
   currentVoteType = data.voteType;
 
+  console.log("showing voting screen", data.voteType);
+
   resetVotingScreen();
-  renderCharacterWidgetSafely();
-  showScreen("votingscreen");
+  startVotingTimer();
+  showScreen("votingScreen");
 }
 
 function handleVoteSaved(data) {
@@ -420,21 +403,21 @@ function setupVotingControls() {
 
   if (submitVoteBtn) {
     submitVoteBtn.addEventListener("click", () => {
-      submitVote("manual");
+      submitVote();
     });
   }
 
   if (enactVoteBtn) {
     enactVoteBtn.addEventListener("click", () => {
       selectedSecondVote = "yes";
-      submitVote("manual");
+      submitVote();
     });
   }
 
   if (rejectVoteBtn) {
     rejectVoteBtn.addEventListener("click", () => {
       selectedSecondVote = "no";
-      submitVote("manual");
+      submitVote();
     });
   }
 }
@@ -524,7 +507,7 @@ function startVotingTimer() {
         if (currentVoteType === "second_vote") {
           handleSecondVoteTimeout();
         } else {
-          submitVote("timeout");
+          submitVote();
         }
       }
     }
@@ -575,7 +558,7 @@ function mapSliderValueToFirstVote(sliderValue) {
   return "neutral";
 }
 
-function submitVote(submitReason) {
+function submitVote() {
   if (hasSubmittedVote) {
     return;
   }
@@ -627,10 +610,8 @@ function submitVote(submitReason) {
     type: "submit_vote",
     room: roomCode,
     clientId: clientId,
-    roundNumber: currentRound,
     voteType: currentVoteType,
     voteValue: vote,
-    submitReason: submitReason
   }));
 }
 
@@ -652,6 +633,8 @@ function showScreen(screenId) {
 
   targetScreen.classList.add("active");
   currentScreenId = screenId;
+
+   hideCharacterWidgetIfNeeded();
 }
 
 function renderCharacterWidgetSafely() {
