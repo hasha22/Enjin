@@ -155,7 +155,16 @@ body:has(#gameOverScreen.active) .game-ui {
   text-align: center;
 }
 
-.circle {
+#characterWidgetRoot {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 5000;
+  font-family: "Dobra", serif;
+  display: none;
+}
+
+#characterCircle {
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -165,7 +174,7 @@ body:has(#gameOverScreen.active) .game-ui {
   padding: 4px;
 }
 
-.circle-image {
+#profileImage {
   width: 92px;
   height: 92px;
   border-radius: 50%;
@@ -173,67 +182,110 @@ body:has(#gameOverScreen.active) .game-ui {
   cursor: pointer;
 }
 
-
-.modal {
+#imageModal {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 
-.modal.active {
+#imageModal.active {
   display: flex;
 }
 
-.modal-content {
-  width: 20%;
-  height: 20%;
-  background-color: #f4f4ee;
-  border: 5px solid #f735ea;
+#characterModalContent {
+  width: 820px;
+  height: 560px;
+
+  background-color: #f4f4ee; 
   border-radius: 20px;
+
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 10px;
   overflow: hidden;
 }
 
-.modal-content img {
-  max-width: 50%;
-  max-height: 100%;
-  object-fit: contain;
-  border-radius: 15px;
-}
-
-.modal-right-section {
-  width: 70%;
+#characterModalLeft {
+  width: 42%;
   height: 100%;
+
   display: flex;
   flex-direction: column;
+}
+
+#characterImageBox {
+  height: 70%;
+  width: 100%;
+
+  display: flex;
   justify-content: center;
   align-items: center;
-  gap: 15px;
-  padding: 20px;
+
+  padding: 4px;
 }
 
-.character-widget-root .character-widget-modal-content {
-  width: 500px;
-  height: 500px;
+#fullImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
-.character-widget-root {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  z-index: 5000;
+#characterKeywordBox {
+  height: 30%;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px;
+}
+
+#box1Text,
+#box2Text {
+  width: 100%;
+  min-height: 48px;
+
+  border-radius: 12px;
+  padding: 10px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
   font-family: "Dobra", serif;
+  font-size: 24px;
+  color: #333333;
 }
+
+#characterModalRight {
+  width: 50%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 28px;
+}
+
+#modalDescription {
+  width: 100%;
+
+  font-family: "Dobra", serif;
+  font-size: 20px;
+  line-height: 1.4;
+  color: #333333;
+  text-align: left;
+  white-space: pre-line;
+}
+
+/* Voting */
 
 .VotingScreenFrame {
   display: flex;
@@ -244,30 +296,6 @@ body:has(#gameOverScreen.active) .game-ui {
   width: 100%;
   padding: 20px;
   position: relative;
-}
-
-.text-box {
-  width: 80%;
-  background-color: #ffffff;
-  border-radius: 15px;
-  padding: 20px;
-  text-align: center;
-  font-family: "Dobra", serif;
-  font-size: 16px;
-  color: #333333;
-  min-height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.modal-text {
-  width: 85%;
-  text-align: center;
-  font-family: "Dobra", serif;
-  font-size: 14px;
-  color: #333333;
-  margin-top: 10px;
 }
 
 .voting-content {
@@ -492,8 +520,6 @@ body:has(#gameOverScreen.active) .game-ui {
   max-width: 320px;
 }
 
-/* Collapsible keyword cheat sheet */
-
 .collapsible {
   position: relative;
   background-color: white;
@@ -521,7 +547,6 @@ body:has(#gameOverScreen.active) .game-ui {
   transition: transform 0.2s ease;
 }
 
-/* When opened, arrow points down */
 .collapsible.active .cheat-arrow {
   transform: translateX(-50%) rotate(45deg);
 }

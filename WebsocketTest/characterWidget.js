@@ -16,72 +16,6 @@
     }
   }
 
-  function createCharacterWidgetShell() {
-    if (document.getElementById(ROOT_ID)) {
-      return;
-    }
-
-    const root = document.createElement("div");
-    root.id = ROOT_ID;
-    root.className = "character-widget-root";
-
-    const circle = document.createElement("div");
-    circle.id = "characterCircle";
-    circle.className = "circle character-widget-circle";
-
-    const profileImage = document.createElement("img");
-    profileImage.id = "profileImage";
-    profileImage.className = "circle-image character-widget-face-image";
-    profileImage.alt = "profile";
-    profileImage.src = "";
-
-    circle.appendChild(profileImage);
-
-    const modal = document.createElement("div");
-    modal.id = "imageModal";
-    modal.className = "modal character-widget-modal";
-
-    const modalContent = document.createElement("div");
-    modalContent.className = "modal-content character-widget-modal-content";
-
-    const fullImage = document.createElement("img");
-    fullImage.id = "fullImage";
-    fullImage.className = "full-character-image";
-    fullImage.alt = "full character";
-    fullImage.src = "";
-
-    const rightSection = document.createElement("div");
-    rightSection.className = "modal-right-section character-widget-right-section";
-
-    const box1Text = document.createElement("div");
-    box1Text.id = "box1Text";
-    box1Text.className = "text-box character-widget-text-box";
-    //box1Text.style.backgroundColor = keywordColor1;
-
-    const box2Text = document.createElement("div");
-    box2Text.id = "box2Text";
-    box2Text.className = "text-box character-widget-text-box";
-    //box2Text.style.backgroundColor = keywordColor2;
-
-    const modalDescription = document.createElement("p");
-    modalDescription.id = "modalDescription";
-    modalDescription.className = "modal-text character-widget-modal-text";
-
-    rightSection.appendChild(box1Text);
-    rightSection.appendChild(box2Text);
-    rightSection.appendChild(modalDescription);
-
-    modalContent.appendChild(fullImage);
-    modalContent.appendChild(rightSection);
-    modal.appendChild(modalContent);
-
-    root.appendChild(circle);
-    root.appendChild(modal);
-    document.body.appendChild(root);
-
-    attachCharacterWidgetEvents();
-  }
-
   function attachCharacterWidgetEvents() {
     const profileImage = document.getElementById("profileImage");
     const imageModal = document.getElementById("imageModal");
@@ -109,7 +43,6 @@
   }
 
   function renderCharacterWidget() {
-    createCharacterWidgetShell();
     attachCharacterWidgetEvents();
 
     const character = getSavedCharacter();
