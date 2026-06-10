@@ -4,8 +4,6 @@
     box-sizing: border-box;
 }
 
-<<<<<<< Updated upstream
-=======
 .game-ui {
     position: absolute;
     left: 5px;
@@ -18,7 +16,6 @@ body:has(#gameOverScreen.active) .game-ui {
     display: none;
 } */
 
->>>>>>> Stashed changes
 @font-face {
     font-family: 'Dobra';
     src: url('Abel-Regular.ttf') format('truetype');
