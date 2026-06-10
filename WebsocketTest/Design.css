@@ -609,20 +609,20 @@ body:has(#gameOverScreen.active) .game-ui {
 
 .line-1 {
   width: 100px;
-  transform: translateX(180px);
+  transform: translateX(230px);
 }
 
 .line-2 {
   width: 160px;
-  transform: translateX(120px);
+  transform: translateX(170px);
 }
 
 .line-3 {
   width: 220px;
-  transform: translateX(60px);
+  transform: translateX(110px);
 }
 
 .line-4 {
   width: 280px;
-  transform: translateX(0);
+  transform: translateX(50px);
 }
