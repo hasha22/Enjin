@@ -74,8 +74,9 @@ public class ValueManager : MonoBehaviour
     public void MakeBig()
     {
         RectTransform rect = sliderContainer.GetComponent<RectTransform>();
-        rect.anchoredPosition = new Vector2(0, -26);
+        rect.anchoredPosition = new Vector2(-15, -40);
         rect.localScale = new Vector2(3, 3);
+        rect.localRotation = Quaternion.Euler(0, 0, 0);
     }
     public void MakeSmall()
     {
@@ -83,6 +84,7 @@ public class ValueManager : MonoBehaviour
         RectTransform rect = sliderContainer.GetComponent<RectTransform>();
         rect.anchoredPosition = new Vector2(-762, -358);
         rect.localScale = new Vector2(0.9f, 0.9f);
+        rect.localRotation = Quaternion.Euler(0, 0, 90);
     }
     public void InstantlySetSliders()
     {
@@ -131,15 +133,15 @@ public class ValueManager : MonoBehaviour
     }
     private IEnumerator ShowMarks()
     {
-        markContainer.SetActive(true);
-        float xPos = prevEnjinValue / 10 * 290;
-        enijnMark.anchoredPosition = new Vector2(xPos, enijnMark.anchoredPosition.y);
-        xPos = prevWorkerMoraleValue / 10 * 290;
-        workMark.anchoredPosition = new Vector2(xPos, workMark.anchoredPosition.y);
-        xPos = prevEthicValue / 10 * 290;
-        ethMark.anchoredPosition = new Vector2(xPos, ethMark.anchoredPosition.y);
-        xPos = prevProfitValue / 10 * 290;
-        profMark.anchoredPosition = new Vector2(xPos, profMark.anchoredPosition.y);
+        // markContainer.SetActive(true);
+        // float xPos = prevEnjinValue / 10 * 290;
+        // enijnMark.anchoredPosition = new Vector2(xPos, enijnMark.anchoredPosition.y);
+        // xPos = prevWorkerMoraleValue / 10 * 290;
+        // workMark.anchoredPosition = new Vector2(xPos, workMark.anchoredPosition.y);
+        // xPos = prevEthicValue / 10 * 290;
+        // ethMark.anchoredPosition = new Vector2(xPos, ethMark.anchoredPosition.y);
+        // xPos = prevProfitValue / 10 * 290;
+        // profMark.anchoredPosition = new Vector2(xPos, profMark.anchoredPosition.y);
         yield return null;
     }
     public void testSliders()
