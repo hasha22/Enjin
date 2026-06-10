@@ -640,7 +640,9 @@ function showScreen(screenId) {
   targetScreen.classList.add("active");
   currentScreenId = screenId;
 
-   hideCharacterWidgetIfNeeded();
+  localStorage.setItem("currentScreen", screenId);
+
+  hideCharacterWidgetIfNeeded();
 }
 
 function renderCharacterWidgetSafely() {
@@ -704,3 +706,11 @@ function setStatus(text, screenId) {
 }
 
 window.joinRoom = joinRoom;
+
+window.addEventListener("load", function () {
+  const savedScreen = localStorage.getItem("currentScreen");
+
+  if (savedScreen && document.getElementById(savedScreen)) {
+    showScreen(savedScreen);
+  }
+});
