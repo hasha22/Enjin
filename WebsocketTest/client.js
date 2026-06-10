@@ -252,7 +252,7 @@ function buildCharacterObject(data)
             keywordColor1 = "#FF006F";
             keywordColor2 = "#00FFB5";
             break;
-        case "ProductionManager:":
+        case "ProductionManager":
             faceImage = "ProductionManager_portrait.png";
             fullImage = "ProductionManager.png";
             backgroundColor = "#273DD7"
