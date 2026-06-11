@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4914645aa4654324688982b7387c5f46, type: 3}
+  m_Name: Neutral Ending
+  m_EditorClassIdentifier: Assembly-CSharp::Ending
+  endingName: Neutral Ending
+  endingText:
+  - After much deliberation, the company has decided to adopt Enjin halfway.
+  - It's used for development, bugfixing, or sifting through large datasets, but
+    never claims a seat next to executives or creative directors.
+  - The competition is fierce, but by keeping a human touch in your company, many
+    clients still prefer your services to other more Enjin-focused competitors.
+  - Your company succesfully divides role between its employees and Enjin, securing
+    its place as maybe not the most profitable, but one of the most succesful.

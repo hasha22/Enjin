@@ -16,7 +16,7 @@ public class OutcomeManager : MonoBehaviour
     [Header("Endings")]
     public Ending enjinEnding;
     public Ending neutralEnding;
-    public Ending antiEnjinEnding;
+    public Ending conservationEnding;
 
     [Header("Text Refs")]
     public TextMeshProUGUI title;
@@ -45,6 +45,7 @@ public class OutcomeManager : MonoBehaviour
                 );
         StartEnding(DetermineOutcome());
     }
+
     public void SetValues(float enj, float morale, float ethic, float profit)
     {
         enjinValue = enj;
@@ -59,10 +60,15 @@ public class OutcomeManager : MonoBehaviour
         title.text = selectedEnding.endingName;
         StartCoroutine(TypeText(selectedEnding.endingText[currentLine], mainText));
     }
+    
     public Ending DetermineOutcome()
     {
-        if (true) { return enjinEnding; }
+        if ((workerMoraleValue + ethicValue) / 2 < enjinValue) { return enjinEnding; }
+        else if ((workerMoraleValue + ethicValue) / 2 > enjinValue) {return conservationEnding;}
+        else {return neutralEnding;}
     }
+
+
 
     #region Text logic
     public void NextLine()
