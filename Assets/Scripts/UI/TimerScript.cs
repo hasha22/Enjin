@@ -40,4 +40,10 @@ public class TimerScript : MonoBehaviour
             
         }
     }
+
+    public void StopTimer()
+    {
+        StopAllCoroutines();
+        GameUIManager.instance.TimerDone();
+    }
 }

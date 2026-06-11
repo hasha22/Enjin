@@ -336,7 +336,6 @@ public class NetworkManager : MonoBehaviour
         foreach (GameObject player in allPlayers)
         {
             Player playerScript = player.GetComponent<Player>();
-
             if (playerScript.GetPlayerID() == playerID)
             {
                 VoteTypes parsedVote = VoteTypes.Neutral;
@@ -365,7 +364,38 @@ public class NetworkManager : MonoBehaviour
                 break;
             }
         }
+        if (FirstCheckIfAllVoted())
+        {
+            TimerScript.instance.StopTimer();
+        }
     }
+
+    public bool FirstCheckIfAllVoted()
+    {
+        foreach(GameObject p in allPlayers)
+        {
+            Player player = p.GetComponent<Player>();
+            if (player.GetFirstVote() == 0 || player.GetFirstVote() == VoteTypes.NoVote)
+            {
+                return false;
+            }
+        } 
+        return true;
+    }
+
+    public bool SecondCheckIfAllVoted()
+    {
+        foreach(GameObject p in allPlayers)
+        {
+            Player player = p.GetComponent<Player>();
+            if (player.GetSecondVote() == FinalVoteTypes.NoVote || player.GetSecondVote() == 0)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void RegisterSecondPlayerVote(string playerID, string playerVote)
     {
         foreach (GameObject player in allPlayers)
@@ -375,15 +405,19 @@ public class NetworkManager : MonoBehaviour
             {
                 if (playerVote == "yes")
                 {
-                    playerScript.SetSecondVote(true);
+                    playerScript.SetSecondVote(FinalVoteTypes.Yes);
                 }
                 else if (playerVote == "no")
                 {
-                    playerScript.SetSecondVote(false);
+                    playerScript.SetSecondVote(FinalVoteTypes.No);
                 }
                 GameUIManager.instance.InstantiateVotePlayerIcon(playerScript);
                 break;
             }
+        }
+        if (SecondCheckIfAllVoted())
+        {
+            TimerScript.instance.StopTimer();
         }
     }
     #endregion

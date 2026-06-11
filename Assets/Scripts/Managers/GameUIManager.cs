@@ -264,15 +264,15 @@ public class GameUIManager : MonoBehaviour
     {
         if (NetworkManager.instance == null || NetworkManager.instance.allPlayers.Count == 0) return;
 
-        bool playerVote = playerScript.GetSecondVote();
+        FinalVoteTypes playerVote = playerScript.GetSecondVote();
 
-        if (playerVote)
+        if (playerVote == FinalVoteTypes.Yes)
         {
             bool useFirstGroup = (yesGroup1.childCount < 3);
             Transform group = useFirstGroup ? yesGroup1 : yesGroup2;
             InstantiateIconInGroup(group, playerScript.selectedCharacter.characterImage, false);
         }
-        else if (!playerVote)
+        else if (playerVote == FinalVoteTypes.No)
         {
             bool useFirstGroup = (noGroup1.childCount < 3);
             Transform group = useFirstGroup ? noGroup1 : noGroup2;
