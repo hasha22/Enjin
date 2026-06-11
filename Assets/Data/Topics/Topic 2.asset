@@ -23,7 +23,7 @@ MonoBehaviour:
       because they understand how to treat the customers best.
     keywords: 02000000
     enjinValue: 0
-    moraleValue: 1
+    moraleValue: 3
     ethicValue: 0
     profitValue: -1
   enjinPolicy:
