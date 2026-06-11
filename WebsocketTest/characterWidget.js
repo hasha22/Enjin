@@ -62,6 +62,7 @@
     const box2Text = document.getElementById("box2Text");
     const modalDescription = document.getElementById("modalDescription");
     const background = document.getElementById("Background");
+    const characterName = document.getElementById("characterName");
 
     if (background && character.backgroundColor) {
       background.style.backgroundColor = character.backgroundColor;
@@ -69,6 +70,10 @@
 
     if (profileImage && character.faceImage) {
       profileImage.src = character.faceImage;
+    }
+
+    if (characterName && character.name) {
+      characterName.textContent = character.name;
     }
 
     if (characterCircle && character.backgroundColor) {

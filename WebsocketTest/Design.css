@@ -216,7 +216,7 @@ body:has(#gameOverScreen.active) .game-ui {
 }
 
 #characterImageBox {
-  height: 70%;
+  height: 50%;
   width: 100%;
 
   display: flex;
@@ -243,6 +243,23 @@ body:has(#gameOverScreen.active) .game-ui {
   gap: 12px;
 
   padding: 14px;
+}
+
+#characterName {
+  height: 20%;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 8px 10px;
+
+  font-family: "Dobra", serif;
+  font-size: 26px;
+  font-weight: bold;
+  color: #333333;
+  text-align: center;
 }
 
 #box1Text,
