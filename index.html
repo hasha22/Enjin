@@ -117,10 +117,12 @@
           />
 
           <div class="slider-labels">
-            <span class="slider-label">Disagree</span>
-            <span class="slider-label">Neutral</span>
             <span class="slider-label">Agree</span>
+            <span class="slider-label">Neutral</span>
+            <span class="slider-label">Disagree</span>
           </div>
+
+          <p id="voteLabel">Neutral</p>
 
           <button class="submit-btn" id="submitVoteBtn">
             Submit Vote
@@ -155,7 +157,7 @@
   <!-- 6. Vote saved / waiting for other players -->
   <section id="voteSavedScreen" class="screen">
     <div class="JoinRoom">
-      <h2>Vote saved</h2>
+      <h2 id="voteSavedText">You voted: --</h2>
       <label data-role="status">Waiting for the other players...</label>
       <div data-role="log"></div>
     </div>

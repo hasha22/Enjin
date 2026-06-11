@@ -417,10 +417,9 @@ body:has(#gameOverScreen.active) .game-ui {
 }
 
 .slider-labels {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   width: 100%;
-  gap: 12px;
 }
 
 .slider-label {
@@ -428,9 +427,19 @@ body:has(#gameOverScreen.active) .game-ui {
   font-size: 14px;
   color: #4a9eff;
   font-weight: bold;
-  flex: 1;
-  text-align: center;
   line-height: 1.2;
+}
+
+.slider-label:first-child {
+  text-align: left;
+}
+
+.slider-label:nth-child(2) {
+  text-align: center;
+}
+
+.slider-label:last-child {
+  text-align: right;
 }
 
 .submit-btn {

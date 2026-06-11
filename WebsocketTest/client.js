@@ -14,6 +14,7 @@ let votingStartedAt = Date.now();
 
 let currentVoteType = "first_vote";
 let selectedSecondVote = null;
+let lastSubmittedVote = null;
 
 let hasSubmittedVote = false;
 let countdownInterval = null;
@@ -435,14 +436,18 @@ function setupVotingControls() {
   const voteSlider = document.getElementById("voteSlider");
   const voteValue = document.getElementById("voteValue");
   const submitVoteBtn = document.getElementById("submitVoteBtn");
+  const voteLabel = document.getElementById("voteLabel");
 
-  if (voteSlider && voteValue) {
-    voteValue.innerText = voteSlider.value;
-
-    voteSlider.addEventListener("input", () => {
-      voteValue.innerText = voteSlider.value;
-    });
+  if (voteSlider && voteLabel) {
+    function updateVoteLabel() {
+    const vote = mapSliderValueToFirstVote(voteSlider.value);
+    voteLabel.innerText = formatVoteLabel(vote);
   }
+
+  updateVoteLabel();
+
+  voteSlider.addEventListener("input", updateVoteLabel);
+}
 
   if (submitVoteBtn) {
     submitVoteBtn.addEventListener("click", () => {
@@ -481,6 +486,7 @@ function resetVotingScreen() {
   const enactVoteBtn = document.getElementById("enactVoteBtn");
   const rejectVoteBtn = document.getElementById("rejectVoteBtn");
   const isSecondVote = currentVoteType === "second_vote";
+  const voteLabel = document.getElementById("voteLabel");
 
   votingStartedAt = Date.now();
 
@@ -488,9 +494,15 @@ function resetVotingScreen() {
     roundNumber.innerText = currentRound;
   }
 
-  if (voteSlider && voteValue) {
+
+
+  if (voteSlider) {
     voteSlider.value = 3;
-    voteValue.innerText = voteSlider.value;
+
+    if (voteLabel) {
+      const vote = mapSliderValueToFirstVote(voteSlider.value);
+      voteLabel.innerText = formatVoteLabel(vote);
+    }
   }
 
   if (submitVoteBtn) {
@@ -601,6 +613,20 @@ function mapSliderValueToFirstVote(sliderValue) {
   return "neutral";
 }
 
+function formatVoteLabel(vote) {
+  const labels = {
+    agree: "Agree",
+    mostly_agree: "Mostly agree",
+    neutral: "Neutral",
+    mostly_disagree: "Mostly disagree",
+    disagree: "Disagree",
+    yes: "Enact",
+    no: "Reject"
+  };
+
+  return labels[vote] || vote || "unknown";
+}
+
 function submitVote(submitReason) {
   if (hasSubmittedVote) {
     return;
@@ -625,6 +651,8 @@ function submitVote(submitReason) {
   const vote = currentVoteType === "second_vote"
     ? selectedSecondVote
     : mapSliderValueToFirstVote(voteSlider.value);
+
+    lastSubmittedVote = vote;
 
   if (!vote) {
     hasSubmittedVote = false;
@@ -661,6 +689,11 @@ function submitVote(submitReason) {
 }
 
 function showWaitingForOthersScreen() {
+    const voteSavedText = document.getElementById("voteSavedText");
+
+  if (voteSavedText) {
+    voteSavedText.innerText = "You voted: " + formatVoteLabel(lastSubmittedVote);
+  }
   showScreen("voteSavedScreen");
 }
 
