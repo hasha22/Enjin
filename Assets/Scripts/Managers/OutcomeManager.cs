@@ -19,8 +19,8 @@ public class OutcomeManager : MonoBehaviour
     public Ending conservationEnding;
 
     [Header("Text Refs")]
-    public TextMeshProUGUI title;
     public TextMeshProUGUI mainText;
+    public GameObject button;
 
     private int currentLine = 0;
     private Ending selectedEnding;
@@ -38,6 +38,7 @@ public class OutcomeManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        button.SetActive(true);
         SetValues(OutcomeValueContainer.instance.enjinValue,
                   OutcomeValueContainer.instance.workerMoraleValue,
                   OutcomeValueContainer.instance.ethicValue,
@@ -57,7 +58,7 @@ public class OutcomeManager : MonoBehaviour
     {
         currentLine = 0;
         selectedEnding = end;
-        title.text = selectedEnding.endingName;
+        Debug.Log("fired");
         StartCoroutine(TypeText(selectedEnding.endingText[currentLine], mainText));
     }
     
@@ -76,7 +77,7 @@ public class OutcomeManager : MonoBehaviour
         StopAllCoroutines();
         mainText.text = "";
         currentLine++;
-        if (currentLine >= selectedEnding.endingText.Count) { mainText.text = "we done"; }
+        if (currentLine >= selectedEnding.endingText.Count) { mainText.text = "Thank you for playing our game!"; button.SetActive(false);}
         else { StartCoroutine(TypeText(selectedEnding.endingText[currentLine], mainText)); }
     }
 
