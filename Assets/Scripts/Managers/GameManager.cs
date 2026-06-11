@@ -114,7 +114,8 @@ public class GameManager : MonoBehaviour
                 break;
             case GameScreens.ResultsScreen:
                 GameUIManager.instance.NextScreen();
-                break;
+                NetworkManager.instance.SendShowOutcomeScreen();
+                break; 
             default:
                 Debug.LogWarning("No Continue action assigned for screen: " + currentScreen);
                 break;

@@ -85,6 +85,9 @@ function connectWebSocket() {
       case "show_enjin_update_screen":
         handleShowEnjinUpdateScreen(data);
         break;
+      case "show_outcome_screen":
+        handleShowOutcomeScreen(data);
+        break;
       case "error":
         log("Server error");
         break;
@@ -746,5 +749,7 @@ function handleDiscussionStarted(data) {
 function handleShowEnjinUpdateScreen(data) {
   showScreen("waitingEnjinUpdateScreen");
 }
-
+function handleShowOutcomeScreen(data) {
+  showScreen("waitingResultsScreen");
+}
 window.joinRoom = joinRoom;

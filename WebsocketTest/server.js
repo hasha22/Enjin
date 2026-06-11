@@ -252,7 +252,7 @@ wss.on("connection", (clientSocket) => {
       if (msg.type === "show_enjin_update_screen")
       {
         const roomCode = normalize(msg.room || msg.roomCode);
-        const payload = msg.data;
+     
 
         if (!roomCode)
         {
@@ -262,6 +262,20 @@ wss.on("connection", (clientSocket) => {
           return;
         }
         showEnjinUpdateScreen(clientSocket, roomCode);
+        return;
+      }
+
+      if (msg.type === "show_outcome_screen")
+      {
+        const roomCode = normalize(msg.room || msg.roomCode);
+        
+        if (!roomCode)        {
+          send(clientSocket, "show_outcome_screen_failed", {
+            reason: "Room code is missing"  
+          });
+          return;
+        }
+        showOutcomeScreen(clientSocket, roomCode);
         return;
       }
 
@@ -761,6 +775,31 @@ function showEnjinUpdateScreen(clientSocket, roomCode)
   send(room.host, "show_enjin_update_screen_success", {
     room: roomCode
   });
-
-  console.log(`[Room: ${roomCode}] Enjin update screen shown`);
 }
+
+function showOutcomeScreen(clientSocket, roomCode)
+{  
+  const room = rooms.get(roomCode);
+
+  if (!room)    
+  {
+    send(clientSocket, "show_outcome_screen_failed", {
+      reason: "Room not found"
+    });
+    return;
+  }
+  const connectedPlayers = [...room.players].filter(player => player.connected);
+  if (connectedPlayers.length === 0)
+  {
+    send(clientSocket, "show_outcome_screen_failed", {
+      reason: "No connected players in the room"
+    });
+    return;
+  }
+  for (const player of connectedPlayers)
+  {    console.log("sent show_outcome_screen request");
+    send(player.socket, "show_outcome_screen");
+  }
+  send(room.host, "show_outcome_screen_success", {
+  room: roomCode});
+} 
