@@ -24,10 +24,10 @@ MonoBehaviour:
     policyDescription: Enjin should not be used to generate art or assets of any
       kind because it takes away from people's ability to express themselves.
     keywords: 03000000
-    enjinValue: 0
-    moraleValue: 0
-    ethicValue: 0
-    profitValue: 0
+    enjinValue: -1
+    moraleValue: 2
+    ethicValue: 1
+    profitValue: -1
   enjinPolicy:
     policyName: Enjin V3.0
     policyDescription: Our brand new model, Enjin 3.0, has now become an artist capable
@@ -35,7 +35,7 @@ MonoBehaviour:
       website? Stock images for a presentation? Promotional images for an advertisement?
       Enjin 3.0 has got you covered!
     keywords: 04000000
-    enjinValue: 0
-    moraleValue: 0
-    ethicValue: 0
-    profitValue: 0
+    enjinValue: 1
+    moraleValue: -2
+    ethicValue: -1
+    profitValue: 2

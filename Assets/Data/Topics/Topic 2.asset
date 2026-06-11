@@ -23,9 +23,9 @@ MonoBehaviour:
       because they understand how to treat the customers best.
     keywords: 02000000
     enjinValue: 0
-    moraleValue: 0
+    moraleValue: 1
     ethicValue: 0
-    profitValue: 0
+    profitValue: -1
   enjinPolicy:
     policyName: Enjin V2.0
     policyDescription: 'Meet Enjin 2.0 - our new model is capable of delivering hyper-personalized
@@ -37,6 +37,6 @@ MonoBehaviour:
 '
     keywords: 03000000
     enjinValue: 0
-    moraleValue: 0
-    ethicValue: 0
+    moraleValue: -1
+    ethicValue: 1
     profitValue: 0

@@ -22,9 +22,9 @@ MonoBehaviour:
     policyDescription: Enjin shouldn't take part in advising people on company decisions
       because it is still capable of making basic mistakes.
     keywords: 02000000
-    enjinValue: 0
+    enjinValue: -1
     moraleValue: 0
-    ethicValue: 0
+    ethicValue: 2
     profitValue: 0
   enjinPolicy:
     policyName: Enjin V5.0
@@ -37,7 +37,7 @@ MonoBehaviour:
 
 '
     keywords: 01000000
-    enjinValue: 0
+    enjinValue: 3
     moraleValue: 0
-    ethicValue: 0
+    ethicValue: -2
     profitValue: 0
