@@ -106,10 +106,11 @@ public class GameManager : MonoBehaviour
                 break;
             case GameScreens.DiscussionScreen:
                 GameUIManager.instance.NextScreen();
+                NetworkManager.instance.SendShowEnjinUpdateScreen();
                 break;
             case GameScreens.SecondPolicyVotingScreen:
-                GameUIManager.instance.NextScreen();
                 DeterminePolicyOutcome();
+                GameUIManager.instance.NextScreen();
                 break;
             case GameScreens.ResultsScreen:
                 GameUIManager.instance.NextScreen();

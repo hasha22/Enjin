@@ -248,7 +248,23 @@ wss.on("connection", (clientSocket) => {
         startDiscussion(clientSocket, roomCode);
         return;
       }
-      
+
+      if (msg.type === "show_enjin_update_screen")
+      {
+        const roomCode = normalize(msg.room || msg.roomCode);
+        const payload = msg.data;
+
+        if (!roomCode)
+        {
+          send(clientSocket, "show_enjin_update_failed", {
+            reason: "Room code is missing"
+          });
+          return;
+        }
+        showEnjinUpdateScreen(clientSocket, roomCode);
+        return;
+      }
+
       //REFACTOR THIS
       if (msg.type === "player_screen_command")
       {
@@ -713,3 +729,38 @@ function startDiscussion(clientSocket, roomCode)
 });
   console.log(`[Room: ${roomCode}] Discussion started`);
 } 
+
+function showEnjinUpdateScreen(clientSocket, roomCode)
+{
+  const room = rooms.get(roomCode);
+
+  if (!room)
+  {
+    send(clientSocket, "show_enjin_update_screen_failed", {
+      reason: "Room not found"
+    });
+    return;
+  }
+
+  const connectedPlayers = [...room.players].filter(player => player.connected);
+
+  if (connectedPlayers.length === 0)
+  {
+    send(clientSocket, "show_enjin_update_screen_failed", {
+      reason: "No connected players in the room"
+    });
+    return;
+  }
+
+  for (const player of connectedPlayers)
+  {
+    console.log("sent show_enjin_update_screen request");
+    send(player.socket, "show_enjin_update_screen");
+  }
+
+  send(room.host, "show_enjin_update_screen_success", {
+    room: roomCode
+  });
+
+  console.log(`[Room: ${roomCode}] Enjin update screen shown`);
+}
