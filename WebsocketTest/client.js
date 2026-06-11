@@ -209,6 +209,7 @@ function handleCharacterInfo(data)
 }
 function buildCharacterObject(data)
 {
+    let name = "";
     let faceImage = "";
     let fullImage = "";
     let backgroundColor = "";
@@ -218,6 +219,7 @@ function buildCharacterObject(data)
     switch(data.characterName)
     {
         case "AIArtist":
+            name = "AI Artist";
             faceImage = "AIArtist_portrait.png";
             fullImage = "AIArtist.png";
             backgroundColor = "#99C998";
@@ -225,6 +227,7 @@ function buildCharacterObject(data)
             keywordColor2 = "#FFF100";
             break;
         case "CulturalOrganizer":
+            name = "Cultural Organizer";
             faceImage = "CulturalOrganizer_portrait.png";
             fullImage = "CulturalOrganizer.png";
             backgroundColor = "#7EA5D8";
@@ -232,6 +235,7 @@ function buildCharacterObject(data)
             keywordColor2 = "#9B00F3";
             break;
         case "EthicalAdvisor":
+            name = "Ethical Advisor";
             faceImage = "EthicalAdvisor_portrait.png";
             fullImage = "EthicalAdvisor.png";
             backgroundColor = "#f735ea";
@@ -239,6 +243,7 @@ function buildCharacterObject(data)
             keywordColor2 = "#FF006F";
             break;
         case "FinanceEmployee":
+            name = "Finance Employee";
             faceImage = "FinanceEmployee_portrait.png";
             fullImage = "FinanceEmployee.png";
             backgroundColor = "#FFD700";
@@ -246,6 +251,7 @@ function buildCharacterObject(data)
             keywordColor2 = "#00FFB5";
             break;
         case "UIDesigner":
+            name = "UI Designer";
             faceImage = "UIDesigner_portrait.png";
             fullImage = "UIDesigner.png";
             backgroundColor = "#088F8F";
@@ -253,6 +259,7 @@ function buildCharacterObject(data)
             keywordColor2 = "#00FFB5";
             break;
         case "ProductionManager":
+            name = "Production Manager";
             faceImage = "ProductionManager_portrait.png";
             fullImage = "ProductionManager.png";
             backgroundColor = "#1424C8";
@@ -262,6 +269,7 @@ function buildCharacterObject(data)
     }
 
     return {
+        name,
         faceImage,
         fullImage,
         box1Text: data.keyword1,
