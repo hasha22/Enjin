@@ -592,11 +592,11 @@ function updateTimerText() {
 function mapSliderValueToFirstVote(sliderValue) {
   const value = Number(sliderValue);
 
-  if (value === 1) return "disagree";
-  if (value === 2) return "mostly_disagree";
+  if (value === 1) return "agree";
+  if (value === 2) return "mostly_agree";
   if (value === 3) return "neutral";
-  if (value === 4) return "mostly_agree";
-  if (value === 5) return "agree";
+  if (value === 4) return "mostly_disagree";
+  if (value === 5) return "disagree";
 
   return "neutral";
 }
