@@ -34,6 +34,7 @@ public class NetworkManager : MonoBehaviour
     private const string SECOND_VOTE = "second_vote";
     private const string CHARACTER_INFO = "character_info";
     private const string START_DISCUSSION_REQUEST = "start_discussion_request";
+    private const string SHOW_ENJIN_UPDATE_SCREEN = "show_enjin_update_screen";
     #region UNITY METHODS
 
     void Awake()
@@ -289,6 +290,17 @@ public class NetworkManager : MonoBehaviour
     {
         SendMessageToServer(
             START_DISCUSSION_REQUEST,
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            }
+        );
+    }
+
+    public void SendShowEnjinUpdateScreen()
+    {
+        SendMessageToServer(
+            SHOW_ENJIN_UPDATE_SCREEN,
             new InformServerPayload
             {
                 hostClientId = this.hostClientId
