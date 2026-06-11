@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
         {
             Player playerScript = player.GetComponent<Player>();
 
-            if (playerScript.GetSecondVote()) { votedYes.Add(playerScript); }
+            if (playerScript.GetSecondVote() == FinalVoteTypes.Yes) { votedYes.Add(playerScript); }
             else { votedNo.Add(playerScript); }
         }
         if (votedYes.Count > votedNo.Count)
@@ -82,6 +82,8 @@ public class GameManager : MonoBehaviour
             ValueManager.instance.ChangeValue(enj, morale, ethic, profit);
         }
     }
+
+
     public void OnContinueButtonPressed()
     {
         switch (currentScreen)
@@ -100,17 +102,20 @@ public class GameManager : MonoBehaviour
                 break;
             case GameScreens.FirstPolicyVotingScreen:
                 GameUIManager.instance.NextScreen();
+                NetworkManager.instance.SendStartDiscussionRequest();
                 break;
             case GameScreens.DiscussionScreen:
                 GameUIManager.instance.NextScreen();
+                NetworkManager.instance.SendShowEnjinUpdateScreen();
                 break;
             case GameScreens.SecondPolicyVotingScreen:
                 DeterminePolicyOutcome();
                 GameUIManager.instance.NextScreen();
+                NetworkManager.instance.SendShowOutcomeScreen();
                 break;
             case GameScreens.ResultsScreen:
                 GameUIManager.instance.NextScreen();
-                break;
+                break; 
             default:
                 Debug.LogWarning("No Continue action assigned for screen: " + currentScreen);
                 break;

@@ -33,6 +33,9 @@ public class NetworkManager : MonoBehaviour
     private const string FIRST_VOTE = "first_vote";
     private const string SECOND_VOTE = "second_vote";
     private const string CHARACTER_INFO = "character_info";
+    private const string START_DISCUSSION_REQUEST = "start_discussion_request";
+    private const string SHOW_ENJIN_UPDATE_SCREEN = "show_enjin_update_screen";
+    private const string SHOW_OUTCOME_SCREEN = "show_outcome_screen";
     #region UNITY METHODS
 
     void Awake()
@@ -283,6 +286,39 @@ public class NetworkManager : MonoBehaviour
 
         Send(json);
     }
+
+    public void SendStartDiscussionRequest()
+    {
+        SendMessageToServer(
+            START_DISCUSSION_REQUEST,
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            }
+        );
+    }
+
+    public void SendShowEnjinUpdateScreen()
+    {
+        SendMessageToServer(
+            SHOW_ENJIN_UPDATE_SCREEN,
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            }
+        );
+    }
+
+    public void SendShowOutcomeScreen()
+    {
+        SendMessageToServer(
+            SHOW_OUTCOME_SCREEN,
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            }
+        );
+    }
     private void Send(string json)
     {
         if (websocket != null && websocket.State == WebSocketState.Open)
@@ -324,7 +360,6 @@ public class NetworkManager : MonoBehaviour
         foreach (GameObject player in allPlayers)
         {
             Player playerScript = player.GetComponent<Player>();
-
             if (playerScript.GetPlayerID() == playerID)
             {
                 VoteTypes parsedVote = VoteTypes.Neutral;
@@ -353,7 +388,38 @@ public class NetworkManager : MonoBehaviour
                 break;
             }
         }
+        if (FirstCheckIfAllVoted())
+        {
+            TimerScript.instance.StopTimer();
+        }
     }
+
+    public bool FirstCheckIfAllVoted()
+    {
+        foreach(GameObject p in allPlayers)
+        {
+            Player player = p.GetComponent<Player>();
+            if (player.GetFirstVote() == 0 || player.GetFirstVote() == VoteTypes.NoVote)
+            {
+                return false;
+            }
+        } 
+        return true;
+    }
+
+    public bool SecondCheckIfAllVoted()
+    {
+        foreach(GameObject p in allPlayers)
+        {
+            Player player = p.GetComponent<Player>();
+            if (player.GetSecondVote() == FinalVoteTypes.NoVote || player.GetSecondVote() == 0)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void RegisterSecondPlayerVote(string playerID, string playerVote)
     {
         foreach (GameObject player in allPlayers)
@@ -363,15 +429,19 @@ public class NetworkManager : MonoBehaviour
             {
                 if (playerVote == "yes")
                 {
-                    playerScript.SetSecondVote(true);
+                    playerScript.SetSecondVote(FinalVoteTypes.Yes);
                 }
                 else if (playerVote == "no")
                 {
-                    playerScript.SetSecondVote(false);
+                    playerScript.SetSecondVote(FinalVoteTypes.No);
                 }
                 GameUIManager.instance.InstantiateVotePlayerIcon(playerScript);
                 break;
             }
+        }
+        if (SecondCheckIfAllVoted())
+        {
+            TimerScript.instance.StopTimer();
         }
     }
     #endregion

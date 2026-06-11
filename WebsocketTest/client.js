@@ -50,6 +50,8 @@ function connectWebSocket() {
   ws.onmessage = (event) => {
     const { type, data } = parseServerMessage(event);
 
+    console.log("Message from server:", type, data);
+
     switch (type) {
       case "join_room_success":
         handleJoinRoomSuccess(data);
@@ -77,6 +79,15 @@ function connectWebSocket() {
       case "vote_failed":
         handleVoteFailed(data);
         break;
+      case "discussion_started":
+        handleDiscussionStarted(data);
+        break;
+      case "show_enjin_update_screen":
+        handleShowEnjinUpdateScreen(data);
+        break;
+      case "show_outcome_screen":
+        handleShowOutcomeScreen(data);
+        break;
       case "error":
         log("Server error");
         break;
@@ -86,26 +97,21 @@ function connectWebSocket() {
     }
   };
 }
-function parseServerMessage(event) {
-  const msg = JSON.parse(event.data);
-
-  let data = {};
-
-  if (typeof msg.data === "string" && msg.data.length > 0) {
-    try {
-      data = JSON.parse(msg.data);
-    } catch (error) {
-      console.warn("Could not parse msg.data as JSON:", msg.data);
-      data = {};
-    }
-  } else if (msg.data && typeof msg.data === "object") {
-    data = msg.data;
+function handlePlayerScreenChanged(data) {
+  //FIX THIS
+  if (data.screenId === "waitingScreen") {
+    clearDiscussionTimer();
+    renderCharacterWidgetSafely();
+    showWaitingScreen(data);
+    return;
   }
-
-  return {
-    type: msg.type,
-    data: data
-  };
+  //FIX THIS
+  if (data.screenId === "gameOverScreen") {
+    clearInterval(countdownInterval);
+    clearDiscussionTimer();
+    showScreen("gameOverScreen");
+    return;
+  }
 }
 
 function showWaitingScreen(data) {
@@ -209,6 +215,7 @@ function handleCharacterInfo(data)
 }
 function buildCharacterObject(data)
 {
+    let name = "";
     let faceImage = "";
     let fullImage = "";
     let backgroundColor = "";
@@ -218,6 +225,7 @@ function buildCharacterObject(data)
     switch(data.characterName)
     {
         case "AIArtist":
+            name = "AI Artist";
             faceImage = "AIArtist_portrait.png";
             fullImage = "AIArtist.png";
             backgroundColor = "#99C998";
@@ -225,6 +233,7 @@ function buildCharacterObject(data)
             keywordColor2 = "#FFF100";
             break;
         case "CulturalOrganizer":
+            name = "Cultural Organizer";
             faceImage = "CulturalOrganizer_portrait.png";
             fullImage = "CulturalOrganizer.png";
             backgroundColor = "#7EA5D8";
@@ -232,6 +241,7 @@ function buildCharacterObject(data)
             keywordColor2 = "#9B00F3";
             break;
         case "EthicalAdvisor":
+            name = "Ethical Advisor";
             faceImage = "EthicalAdvisor_portrait.png";
             fullImage = "EthicalAdvisor.png";
             backgroundColor = "#f735ea";
@@ -239,6 +249,7 @@ function buildCharacterObject(data)
             keywordColor2 = "#FF006F";
             break;
         case "FinanceEmployee":
+            name = "Finance Employee";
             faceImage = "FinanceEmployee_portrait.png";
             fullImage = "FinanceEmployee.png";
             backgroundColor = "#FFD700";
@@ -246,15 +257,25 @@ function buildCharacterObject(data)
             keywordColor2 = "#00FFB5";
             break;
         case "UIDesigner":
+            name = "UI Designer";
             faceImage = "UIDesigner_portrait.png";
             fullImage = "UIDesigner.png";
             backgroundColor = "#088F8F";
             keywordColor1 = "#FF006F";
             keywordColor2 = "#00FFB5";
             break;
+        case "ProductionManager":
+            name = "Production Manager";
+            faceImage = "ProductionManager_portrait.png";
+            fullImage = "ProductionManager.png";
+            backgroundColor = "#1424C8";
+            keywordColor1 = "#FF006F";
+            keywordColor2 = "#FFF100";
+            break;
     }
 
     return {
+        name,
         faceImage,
         fullImage,
         box1Text: data.keyword1,
@@ -264,6 +285,28 @@ function buildCharacterObject(data)
         keywordColor1,
         keywordColor2
     };
+}
+
+function parseServerMessage(event) {
+  const msg = JSON.parse(event.data);
+
+  let data = {};
+
+  if (typeof msg.data === "string" && msg.data.length > 0) {
+    try {
+      data = JSON.parse(msg.data);
+    } catch (error) {
+      console.warn("Could not parse msg.data as JSON:", msg.data);
+      data = {};
+    }
+  } else if (msg.data && typeof msg.data === "object") {
+    data = msg.data;
+  }
+
+  return {
+    type: msg.type,
+    data: data
+  };
 }
 
 function joinRoom() {
@@ -301,7 +344,6 @@ function joinRoom() {
 }
 
 function handleJoinRoomSuccess(data) {
-  renderCharacterWidgetSafely();
   joinedRoomCode = data.room;
   savePlayerData(data);
 
@@ -312,6 +354,7 @@ function handleJoinRoomSuccess(data) {
 }
 
 function handleGameStarted(data) {
+  renderCharacterWidgetSafely();
   showScreen("characterScreen");
 }
 
@@ -322,10 +365,8 @@ function handleShowScenario(data) {
 function handleVotingStarted(data) {
   currentVoteType = data.voteType;
 
-  console.log("showing voting screen", data.voteType);
-
   resetVotingScreen();
-  startVotingTimer();
+  renderCharacterWidgetSafely();
   showScreen("votingScreen");
 }
 
@@ -359,6 +400,8 @@ function handleVoteFailed(data) {
 
   setStatus("Vote failed: " + (data.reason || "Unknown reason"), "votingScreen");
 }
+
+
 
 function savePlayerData(data) {
   if (data.room) {
@@ -403,21 +446,21 @@ function setupVotingControls() {
 
   if (submitVoteBtn) {
     submitVoteBtn.addEventListener("click", () => {
-      submitVote();
+      submitVote("manual");
     });
   }
 
   if (enactVoteBtn) {
     enactVoteBtn.addEventListener("click", () => {
       selectedSecondVote = "yes";
-      submitVote();
+      submitVote("manual");
     });
   }
 
   if (rejectVoteBtn) {
     rejectVoteBtn.addEventListener("click", () => {
       selectedSecondVote = "no";
-      submitVote();
+      submitVote("manual");
     });
   }
 }
@@ -507,7 +550,7 @@ function startVotingTimer() {
         if (currentVoteType === "second_vote") {
           handleSecondVoteTimeout();
         } else {
-          submitVote();
+          submitVote("timeout");
         }
       }
     }
@@ -558,7 +601,7 @@ function mapSliderValueToFirstVote(sliderValue) {
   return "neutral";
 }
 
-function submitVote() {
+function submitVote(submitReason) {
   if (hasSubmittedVote) {
     return;
   }
@@ -610,8 +653,10 @@ function submitVote() {
     type: "submit_vote",
     room: roomCode,
     clientId: clientId,
+    roundNumber: currentRound,
     voteType: currentVoteType,
     voteValue: vote,
+    submitReason: submitReason
   }));
 }
 
@@ -634,7 +679,7 @@ function showScreen(screenId) {
   targetScreen.classList.add("active");
   currentScreenId = screenId;
 
-   hideCharacterWidgetIfNeeded();
+  hideCharacterWidgetIfNeeded();
 }
 
 function renderCharacterWidgetSafely() {
@@ -697,4 +742,14 @@ function setStatus(text, screenId) {
   }
 }
 
+function handleDiscussionStarted(data) {
+  showDiscussionTurnScreen(data);
+}
+
+function handleShowEnjinUpdateScreen(data) {
+  showScreen("waitingEnjinUpdateScreen");
+}
+function handleShowOutcomeScreen(data) {
+  showScreen("waitingResultsScreen");
+}
 window.joinRoom = joinRoom;

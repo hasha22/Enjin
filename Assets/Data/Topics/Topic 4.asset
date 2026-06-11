@@ -22,10 +22,10 @@ MonoBehaviour:
     policyDescription: All Enjin usage should be documented within the company, and
       inputting sensitive company data is forbidden unless approved by management.
     keywords: 02000000
-    enjinValue: 0
+    enjinValue: -2
     moraleValue: 0
-    ethicValue: 0
-    profitValue: 0
+    ethicValue: 3
+    profitValue: -1
   enjinPolicy:
     policyName: Enjin V4.0
     policyDescription: Enjin 4.0, our newest, most advanced model is now capable
@@ -34,7 +34,7 @@ MonoBehaviour:
       quickly for a meeting? Need a new website design, or maybe you want to make
       a new phone app? There is nothing Enjin cannot do for you!
     keywords: 0100000004000000
-    enjinValue: 0
+    enjinValue: 3
     moraleValue: 0
-    ethicValue: 0
-    profitValue: 0
+    ethicValue: -2
+    profitValue: 1

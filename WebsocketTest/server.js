@@ -10,7 +10,8 @@ const PLAYER_STATE = {
   VOTING: "voting",
   MAKING_CHOICE: "making_choice",
   VIEWING_CHARACTER: "viewing_character",
-  VIEWING_SCENARIO: "viewing_scenario"
+  VIEWING_SCENARIO: "viewing_scenario",
+  DISCUSSING: "discussing"
 };
 
 const DISCONNECT_TIMEOUT_MS = 10000;
@@ -234,6 +235,50 @@ wss.on("connection", (clientSocket) => {
         );
         return;
       }
+      if (msg.type === "start_discussion_request")
+      {
+        const roomCode = normalize(msg.room || msg.roomCode);
+       
+        if (!roomCode)        {
+          send(clientSocket, "start_discussion_failed", {
+            reason: "Room code is missing"  
+          });
+          return;
+        }
+        startDiscussion(clientSocket, roomCode);
+        return;
+      }
+
+      if (msg.type === "show_enjin_update_screen")
+      {
+        const roomCode = normalize(msg.room || msg.roomCode);
+     
+
+        if (!roomCode)
+        {
+          send(clientSocket, "show_enjin_update_failed", {
+            reason: "Room code is missing"
+          });
+          return;
+        }
+        showEnjinUpdateScreen(clientSocket, roomCode);
+        return;
+      }
+
+      if (msg.type === "show_outcome_screen")
+      {
+        const roomCode = normalize(msg.room || msg.roomCode);
+        
+        if (!roomCode)        {
+          send(clientSocket, "show_outcome_screen_failed", {
+            reason: "Room code is missing"  
+          });
+          return;
+        }
+        showOutcomeScreen(clientSocket, roomCode);
+        return;
+      }
+
       //REFACTOR THIS
       if (msg.type === "player_screen_command")
       {
@@ -673,3 +718,88 @@ function submitVote(clientSocket, roomCode, clientId, voteValue, voteType) {
     `[Room: ${roomCode}] ${player.playerName} submitted ${voteType}: ${voteValue} in round ${roundNumber}`
   );
 }
+
+function startDiscussion(clientSocket, roomCode)
+{  const room = rooms.get(roomCode);
+
+  const connectedPlayers = [...room.players].filter(player => player.connected);
+  if (connectedPlayers.length === 0)
+  {
+    send(clientSocket, "start_discussion_failed", {
+      reason: "No connected players in the room"
+    });
+    return;
+  } 
+  for (const player of connectedPlayers)
+  {player.playerState = PLAYER_STATE.DISCUSSING;
+    if (player.connected)
+    {
+      console.log("sent start_discussion request");
+      send(player.socket, "discussion_started");
+    }
+  }
+  send(room.host, "start_discussion_success", {
+  room: roomCode
+});
+  console.log(`[Room: ${roomCode}] Discussion started`);
+} 
+
+function showEnjinUpdateScreen(clientSocket, roomCode)
+{
+  const room = rooms.get(roomCode);
+
+  if (!room)
+  {
+    send(clientSocket, "show_enjin_update_screen_failed", {
+      reason: "Room not found"
+    });
+    return;
+  }
+
+  const connectedPlayers = [...room.players].filter(player => player.connected);
+
+  if (connectedPlayers.length === 0)
+  {
+    send(clientSocket, "show_enjin_update_screen_failed", {
+      reason: "No connected players in the room"
+    });
+    return;
+  }
+
+  for (const player of connectedPlayers)
+  {
+    console.log("sent show_enjin_update_screen request");
+    send(player.socket, "show_enjin_update_screen");
+  }
+
+  send(room.host, "show_enjin_update_screen_success", {
+    room: roomCode
+  });
+}
+
+function showOutcomeScreen(clientSocket, roomCode)
+{  
+  const room = rooms.get(roomCode);
+
+  if (!room)    
+  {
+    send(clientSocket, "show_outcome_screen_failed", {
+      reason: "Room not found"
+    });
+    return;
+  }
+  const connectedPlayers = [...room.players].filter(player => player.connected);
+  if (connectedPlayers.length === 0)
+  {
+    send(clientSocket, "show_outcome_screen_failed", {
+      reason: "No connected players in the room"
+    });
+    return;
+  }
+  for (const player of connectedPlayers)
+  {    console.log("sent show_outcome_screen request");
+    send(player.socket, "show_outcome_screen");
+  }
+  send(room.host, "show_outcome_screen_success", {
+  room: roomCode});
+} 

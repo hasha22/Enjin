@@ -32,6 +32,13 @@ public enum VoteTypes
     MostlyAgree = 5
 }
 
+public enum FinalVoteTypes
+{
+    NoVote = 0,
+    Yes = 1,
+    No = 2
+}
+
 public enum GameScreens
 {
     CharacterIntroScreen = 0,
