@@ -92,6 +92,10 @@ function connectWebSocket() {
       case "error":
         log("Server error");
         break;
+
+      case "show_waiting_situation_screen":
+        handleShowWaitingSituationScreen(data);
+        break;
       default:
         console.log("Unhandled message type:", type, data);
         break;
@@ -784,5 +788,9 @@ function handleShowEnjinUpdateScreen(data) {
 }
 function handleShowOutcomeScreen(data) {
   showScreen("waitingResultsScreen");
+}
+
+function handleShowWaitingSituationScreen(data) {
+  showScreen("waitingSituationScreen");
 }
 window.joinRoom = joinRoom;
