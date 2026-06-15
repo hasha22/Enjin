@@ -329,9 +329,10 @@ public class NetworkManager : MonoBehaviour
     {
         SendMessageToServer(
             SEND_CURRENT_SPEAKER_ID,
-            new CurrnetSpeakerPayload
+            new CurrentSpeakerPayload
             {
-                playerID = currentSpeaker.GetPlayerID()
+                playerID = currentSpeaker.GetPlayerID(),
+                discussionDuration = GameManager.instance != null ? GameManager.instance.discussionTime : 0
             }
         );
     }
