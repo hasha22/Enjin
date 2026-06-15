@@ -691,3 +691,42 @@ body:has(#gameOverScreen.active) .game-ui {
   width: 220px;
   transform: translateX(20px);
 }
+
+.skip-discussion-container {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.skip-discussion-button {
+  background-color: #ff0000;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 28px;
+
+  font-family: "Dobra", serif;
+  font-size: 18px;
+  font-weight: bold;
+
+  cursor: pointer;
+  min-height: 44px;
+
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.skip-discussion-button:hover {
+  background-color: #ff00008f;
+  transform: scale(1.03);
+}
+
+.skip-discussion-button:active {
+  transform: scale(0.98);
+}
+
+.skip-discussion-button:disabled {
+  background-color: #999999;
+  cursor: not-allowed;
+  transform: none;
+}
