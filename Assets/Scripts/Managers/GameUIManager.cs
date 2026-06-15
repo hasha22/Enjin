@@ -352,6 +352,7 @@ public class GameUIManager : MonoBehaviour
 
             Player currentSpeaker = discussionPlayers[i];
             this.currentSpeaker = currentSpeaker;
+            NetworkManager.instance.SendCurrentSpeakerID(this.currentSpeaker);
             GameObject speaker = allPlayerIcons[i];
 
             StartCoroutine(MoveCircle(iconCircle.transform, speaker.transform.position, 0.35f));

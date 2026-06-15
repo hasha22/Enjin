@@ -31,6 +31,10 @@ public class CharacterInfoPayload
     public string keyword1;
     public string keyword2;
 }
+public class CurrnetSpeakerPayload
+{
+    public string playerID;
+}
 
 // Envelope for receiving data (generic)
 [System.Serializable]
