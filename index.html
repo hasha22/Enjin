@@ -250,41 +250,32 @@
     </button>
 
     <div class="content">
-  <!-- OLD BAR/LABEL CODE - kept for later
-  
-  <div class="bars-wrapper">
-    <div class="container">
-      <div class="Innovation"></div>
-    </div>
+      <div class="bars-wrapper">
+        <div class="container">
+          <div class="Innovation"></div>
+        </div>
 
-    <div class="container">
-      <div class="RiskManagement"></div>
-    </div>
+        <div class="container">
+          <div class="RiskManagement"></div>
+        </div>
 
-    <div class="container">
-      <div class="WorkerSatisfaction"></div>
-    </div>
+        <div class="container">
+          <div class="WorkerSatisfaction"></div>
+        </div>
 
-    <div class="container">
-      <div class="Profit"></div>
+        <div class="container">
+          <div class="Profit"></div>
+        </div>
+      </div>
+
+      <div class="line-wrapper">
+        <div class="line line-1"><span>Profit</span></div>
+        <div class="line line-2"><span>Worker Satisfaction</span></div>
+        <div class="line line-3"><span>Risk Management</span></div>
+        <div class="line line-4"><span>Innovation</span></div>
+      </div>
     </div>
   </div>
-
-  <div class="line-wrapper">
-    <div class="line line-1"><span>Profit</span></div>
-    <div class="line line-2"><span>Worker Satisfaction</span></div>
-    <div class="line line-3"><span>Risk Management</span></div>
-    <div class="line line-4"><span>Innovation</span></div>
-  </div>
-
-  -->
-
-  <img
-    class="cheat-sheet-image"
-    src="WebsocketTest/EnjinBars.png"
-    alt="Keyword Cheat Sheet"
-  />
-</div>
 
   <div id="characterWidgetRoot">
   <div id="characterCircle">
@@ -318,21 +309,21 @@
   <script src="WebsocketTest/client.js"></script>
 
   <script>
-  var coll = document.getElementsByClassName("collapsible");
+    var coll = document.getElementsByClassName("collapsible");
 
-  for (var i = 0; i < coll.length; i++) {
-    coll[i].addEventListener("click", function () {
-      this.classList.toggle("active");
+    for (var i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function () {
+        this.classList.toggle("active");
 
-      var content = this.nextElementSibling;
+        var content = this.nextElementSibling;
 
-      if (content.style.maxHeight) {
-        content.style.maxHeight = null;
-      } else {
-        content.style.maxHeight = content.scrollHeight + "px";
-      }
-    });
-  }
+        if (content.style.maxHeight) {
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "600px";
+        }
+      });
+    }
   </script>
 </body>
 </html>
