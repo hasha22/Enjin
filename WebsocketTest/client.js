@@ -802,12 +802,12 @@ function skipDiscussionTurn() {
   }
 
   const roomCode = sessionStorage.getItem("roomCode");
-  const clientId = getClientId();
+  const playedID = getClientId();
 
   ws.send(JSON.stringify({
-    type: "skip_discussion",
+    type: "player_skip",
     room: roomCode,
-    clientId: clientId
+    playerID: playerID
   }));
 }
 
