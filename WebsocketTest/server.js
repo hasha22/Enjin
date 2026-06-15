@@ -295,6 +295,24 @@ wss.on("connection", (clientSocket) => {
         return;
       }
 
+
+      if (msg.type === "skip_discussion")
+      {
+        const roomCode = normalize(msg.room || msg.roomCode);
+        const clientId = msg.clientId;
+
+        if (!roomCode)
+        {
+          send(clientSocket, "skip_discussion_failed", {
+            reason: "Room code is missing"
+          });
+          return;
+        }
+
+        skipDiscussionTurn(clientSocket, roomCode, clientId);
+        return;
+      }
+
       //REFACTOR THIS
       if (msg.type === "player_screen_command")
       {
@@ -850,5 +868,24 @@ function showWaitingSituationScreen(clientSocket, roomCode)
 
   send(room.host, "show_waiting_situation_screen_success", {
     room: roomCode
+  });
+}
+
+function skipDiscussion(clientSocket, roomCode, clientId) {
+  const room = rooms.get(roomCode);
+
+  if (!room || !room.host) {
+    send(clientSocket, "skip_discussion_failed", {
+      reason: "Room not found"
+    });
+    return;
+  }
+
+  send(room.host, "player_skip", {
+    playerID: clientId
+  });
+
+  send(clientSocket, "skip_discussion_success", {
+    playerID: clientId
   });
 }

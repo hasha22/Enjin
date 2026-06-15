@@ -24,6 +24,7 @@ let currentScreenId = "joinScreen";
 connectWebSocket();
 setupVotingControls();
 hideCharacterWidgetIfNeeded();
+setupDiscussionControls();
 
 function getServerUrl() {
   return DEPLOYED_SERVER_URL;
@@ -793,4 +794,30 @@ function handleShowOutcomeScreen(data) {
 function handleShowWaitingSituationScreen(data) {
   showScreen("waitingSituationScreen");
 }
+
+function skipDiscussionTurn() {
+  if (!ws || ws.readyState !== WebSocket.OPEN) {
+    setStatus("WebSocket is not open. Cannot skip discussion turn.", "discussionScreen");
+    return;
+  }
+
+  const roomCode = sessionStorage.getItem("roomCode");
+  const clientId = getClientId();
+
+  ws.send(JSON.stringify({
+    type: "skip_discussion",
+    room: roomCode,
+    clientId: clientId
+  }));
+}
+
+function setupDiscussionControls() {
+  const skipDiscussionBtn = document.getElementById("skipDiscussionBtn");
+
+  if (skipDiscussionBtn) {
+    skipDiscussionBtn.addEventListener("click", skipDiscussionTurn);
+  }
+}
+
+
 window.joinRoom = joinRoom;
