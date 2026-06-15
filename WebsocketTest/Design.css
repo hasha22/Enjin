@@ -25,9 +25,10 @@ html {
 
 .game-ui {
   position: absolute;
-  left: 0;
+  left: 50%;
   bottom: 5px;
-  width: 100%;
+  transform: translateX(-50%);
+  width: min(100%, 700px);
   z-index: 999;
 }
 
@@ -295,7 +296,7 @@ body:has(#gameOverScreen.active) .game-ui {
   width: 100%;
 
   font-family: "Dobra", serif;
-  font-size: 20px;
+  font-size: 12px;
   line-height: 1.4;
   color: #333333;
   text-align: left;
@@ -580,16 +581,22 @@ body:has(#gameOverScreen.active) .game-ui {
 .content {
   position: relative;
   width: 100%;
-  height: 360px;
-  padding: 0 18px;
-  background-color: white;
   max-height: 0;
   overflow: hidden;
+  background-color: white;
   transition: max-height 0.2s ease-out;
 
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
+}
+
+.cheat-sheet-image {
+  width: 100%;
+  max-width: 700px;
+  height: auto;
+  display: block;
+  object-fit: contain;
 }
 
 .bars-wrapper {
@@ -730,3 +737,4 @@ body:has(#gameOverScreen.active) .game-ui {
   cursor: not-allowed;
   transform: none;
 }
+
