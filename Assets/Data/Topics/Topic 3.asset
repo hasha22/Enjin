@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5be028ba93737df409e7a198304f8a7c, type: 3}
   m_Name: Topic 3
   m_EditorClassIdentifier: Assembly-CSharp::Topic
+  shortenedName: Enjin, the artist!
   topicName: Employees use Enjin to generate art, advertisements, and write texts.
     Over time, their own voice fades.
   topicDescription: As Enjin is evolving more and more, people have started using
@@ -23,14 +24,10 @@ MonoBehaviour:
     policyDescription: Enjin should not be used to generate art or assets of any
       kind because it takes away from people's ability to express themselves.
     keywords: 03000000
-    enjinPosValue: 0
-    moralePosValue: 0
-    ethicPosValue: 0
-    profitPosValue: 0
-    enjinNegValue: 0
-    moraleNegValue: 0
-    ethicNegValue: 0
-    profitNegValue: 0
+    enjinValue: -1
+    moraleValue: 2
+    ethicValue: 1
+    profitValue: -1
   enjinPolicy:
     policyName: Enjin V3.0
     policyDescription: Our brand new model, Enjin 3.0, has now become an artist capable
@@ -38,11 +35,7 @@ MonoBehaviour:
       website? Stock images for a presentation? Promotional images for an advertisement?
       Enjin 3.0 has got you covered!
     keywords: 04000000
-    enjinPosValue: 0
-    moralePosValue: 0
-    ethicPosValue: 0
-    profitPosValue: 0
-    enjinNegValue: 0
-    moraleNegValue: 0
-    ethicNegValue: 0
-    profitNegValue: 0
+    enjinValue: 1
+    moraleValue: -2
+    ethicValue: -1
+    profitValue: 2

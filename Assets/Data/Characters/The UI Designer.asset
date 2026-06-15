@@ -12,10 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfbb24d7071b4ad459a7ae40510e8f2a, type: 3}
   m_Name: The UI Designer
   m_EditorClassIdentifier: Assembly-CSharp::Character
-  characterName: The UI Designer
+  characterName: UIDesigner
   characterDescription: "You believe Enjin shouldn\u2019t replace any work. You think
     Enjin only has a negative influence on creativity, and that by using it artists
     sell their creativity to big corporations You believe Enjin can be used for administrative
-    work, but in no way should replace creative work.\r\n"
-  characterImage: {fileID: -4315248950563333976, guid: cf321ff330faacd43b713d4221386dcd, type: 3}
+    work, but in no way should replace creative work.\n\nYou understand how important
+    self-expression is, even in the buisness world. You want to make sure that you
+    and others like yourself have a place in tomorrow's society. But how will you
+    end up using Enjin, then? Get in character!"
+  characterImage: {fileID: 2869412758006590874, guid: ab44052cc8e819242b39c6b40bd78e3a, type: 3}
   characterKeywords: 0200000000000000

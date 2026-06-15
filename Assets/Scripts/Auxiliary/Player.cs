@@ -6,7 +6,7 @@ public class Player : MonoBehaviour
     [SerializeField] private string playerId;
     [SerializeField] private string playerName;
     [SerializeField] private VoteTypes firstVote;
-    [SerializeField] private bool secondVote;
+    [SerializeField] private FinalVoteTypes secondVote;
     public Character selectedCharacter;
 
     public string GetPlayerName()
@@ -21,21 +21,21 @@ public class Player : MonoBehaviour
     {
         return firstVote;
     }
-    public bool GetSecondVote()
+    public FinalVoteTypes GetSecondVote()
     {
         return secondVote;
     }
-    public void InitializePlayerData(string playerName)
+    public void InitializePlayerData(string playerName, string playerID)
     {
         selectedCharacter = CharacterDatabase.instance.GetRandomCharacter();
         this.playerName = playerName;
-        playerId = "1";
+        playerId = playerID;
     }
     public void SetFirstVote(VoteTypes vote)
     {
         firstVote = vote;
     }
-    public void SetSecondVote(bool vote)
+    public void SetSecondVote(FinalVoteTypes vote)
     {
         secondVote = vote;
     }

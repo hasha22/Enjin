@@ -1,382 +1,693 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 @font-face {
-    font-family: 'Dobra';
-    src: url('Abel-Regular.ttf') format('truetype');
+  font-family: "Dobra";
+  src: url("Abel-Regular.ttf") format("truetype");
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 html {
-    border: 5px solid #f735ea;
-    background-color: #f4f4ee;
-    width: 100%;
-    height: 100vh;
+  border: 5px solid #f735ea;
+  background-color: #f4f4ee;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.game-ui {
+  position: absolute;
+  left: 0;
+  bottom: 5px;
+  width: 100%;
+  z-index: 999;
+}
+
+body:has(#joinScreen.active) .game-ui,
+body:has(#gameOverScreen.active) .game-ui {
+  display: none;
 }
 
 .JoinRoom {
-    width: 100%;
-    height: 100vh;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
-    font-family: 'Dobra', serif;
-    text-align: center;
+  font-family: "Dobra", serif;
+  text-align: center;
 }
 
 .JoinRoom h2 {
-    color: #4a9eff;
-    font-size: 44px;
-    font-weight: bold;
-    margin-bottom: 45px;
+  color: #4a9eff;
+  font-size: clamp(30px, 6vw, 44px);
+  font-weight: bold;
+  margin-bottom: 28px;
+  line-height: 1.15;
 }
 
 .join-form {
-    width: 360px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
+  width: min(360px, calc(100vw - 48px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
 }
 
 .join-form label {
-    width: 100%;
-    color: #4a9eff;
-    font-size: 22px;
-    font-weight: bold;
-    text-align: left;
+  width: 100%;
+  color: #4a9eff;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: left;
 }
 
 .join-form input {
-    width: 100%;
-    height: 48px;
-    margin-top: 8px;
-    padding: 0 14px;
+  width: 100%;
+  height: 48px;
+  margin-top: 8px;
+  padding: 0 14px;
 
-    border: none;
-    border-radius: 12px;
-    background-color: #FFFFFF;
+  border: none;
+  border-radius: 12px;
+  background-color: #ffffff;
 
-    color: #333333;
-    font-family: 'Dobra', serif;
-    font-size: 20px;
-    outline: none;
+  color: #333333;
+  font-family: "Dobra", serif;
+  font-size: 20px;
+  outline: none;
 }
 
 .join-form input:focus {
-    outline: 4px solid #99C998;
+  outline: 4px solid #99c998;
 }
 
 .join-btn {
-    background-color: #FF0000;
-    color: #FFFFFF;
-    border: none;
-    padding: 12px 42px;
-    border-radius: 12px;
+  background-color: #ff0000;
+  color: #ffffff;
+  border: none;
+  padding: 12px 42px;
+  border-radius: 12px;
 
-    font-family: 'Dobra', serif;
-    font-size: 22px;
-    font-weight: bold;
-    cursor: pointer;
+  font-family: "Dobra", serif;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
 
-    transition: background-color 0.3s, transform 0.2s;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 .join-btn:hover {
-    background-color: #ff00008f;
-    transform: scale(1.03);
+  background-color: #ff00008f;
+  transform: scale(1.03);
 }
 
 .JoinRoom #status {
-    color: #4a9eff;
-    font-size: 24px;
-    font-weight: bold;
-    margin-top: 10px;
+  color: #4a9eff;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 10px;
 }
 
 .ConnectedScreen {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100%;
-    padding: 40px 20px;
-    text-align: center;
-    max-width: 50vw;
-    margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  padding: 40px 20px;
+  text-align: center;
+  max-width: 50vw;
+  margin: 0 auto;
 }
 
 .ConnectedScreen p {
-    color: #4a9eff;
-    font-size: 40px;
-    font-family: 'Dobra', serif;
+  color: #4a9eff;
+  font-size: 40px;
+  font-family: "Dobra", serif;
 }
 
 .WaitingScreen {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    height: 100vh;
-    width: 100%;
-    padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  padding: 20px;
 }
 
 .WaitingScreen p {
-    color: #4a9eff;
-    font-size: 40px;
-    font-family: 'Dobra', serif;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  color: #4a9eff;
+  font-size: 40px;
+  font-family: "Dobra", serif;
+  text-align: center;
 }
 
-.circle {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 4px;
+#characterWidgetRoot {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 5000;
+  font-family: "Dobra", serif;
+  display: none;
 }
 
-.circle-image {
-    width: 92px;
-    height: 92px;
-    border-radius: 50%;
-    object-fit: cover;
-    cursor: pointer;
+#characterCircle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
 }
 
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+#profileImage {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
 }
 
-.modal.active {
-    display: flex;
+#imageModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
-.modal-content {
-    width: 500px;
-    height: 500px;
-    background-color: #f4f4ee;
-    border: 5px solid #f735ea;
-    border-radius: 20px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 10px;
-    overflow: hidden;
+#imageModal.active {
+  display: flex;
 }
 
-.modal-content img {
-    max-width: 50%;
-    max-height: 100%;
-    object-fit: contain;
-    border-radius: 15px;
+#characterModalContent {
+  width: 820px;
+  height: 560px;
+
+  background-color: #f4f4ee; 
+  border-radius: 20px;
+
+  display: flex;
+  overflow: hidden;
 }
 
-.modal-right-section {
-    width: 70%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    padding: 20px;
+#characterModalLeft {
+  width: 42%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
 }
+
+#characterImageBox {
+  height: 50%;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 4px;
+}
+
+#fullImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+#characterKeywordBox {
+  height: 30%;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px;
+}
+
+#characterName {
+  height: 20%;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 8px 10px;
+
+  font-family: "Dobra", serif;
+  font-size: 26px;
+  font-weight: bold;
+  color: #333333;
+  text-align: center;
+}
+
+#box1Text,
+#box2Text {
+  width: 100%;
+  min-height: 48px;
+
+  border-radius: 12px;
+  padding: 10px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  font-family: "Dobra", serif;
+  font-size: 24px;
+  color: #333333;
+}
+
+#characterModalRight {
+  width: 50%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 28px;
+}
+
+#modalDescription {
+  width: 100%;
+
+  font-family: "Dobra", serif;
+  font-size: 20px;
+  line-height: 1.4;
+  color: #333333;
+  text-align: left;
+  white-space: pre-line;
+}
+
+/* Voting */
 
 .VotingScreenFrame {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    height: 100vh;
-    width: 100%;
-    padding: 20px;
-    position: relative;
-}
-
-.text-box {
-    width: 80%;
-    background-color: #FFFFFF;
-    border-radius: 15px;
-    padding: 20px;
-    text-align: center;
-    font-family: 'Dobra', serif;
-    font-size: 16px;
-    color: #333333;
-    min-height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-.modal-text {
-    width: 85%;
-    text-align: center;
-    font-family: 'Dobra', serif;
-    font-size: 14px;
-    color: #333333;
-    margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  padding: 20px;
+  position: relative;
 }
 
 .voting-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-    gap: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 100vh;
+  height: auto;
+  width: 100%;
+  gap: 20px;
+  padding: 96px 20px 32px;
+}
+
+[data-role="status"],
+[data-role="log"],
+#discussionTimer {
+  max-width: min(680px, calc(100vw - 48px));
+  overflow-wrap: anywhere;
+  line-height: 1.35;
+}
+
+#myTurnBlock,
+#otherSpeakerBlock {
+  text-align: center;
 }
 
 .voting-title {
-    color: #4a9eff;
-    font-size: 48px;
-    font-family: 'Dobra', serif;
-    font-weight: bold;
-    margin: 0;
+  color: #4a9eff;
+  font-size: clamp(28px, 5vw, 36px);
+  font-family: "Dobra", serif;
+  font-weight: bold;
+  margin: 0;
+  max-width: 680px;
+  text-align: center;
+  line-height: 1.15;
+}
+
+#timer {
+  display: block;
+  position: static;
+  color: #4a9eff;
+  font-family: "Dobra", serif;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1.2;
+  margin: 0;
+  min-height: 24px;
+  text-align: center;
+}
+
+#votingScreen [data-role="status"] {
+  display: block;
+  position: static;
+  color: #4a9eff;
+  font-family: "Dobra", serif;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.25;
+  margin: 0;
+  text-align: center;
+  min-height: 48px;
 }
 
 .slider-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: min(420px, calc(100vw - 48px));
 }
 
 .voting-slider {
-    width: 100%;
-    height: 8px;
-    border-radius: 5px;
-    background: #4a9eff;
-    outline: none;
-    -webkit-appearance: none;
-    appearance: none;
-    cursor: pointer;
+  width: 100%;
+  height: 8px;
+  border-radius: 5px;
+  background: #4a9eff;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
 }
 
 .voting-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #FF0000;
-    cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ff0000;
+  cursor: pointer;
 }
 
 .voting-slider::-moz-range-thumb {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #FF0000;
-    cursor: pointer;
-    border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ff0000;
+  cursor: pointer;
+  border: none;
 }
 
 .slider-labels {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
 }
 
 .slider-label {
-    font-family: 'Dobra', serif;
-    font-size: 14px;
-    color: #4a9eff;
-    font-weight: bold;
+  font-family: "Dobra", serif;
+  font-size: 14px;
+  color: #4a9eff;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.slider-label:first-child {
+  text-align: left;
+}
+
+.slider-label:nth-child(2) {
+  text-align: center;
+}
+
+.slider-label:last-child {
+  text-align: right;
 }
 
 .submit-btn {
-    background-color: #FF0000;
-    color: #FFFFFF;
-    border: none;
-    padding: 12px 40px;
-    border-radius: 10px;
-    font-family: 'Dobra', serif;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: background-color 0.3s;
+  background-color: #ff0000;
+  color: #ffffff;
+  border: none;
+  padding: 12px 40px;
+  border-radius: 10px;
+  font-family: "Dobra", serif;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: background-color 0.3s;
 }
 
 .submit-btn:hover {
-    background-color: #ff00008f;
+  background-color: #ff00008f;
 }
 
 .final-voting-content {
-    position: absolute;
-    top: 180px;
-    left: 0;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  position: static;
+  width: min(420px, calc(100vw - 48px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.final-voting-content .voting-title {
+  font-size: clamp(30px, 6vw, 40px);
 }
 
 .final-voting-title {
-    color: #3F73FF;
-    font-size: 23px;
-    font-family: 'Dobra', serif;
-    font-weight: bold;
-    margin-bottom: 55px;
+  color: #3f73ff;
+  font-size: 23px;
+  font-family: "Dobra", serif;
+  font-weight: bold;
+  margin-bottom: 55px;
 }
 
 .final-vote-buttons {
-    display: flex;
-    flex-direction: column;
-    width: 91px;
-    height: 126px;
-    border-radius: 16px;
-    overflow: hidden;
-    margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  width: 150px;
+  height: 140px;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 0;
 }
 
 .final-vote-btn {
-    width: 100%;
-    height: 50%;
-    border: none;
-    color: #FFFFFF;
-    font-family: 'Dobra', serif;
-    font-size: 23px;
-    font-weight: bold;
-    cursor: pointer;
+  width: 100%;
+  height: 50%;
+  border: none;
+  color: #ffffff;
+  font-family: "Dobra", serif;
+  font-size: 23px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .vote-btn {
-    background-color: #00FF40;
+  background-color: #00ff40;
 }
 
 .pass-btn {
-    background-color: #FF120D;
+  background-color: #ff120d;
 }
 
 .vote-btn:hover {
-    background-color: #00d936;
+  background-color: #00d936;
 }
 
 .pass-btn:hover {
-    background-color: #d90f0b;
+  background-color: #d90f0b;
+}
+
+.SituationScreen {
+  width: 100%;
+  height: 100vh;
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  font-family: "Dobra", serif;
+}
+
+.SituationScreen h1 {
+  color: #4a9eff;
+  font-size: 42px;
+  margin-bottom: 20px;
+}
+
+.SituationScreen p {
+  color: #333333;
+  font-size: 24px;
+  max-width: 320px;
+}
+
+.collapsible {
+  position: relative;
+  background-color: white;
+  color: black;
+  cursor: pointer;
+  padding: 24px 18px 12px;
+  width: 100%;
+  border: none;
+  text-align: center;
+  outline: none;
+  font-size: 15px;
+  font-family: "Dobra", serif;
+  border-radius: 8px 8px 0 0;
+}
+
+.cheat-arrow {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+  transform: translateX(-50%) rotate(-135deg);
+  transition: transform 0.2s ease;
+}
+
+.collapsible.active .cheat-arrow {
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.content {
+  position: relative;
+  width: 100%;
+  height: 360px;
+  padding: 0 18px;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.bars-wrapper {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+.container {
+  background-color: rgb(192, 192, 192);
+  width: 40px;
+  height: 300px;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: flex-end;
+
+  overflow: hidden;
+}
+
+.Innovation {
+  width: 100%;
+  height: 60%;
+  background-color: #00ffb5;
+  border-radius: 10px;
+}
+
+.RiskManagement {
+  width: 100%;
+  height: 60%;
+  background-color: #ff006f;
+  border-radius: 10px;
+}
+
+.WorkerSatisfaction {
+  width: 100%;
+  height: 60%;
+  background-color: #9b00f3;
+  border-radius: 10px;
+}
+
+.Profit {
+  width: 100%;
+  height: 60%;
+  background-color: #fff100;
+  border-radius: 10px;
+}
+
+.line-wrapper {
+  position: absolute;
+  left: 50%;
+  bottom: 80px;
+  transform: translateX(-50%);
+
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 60px;
+}
+
+.line {
+  height: 2px;
+  background: black;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  color: black;
+  font-family: "Dobra", serif;
+  font-size: 18px;
+  white-space: nowrap;
+}
+
+.line span {
+  margin-left: calc(100% + 10px);
+}
+
+.line-1 {
+  width: 40px;
+  transform: translateX(200px);
+}
+
+.line-2 {
+  width: 100px;
+  transform: translateX(140px);
+}
+
+.line-3 {
+  width: 160px;
+  transform: translateX(80px);
+}
+
+.line-4 {
+  width: 220px;
+  transform: translateX(20px);
 }

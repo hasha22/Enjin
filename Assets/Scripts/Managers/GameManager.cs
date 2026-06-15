@@ -18,7 +18,6 @@ public class GameManager : MonoBehaviour
     public int discussionTime;
     public int totalRounds;
     public float typingSpeed;
-
     void Awake()
     {
         if (instance == null)
@@ -55,7 +54,6 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
-
     public void DeterminePolicyOutcome()
     {
         List<Player> votedYes = new List<Player>();
@@ -63,7 +61,8 @@ public class GameManager : MonoBehaviour
         foreach (GameObject player in NetworkManager.instance.allPlayers)
         {
             Player playerScript = player.GetComponent<Player>();
-            if (playerScript.GetSecondVote()) { votedYes.Add(playerScript); }
+
+            if (playerScript.GetSecondVote() == FinalVoteTypes.Yes) { votedYes.Add(playerScript); }
             else { votedNo.Add(playerScript); }
         }
         if (votedYes.Count > votedNo.Count)
@@ -83,8 +82,49 @@ public class GameManager : MonoBehaviour
             ValueManager.instance.ChangeValue(enj, morale, ethic, profit);
         }
     }
+
+
+    public void OnContinueButtonPressed()
+    {
+        switch (currentScreen)
+        {
+            case GameScreens.CharacterIntroScreen:
+                GameUIManager.instance.NextScreen();
+                NetworkManager.instance.SendShowScenarioRequest();
+                break;
+            case GameScreens.SituationExplanationScreen:
+                GameUIManager.instance.NextScreen();
+                NetworkManager.instance.SendStartVotingRequest();
+                break;
+            case GameScreens.EnjinUpdateScreen:
+                GameUIManager.instance.NextScreen();
+                NetworkManager.instance.SendStartVotingRequest();
+                break;
+            case GameScreens.FirstPolicyVotingScreen:
+                GameUIManager.instance.NextScreen();
+                NetworkManager.instance.SendStartDiscussionRequest();
+                break;
+            case GameScreens.DiscussionScreen:
+                GameUIManager.instance.NextScreen();
+                NetworkManager.instance.SendShowEnjinUpdateScreen();
+                break;
+            case GameScreens.SecondPolicyVotingScreen:
+                DeterminePolicyOutcome();
+                GameUIManager.instance.NextScreen();
+                NetworkManager.instance.SendShowOutcomeScreen();
+                break;
+            case GameScreens.ResultsScreen:
+                GameUIManager.instance.NextScreen();
+                NetworkManager.instance.SendShowWaitingSituationScreen();
+                break; 
+            default:
+                Debug.LogWarning("No Continue action assigned for screen: " + currentScreen);
+                break;
+        }
+    }
     public Topic GetCurrentTopic()
     {
         return currentTopic;
     }
 }
+

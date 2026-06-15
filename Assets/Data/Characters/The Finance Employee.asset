@@ -12,10 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfbb24d7071b4ad459a7ae40510e8f2a, type: 3}
   m_Name: The Finance Employee
   m_EditorClassIdentifier: Assembly-CSharp::Character
-  characterName: The Finance Employee
+  characterName: FinanceEmployee
   characterDescription: "You understand the hype around Enjin, but you don\u2019t
     exactly understand how it works yet. You don\u2019t know for certain if Enjin
-    is capable of judging work. You are more experienced in what the plans that are
-    being made cost compared to other employees."
-  characterImage: {fileID: 5990312680737159725, guid: dc4e60c4c57f7084aa332443f45be135, type: 3}
+    is capable of judging work or making decisions. You are more experienced in what
+    it means to plan for the future and how much it will cost the company to adapt.\n\nIs
+    it really true that using Enjin will bost productivity all-around the company?
+    Or will implementing Enjin end up costing more than hiring employees? Get in
+    character!"
+  characterImage: {fileID: 5249444126942463206, guid: 9eecc6ddc15febb40b89137f54203dcc, type: 3}
   characterKeywords: 0600000000000000

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5be028ba93737df409e7a198304f8a7c, type: 3}
   m_Name: Topic 5
   m_EditorClassIdentifier: Assembly-CSharp::Topic
+  shortenedName: Enjin, the manager!
   topicName: We just follow the suggestions, they make sense!
   topicDescription: Enjin has become advanced enough that it can propose business
     strategies and understand complex company problems. Teams follow the advice because
@@ -21,14 +22,10 @@ MonoBehaviour:
     policyDescription: Enjin shouldn't take part in advising people on company decisions
       because it is still capable of making basic mistakes.
     keywords: 02000000
-    enjinPosValue: 0
-    moralePosValue: 0
-    ethicPosValue: 0
-    profitPosValue: 0
-    enjinNegValue: 0
-    moraleNegValue: 0
-    ethicNegValue: 0
-    profitNegValue: 0
+    enjinValue: -1
+    moraleValue: 0
+    ethicValue: 2
+    profitValue: 0
   enjinPolicy:
     policyName: Enjin V5.0
     policyDescription: 'The new Enjin 5.0 is more than just a tool - it''s an indispensable
@@ -40,11 +37,7 @@ MonoBehaviour:
 
 '
     keywords: 01000000
-    enjinPosValue: 0
-    moralePosValue: 0
-    ethicPosValue: 0
-    profitPosValue: 0
-    enjinNegValue: 0
-    moraleNegValue: 0
-    ethicNegValue: 0
-    profitNegValue: 0
+    enjinValue: 3
+    moraleValue: 0
+    ethicValue: -2
+    profitValue: 0

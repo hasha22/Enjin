@@ -12,15 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4914645aa4654324688982b7387c5f46, type: 3}
   m_Name: Enjin Ending
   m_EditorClassIdentifier: Assembly-CSharp::Ending
-  endingName: Enjin ending
+  endingName: Enjin Ending
   endingText:
-  - "Well, you were the aftermath\r\nOf every judgment\r\nSo cold by the sweat that\r\nYou\u2019ll
-    waste away"
-  - "And you carry your enemies\r\nBut they\u2019re so familiar\r\nI\u2019m sick
-    of the company\r\nSo I cull the shame"
-  - "And I know you\u2019ll say how I\u2019m a burden\r\nYeah, do your worst, all
-    at once\r\nI know what you want from me (from me)\r\nI know what you\u2019re
-    thinking"
-  - "And it\u2019s not the voice of all the others\r\nYou\u2019ve only said it to
-    yourself\r\nI know what you want from me (from me)\r\nI know what you\u2019re
-    thinking"
+  - After much deliberation, the company has decided to use Enjin at a large scale.
+  - Its influence in the company is massive, so much so that no decision or creative
+    process is made without it being present, or even central.
+  - Slowly but surely, Enjin within the workplace becomes the most important part
+    of the company's work methodology. Your profits greatly increase, as you can
+    ideate, develop and realize concept much faster than the competition.
+  - 'However, large-scale layoffs follow this event: workers are replaced with ones
+    more adept with handling enjin, and the human touch in your company slowly vanishes.'
+  - 'The company''s finances flourish, as it claims its place among the most wealthy
+    of this decade: but dissent among your workers grows, as the treadwheel of profits
+    slowly crushes the less adept.'
+  - Enjin has become the main pillar this company rests on, and it can no longer
+    live without it.

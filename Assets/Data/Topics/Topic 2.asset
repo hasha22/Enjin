@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5be028ba93737df409e7a198304f8a7c, type: 3}
   m_Name: Topic 2
   m_EditorClassIdentifier: Assembly-CSharp::Topic
+  shortenedName: Enjin for our customers!
   topicName: Enjin's capabilities are evolving, we should have it handle customer
     support and interactions!
   topicDescription: Our company wishes to implement the new Enjin model to handle
@@ -21,14 +22,10 @@ MonoBehaviour:
     policyDescription: Customer support should be operated by employees in the company
       because they understand how to treat the customers best.
     keywords: 02000000
-    enjinPosValue: 0
-    moralePosValue: 0
-    ethicPosValue: 0
-    profitPosValue: 0
-    enjinNegValue: 0
-    moraleNegValue: 0
-    ethicNegValue: 0
-    profitNegValue: 0
+    enjinValue: 0
+    moraleValue: 3
+    ethicValue: 0
+    profitValue: -1
   enjinPolicy:
     policyName: Enjin V2.0
     policyDescription: 'Meet Enjin 2.0 - our new model is capable of delivering hyper-personalized
@@ -39,11 +36,7 @@ MonoBehaviour:
 
 '
     keywords: 03000000
-    enjinPosValue: 0
-    moralePosValue: 0
-    ethicPosValue: 0
-    profitPosValue: 0
-    enjinNegValue: 0
-    moraleNegValue: 0
-    ethicNegValue: 0
-    profitNegValue: 0
+    enjinValue: 0
+    moraleValue: -1
+    ethicValue: 1
+    profitValue: 0

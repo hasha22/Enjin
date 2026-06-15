@@ -25,6 +25,20 @@ public class NetworkManager : MonoBehaviour
     [Header("Scene Transition")]
     [SerializeField] private SceneTransitionManager sceneTransitionManager;
 
+    [Header("Message Requests")]
+    private const string START_GAME_REQUEST = "start_game_request";
+    private const string HOST_REGISTER = "host_register";
+    private const string SHOW_SCENARIO_REQUEST = "show_scenario_request";
+    private const string START_VOTING_REQUEST = "start_voting_request";
+    private const string FIRST_VOTE = "first_vote";
+    private const string SECOND_VOTE = "second_vote";
+    private const string CHARACTER_INFO = "character_info";
+    private const string START_DISCUSSION_REQUEST = "start_discussion_request";
+    private const string SHOW_ENJIN_UPDATE_SCREEN = "show_enjin_update_screen";
+    private const string SHOW_OUTCOME_SCREEN = "show_outcome_screen";
+    private const string SHOW_WAITING_SITUATION_SCREEN = "show_waiting_situation_screen";
+    #region UNITY METHODS
+
     void Awake()
     {
         if (instance == null)
@@ -36,14 +50,13 @@ public class NetworkManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        UIManager.instance.SetRoomCode(roomCode);
     }
 
     async void Start()
     {
         Application.runInBackground = true;
         await Connect();
-
-        UIManager.instance.SetRoomCode(roomCode);
     }
 
     void Update()
@@ -51,11 +64,9 @@ public class NetworkManager : MonoBehaviour
 #if !UNITY_WEBGL || UNITY_EDITOR
         websocket?.DispatchMessageQueue();
 #endif
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            RegisterSecondPlayerVote("1", "yes");
-        }
     }
+    #endregion
+    #region WEBSOCKET CONNECTIVITY
     public async System.Threading.Tasks.Task Connect()
     {
         if (isConnecting) return;
@@ -95,6 +106,15 @@ public class NetworkManager : MonoBehaviour
             isConnecting = false;
         }
     }
+    private async void OnApplicationQuit()
+    {
+        if (websocket != null && websocket.State == WebSocketState.Open)
+        {
+            await websocket.Close();
+        }
+    }
+    #endregion
+    #region RECEIVING SERVER MESSAGES
     private void HandleIncoming(string raw)
     {
         Envelope msg;
@@ -108,201 +128,219 @@ public class NetworkManager : MonoBehaviour
             return;
         }
 
-        if (msg == null || string.IsNullOrEmpty(msg.type)) return;
+        if (msg == null || string.IsNullOrEmpty(msg.type))
+        {
+            Debug.LogWarning("Message was null");
+            return;
+        }
         switch (msg.type)
         {
             case "player_joined":
-                PlayerJoinPayload joinData = null;
+                PlayerJoinEnvelope joinData = null;
                 try
                 {
-                    joinData = JsonUtility.FromJson<PlayerJoinPayload>(msg.data);
+                    joinData = JsonUtility.FromJson<PlayerJoinEnvelope>(msg.data);
                 }
                 catch
                 {
-                    Debug.LogWarning("Failed to parse player_joined payload");
-                    return;
-                }
-                if (joinData == null)
-                {
-                    Debug.LogWarning("player_joined payload was null");
+                    Debug.LogWarning("Failed to parse player_joined envelope");
                     return;
                 }
                 Debug.Log($"Player joined: {joinData.playerName}");
 
-                ConnectPlayer(joinData.playerName);
+                ConnectPlayer(joinData.playerName, joinData.playerID);
                 break;
             case "player_vote_1":
-                PlayerVote1Payload voteData1 = null;
+                PlayerVote1Envelope voteData1 = null;
                 try
                 {
-                    voteData1 = JsonUtility.FromJson<PlayerVote1Payload>(msg.data);
+                    voteData1 = JsonUtility.FromJson<PlayerVote1Envelope>(msg.data);
                 }
                 catch
                 {
-                    Debug.LogWarning("Failed to parse player_vote_1 payload");
-                    return;
-                }
-                if (voteData1 == null)
-                {
-                    Debug.LogWarning("player_vote_1 payload was null");
+                    Debug.LogWarning("Failed to parse player_vote_1 envelope");
                     return;
                 }
                 RegisterFirstPlayerVote(voteData1.playerID, voteData1.playerVote);
                 break;
             case "player_vote_2":
-                PlayerVote2Payload voteData2 = null;
+                PlayerVote2Envelope voteData2 = null;
                 try
                 {
-                    voteData2 = JsonUtility.FromJson<PlayerVote2Payload>(msg.data);
+                    voteData2 = JsonUtility.FromJson<PlayerVote2Envelope>(msg.data);
                 }
                 catch
                 {
-                    Debug.LogWarning("Failed to parse player_vote_2 payload");
-                    return;
-                }
-                if (voteData2 == null)
-                {
-                    Debug.LogWarning("player_vote_2 payload was null");
+                    Debug.LogWarning("Failed to parse player_vote_2 envelope");
                     return;
                 }
                 RegisterSecondPlayerVote(voteData2.playerID, voteData2.playerVote);
                 break;
-            case "error":
-                Debug.LogWarning("Server error");
-                break;
-
             case "start_game_success":
-                Debug.Log("Server confirmed: game started");
-
                 if (sceneTransitionManager != null)
                 {
                     sceneTransitionManager.LoadNextScene();
+                    Debug.Log("Server confirmed. Starting game.");
                 }
                 else
                 {
                     Debug.LogWarning("SceneTransitionManager is not assigned in NetworkManager.");
                 }
-
                 break;
-
+            case "player_skip":
+                PlayerSkipEnvelope playerSkip = null;
+                try
+                {
+                    playerSkip = JsonUtility.FromJson<PlayerSkipEnvelope>(msg.data);
+                }
+                catch
+                {
+                    Debug.LogWarning("Failed to parse player_skip envelope");
+                    return;
+                }
+                //Call logic here for skipping player turn
+                break;
             case "start_game_failed":
                 Debug.LogWarning("Start game failed: " + msg.data);
                 break;
-
-            case "player_disconnected":
-                Debug.Log("Player temporarily disconnected: " + msg.data);
+            case "show_scenario_success":
+                Debug.Log("Showing next screen.");
                 break;
-
+            case "show_scenario_failed":
+                Debug.Log("Show scenario failed: " + msg.data);
+                break;
+            case "start_voting_success":
+                Debug.Log("Server confirmed: voting started");
+                break;
+            case "start_voting_failed":
+                Debug.LogWarning("Start voting failed: " + msg.data);
+                break;
+            case "player_disconnected":
+                Debug.LogWarning("Player temporarily disconnected: " + msg.data);
+                break;
             case "player_reconnected":
                 Debug.Log("Player reconnected: " + msg.data);
                 break;
-
             case "player_removed":
                 Debug.Log("Player removed from room: " + msg.data);
                 break;
         }
     }
+    #endregion
+    #region SEND SERVER REQUESTS
     public void SendHostRegister()
     {
-        string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
-        string json = "{"
-            + "\"type\":\"host_register\","
-            + "\"room\":\"" + Escape(code) + "\","
-            + "\"clientId\":\"" + Escape(hostClientId) + "\""
-            + "}";
-        Debug.Log("Sending host_register: " + json);
-        Send(json);
+        SendMessageToServer(
+            HOST_REGISTER,
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            }
+        );
     }
-
-    public void StartGameFromButton()
-    {
-        if (allPlayers.Count == 0)
-        {
-            Debug.LogWarning("Cannot start game: no players connected.");
-            return;
-        }
-
-        SendStartGameRequest();
-    }
-
     public void SendStartGameRequest()
     {
-        string code = string.IsNullOrWhiteSpace(roomCode) ? "ABCD" : roomCode.Trim().ToUpper();
+        SendMessageToServer(
+            START_GAME_REQUEST,
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            }
+        );
+    }
+    public void SendShowScenarioRequest()
+    {
+        SendMessageToServer(
+            SHOW_SCENARIO_REQUEST,
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            }
+        );
+    }
+    public void SendStartVotingRequest()
+    {
+        string voteType = GameManager.instance.currentScreen == GameScreens.FirstPolicyVotingScreen ? FIRST_VOTE : SECOND_VOTE;
+        SendMessageToServer(
+            START_VOTING_REQUEST,
+            new StartVotingPayload
+            {
+                hostClientId = this.hostClientId,
+                votingRound = voteType
+            }
+        );
+    }
+    public void SendCharacterInfo(string playerID, string characterName, string characterDescription, string keyword1, string keyword2)
+    {
+        SendMessageToServer(
+            CHARACTER_INFO,
+            new CharacterInfoPayload
+            {
+                playerID = playerID,
+                characterName = characterName,
+                characterDescription = characterDescription,
+                keyword1 = keyword1,
+                keyword2 = keyword2
+            }
+        );
+    }
+    public void SendStartDiscussionRequest()
+    {
+        SendMessageToServer(
+            START_DISCUSSION_REQUEST,
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            }
+        );
+    }
+    public void SendShowEnjinUpdateScreen()
+    {
+        SendMessageToServer(
+            SHOW_ENJIN_UPDATE_SCREEN,
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            }
+        );
+    }
+    public void SendShowOutcomeScreen()
+    {
+        SendMessageToServer(
+            SHOW_OUTCOME_SCREEN,
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            }
+        );
+    }
+    public void SendShowWaitingSituationScreen()
+    {
+        SendMessageToServer(
+            SHOW_WAITING_SITUATION_SCREEN,
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            }
+        );
+    }
+    private void SendMessageToServer<T>(string type, T payload)
+    {
+        OutgoingMessage<T> message =
+            new OutgoingMessage<T>()
+            {
+                type = type,
+                room = roomCode.Trim().ToUpper(),
+                data = payload
+            };
 
-        string json = "{"
-            + "\"type\":\"start_game_request\","
-            + "\"room\":\"" + Escape(code) + "\","
-            + "\"clientId\":\"" + Escape(hostClientId) + "\""
-            + "}";
+        string json = JsonUtility.ToJson(message);
 
-        Debug.Log("Sending start_game_request: " + json);
+        Debug.Log($"Sending {type}: {json}");
+
         Send(json);
     }
-
-    public void ConnectPlayer(string playerName)
-    {
-        if (allPlayers.Count >= 6)
-        {
-            Debug.Log("Error: Only 6 players allowed.");
-            return;
-        }
-
-        GameObject newPlayer = Instantiate(playerPrefab, playerContainer);
-        allPlayers.Add(newPlayer);
-        Player player = newPlayer.GetComponent<Player>();
-        player.InitializePlayerData(playerName);
-        player.SetFirstVote(VoteTypes.Agree);
-
-        //Instantiate & Update UI elements
-        //Register player in a list of active players
-        UIManager.instance.IncreaseDisplayedPlayerCount();
-        UIManager.instance.UpdatePlayerCard(allPlayers.Count - 1, player);
-    }
-    public void RegisterFirstPlayerVote(string playerID, string playerVote)
-    {
-        foreach (GameObject player in allPlayers)
-        {
-            Player playerScript = player.GetComponent<Player>();
-            if (playerScript.GetPlayerID() == playerID)
-            {
-                switch (playerVote)
-                {
-                    case "disagree":
-                        playerScript.SetFirstVote(VoteTypes.Disagree);
-                        break;
-                    case "mostly_disagree":
-                        playerScript.SetFirstVote(VoteTypes.MostlyDisagree);
-                        break;
-                    case "neutral":
-                        playerScript.SetFirstVote(VoteTypes.Neutral);
-                        break;
-                    case "mostly_agree":
-                        playerScript.SetFirstVote(VoteTypes.MostlyAgree);
-                        break;
-                    case "agree":
-                        playerScript.SetFirstVote(VoteTypes.Agree);
-                        break;
-                }
-                break;
-            }
-        }
-    }
-    public void RegisterSecondPlayerVote(string playerID, string playerVote)
-    {
-        Debug.Log("meow");
-        foreach (GameObject player in allPlayers)
-        {
-            Player playerScript = player.GetComponent<Player>();
-            if (playerScript.GetPlayerID() == playerID)
-            {
-                if (playerVote == "yes") playerScript.SetSecondVote(true);
-                else if (playerVote == "no") playerScript.SetSecondVote(false);
-                if (GameUIManager.instance != null) GameUIManager.instance.InstantiateVotePlayerIcon(playerScript);
-                break;
-            }
-        }
-    }
-    public void Send(string json)
+    private void Send(string json)
     {
         if (websocket != null && websocket.State == WebSocketState.Open)
         {
@@ -313,19 +351,135 @@ public class NetworkManager : MonoBehaviour
             Debug.LogWarning("WebSocket not open. Message not sent.");
         }
     }
-    private async void OnApplicationQuit()
+    #endregion
+
+    #region GAME LOGIC
+    public void ConnectPlayer(string playerName, string playerID)
     {
-        if (websocket != null && websocket.State == WebSocketState.Open)
+        if (allPlayers.Count >= 6)
         {
-            await websocket.Close();
+            Debug.Log("Error: Only 6 players allowed.");
+            return;
+        }
+
+        GameObject newPlayer = Instantiate(playerPrefab, playerContainer);
+        allPlayers.Add(newPlayer);
+        Player player = newPlayer.GetComponent<Player>();
+        player.InitializePlayerData(playerName, playerID);
+
+        UIManager.instance.UpdatePlayerCard(allPlayers.Count - 1, player);
+
+        SendCharacterInfo(player.GetPlayerID(),
+            player.selectedCharacter.characterName,
+            player.selectedCharacter.characterDescription,
+            player.selectedCharacter.characterKeywords[0].ToString(),
+            player.selectedCharacter.characterKeywords[1].ToString()
+        );
+    }
+    public void RegisterFirstPlayerVote(string playerID, string playerVote)
+    {
+        foreach (GameObject player in allPlayers)
+        {
+            Player playerScript = player.GetComponent<Player>();
+            if (playerScript.GetPlayerID() == playerID)
+            {
+                VoteTypes parsedVote = VoteTypes.Neutral;
+
+                switch (playerVote)
+                {
+                    case "disagree":
+                        parsedVote = VoteTypes.Disagree;
+                        break;
+                    case "mostly_disagree":
+                        parsedVote = VoteTypes.MostlyDisagree;
+                        break;
+                    case "neutral":
+                        parsedVote = VoteTypes.Neutral;
+                        break;
+                    case "mostly_agree":
+                        parsedVote = VoteTypes.MostlyAgree;
+                        break;
+                    case "agree":
+                        parsedVote = VoteTypes.Agree;
+                        break;
+                }
+                playerScript.SetFirstVote(parsedVote);
+
+                Debug.Log($"FIRST VOTE SAVED | player: {playerScript.GetPlayerName()}, ID: {playerScript.GetPlayerID()}, vote: {playerScript.GetFirstVote()}");
+                break;
+            }
+        }
+        if (FirstCheckIfAllVoted())
+        {
+            TimerScript.instance.StopTimer();
         }
     }
-    private string Escape(string s)
+
+    public bool FirstCheckIfAllVoted()
     {
-        return (s ?? "").Replace("\\", "\\\\").Replace("\"", "\\\"");
+        foreach (GameObject p in allPlayers)
+        {
+            Player player = p.GetComponent<Player>();
+            if (player.GetFirstVote() == 0 || player.GetFirstVote() == VoteTypes.NoVote)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public bool SecondCheckIfAllVoted()
+    {
+        foreach (GameObject p in allPlayers)
+        {
+            Player player = p.GetComponent<Player>();
+            if (player.GetSecondVote() == FinalVoteTypes.NoVote || player.GetSecondVote() == 0)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void RegisterSecondPlayerVote(string playerID, string playerVote)
+    {
+        foreach (GameObject player in allPlayers)
+        {
+            Player playerScript = player.GetComponent<Player>();
+            if (playerScript.GetPlayerID() == playerID)
+            {
+                if (playerVote == "yes")
+                {
+                    playerScript.SetSecondVote(FinalVoteTypes.Yes);
+                }
+                else if (playerVote == "no")
+                {
+                    playerScript.SetSecondVote(FinalVoteTypes.No);
+                }
+                GameUIManager.instance.InstantiateVotePlayerIcon(playerScript);
+                break;
+            }
+        }
+        if (SecondCheckIfAllVoted())
+        {
+            TimerScript.instance.StopTimer();
+        }
+    }
+    #endregion
+    #region HELPERS
+    public void StartGameFromButton()
+    {
+        if (allPlayers.Count == 0)
+        {
+            Debug.LogWarning("Cannot start game: no players connected.");
+            return;
+        }
+
+        SendStartGameRequest();
     }
     public List<GameObject> GetPlayerList()
     {
         return allPlayers;
     }
+    #endregion
 }
