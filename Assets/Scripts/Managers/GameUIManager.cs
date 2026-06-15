@@ -220,7 +220,6 @@ public class GameUIManager : MonoBehaviour
             imgComponent.sprite = playerScript.selectedCharacter.characterImage;
         }
     }
-
     public void InstantiateKeywordCards()
     {
         Topic currentTopic = GameManager.instance.GetCurrentTopic();

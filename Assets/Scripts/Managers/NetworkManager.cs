@@ -36,7 +36,6 @@ public class NetworkManager : MonoBehaviour
     private const string START_DISCUSSION_REQUEST = "start_discussion_request";
     private const string SHOW_ENJIN_UPDATE_SCREEN = "show_enjin_update_screen";
     private const string SHOW_OUTCOME_SCREEN = "show_outcome_screen";
-
     private const string SHOW_WAITING_SITUATION_SCREEN = "show_waiting_situation_screen";
     #region UNITY METHODS
 
@@ -144,7 +143,7 @@ public class NetworkManager : MonoBehaviour
                 }
                 catch
                 {
-                    Debug.LogWarning("Failed to parse player_joined payload");
+                    Debug.LogWarning("Failed to parse player_joined envelope");
                     return;
                 }
                 Debug.Log($"Player joined: {joinData.playerName}");
@@ -159,7 +158,7 @@ public class NetworkManager : MonoBehaviour
                 }
                 catch
                 {
-                    Debug.LogWarning("Failed to parse player_vote_1 payload");
+                    Debug.LogWarning("Failed to parse player_vote_1 envelope");
                     return;
                 }
                 RegisterFirstPlayerVote(voteData1.playerID, voteData1.playerVote);
@@ -172,7 +171,7 @@ public class NetworkManager : MonoBehaviour
                 }
                 catch
                 {
-                    Debug.LogWarning("Failed to parse player_vote_2 payload");
+                    Debug.LogWarning("Failed to parse player_vote_2 envelope");
                     return;
                 }
                 RegisterSecondPlayerVote(voteData2.playerID, voteData2.playerVote);
@@ -187,6 +186,19 @@ public class NetworkManager : MonoBehaviour
                 {
                     Debug.LogWarning("SceneTransitionManager is not assigned in NetworkManager.");
                 }
+                break;
+            case "player_skip":
+                PlayerSkipEnvelope playerSkip = null;
+                try
+                {
+                    playerSkip = JsonUtility.FromJson<PlayerSkipEnvelope>(msg.data);
+                }
+                catch
+                {
+                    Debug.LogWarning("Failed to parse player_skip envelope");
+                    return;
+                }
+                //Call logic here for skipping player turn
                 break;
             case "start_game_failed":
                 Debug.LogWarning("Start game failed: " + msg.data);
@@ -272,6 +284,46 @@ public class NetworkManager : MonoBehaviour
             }
         );
     }
+    public void SendStartDiscussionRequest()
+    {
+        SendMessageToServer(
+            START_DISCUSSION_REQUEST,
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            }
+        );
+    }
+    public void SendShowEnjinUpdateScreen()
+    {
+        SendMessageToServer(
+            SHOW_ENJIN_UPDATE_SCREEN,
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            }
+        );
+    }
+    public void SendShowOutcomeScreen()
+    {
+        SendMessageToServer(
+            SHOW_OUTCOME_SCREEN,
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            }
+        );
+    }
+    public void SendShowWaitingSituationScreen()
+    {
+        SendMessageToServer(
+            SHOW_WAITING_SITUATION_SCREEN,
+            new InformServerPayload
+            {
+                hostClientId = this.hostClientId
+            }
+        );
+    }
     private void SendMessageToServer<T>(string type, T payload)
     {
         OutgoingMessage<T> message =
@@ -287,52 +339,6 @@ public class NetworkManager : MonoBehaviour
         Debug.Log($"Sending {type}: {json}");
 
         Send(json);
-    }
-
-    public void SendStartDiscussionRequest()
-    {
-        SendMessageToServer(
-            START_DISCUSSION_REQUEST,
-            new InformServerPayload
-            {
-                hostClientId = this.hostClientId
-            }
-        );
-    }
-
-    public void SendShowEnjinUpdateScreen()
-    {
-        SendMessageToServer(
-            SHOW_ENJIN_UPDATE_SCREEN,
-            new InformServerPayload
-            {
-                hostClientId = this.hostClientId
-            }
-        );
-    }
-
-    public void SendShowOutcomeScreen()
-    {
-        SendMessageToServer(
-            SHOW_OUTCOME_SCREEN,
-            new InformServerPayload
-            {
-                hostClientId = this.hostClientId
-            }
-        );
-    }
-
-   
-
-    public void SendShowWaitingSituationScreen()
-    {
-        SendMessageToServer(
-            SHOW_WAITING_SITUATION_SCREEN,
-            new InformServerPayload
-            {
-                hostClientId = this.hostClientId
-            }
-        );
     }
     private void Send(string json)
     {
@@ -411,20 +417,20 @@ public class NetworkManager : MonoBehaviour
 
     public bool FirstCheckIfAllVoted()
     {
-        foreach(GameObject p in allPlayers)
+        foreach (GameObject p in allPlayers)
         {
             Player player = p.GetComponent<Player>();
             if (player.GetFirstVote() == 0 || player.GetFirstVote() == VoteTypes.NoVote)
             {
                 return false;
             }
-        } 
+        }
         return true;
     }
 
     public bool SecondCheckIfAllVoted()
     {
-        foreach(GameObject p in allPlayers)
+        foreach (GameObject p in allPlayers)
         {
             Player player = p.GetComponent<Player>();
             if (player.GetSecondVote() == FinalVoteTypes.NoVote || player.GetSecondVote() == 0)

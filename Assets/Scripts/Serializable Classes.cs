@@ -58,3 +58,8 @@ public class PlayerVote2Envelope
     public string playerID;
     public string playerVote;
 }
+public class PlayerSkipEnvelope
+{
+    public string playerID;
+}
+
