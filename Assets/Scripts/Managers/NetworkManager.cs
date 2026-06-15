@@ -198,7 +198,7 @@ public class NetworkManager : MonoBehaviour
                     Debug.LogWarning("Failed to parse player_skip envelope");
                     return;
                 }
-                //Call logic here for skipping player turn
+                GameUIManager.instance.SkipDiscussionTurn(playerSkip.playerID);
                 break;
             case "start_game_failed":
                 Debug.LogWarning("Start game failed: " + msg.data);
