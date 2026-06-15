@@ -921,6 +921,7 @@ function sendCurrentSpeakerID(hostSocket, roomCode, currentSpeakerPlayerID, disc
     send(player.socket, "current_speaker_changed", {
       currentSpeakerPlayerID: currentSpeakerPlayerID,
       currentSpeakerName: speaker ? speaker.playerName : "",
+      votingDuration: discussionDuration || 0,
       isCurrentSpeaker: player.clientId === currentSpeakerPlayerID
     });
   }
