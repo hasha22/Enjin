@@ -805,7 +805,7 @@ function skipDiscussionTurn() {
   }
 
   const roomCode = sessionStorage.getItem("roomCode");
-  const playedID = getClientId();
+  const playerID = getClientId();
 
   ws.send(JSON.stringify({
     type: "skip_discussion",
