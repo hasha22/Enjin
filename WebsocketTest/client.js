@@ -84,6 +84,9 @@ function connectWebSocket() {
       case "discussion_started":
         handleDiscussionStarted(data);
         break;
+      case "current_speaker_changed":
+        updateCurrentSpeaker(data);
+        break;
       case "show_enjin_update_screen":
         handleShowEnjinUpdateScreen(data);
         break;
@@ -141,18 +144,15 @@ function updateRoundPlaceholders(roundNumber) {
 }
 
 function showDiscussionTurnScreen(data) {
+  showScreen("discussionScreen");
+}
+function updateCurrentSpeaker(data){
   const timerElement = document.getElementById("discussionTimer");
   const myTurnBlock = document.getElementById("myTurnBlock");
   const otherSpeakerBlock = document.getElementById("otherSpeakerBlock");
   const speakerNameElement = document.getElementById("speakerName");
-  const currentClientId = normalizeId(clientId || sessionStorage.getItem("clientId"));
-  const currentPlayerName = normalizeId(sessionStorage.getItem("playerName"));
-  const speakerId = normalizeId(data.currentSpeakerPlayerID);
-  const speakerNameId = normalizeId(data.currentSpeakerName);
-  const isMyTurn = data.isCurrentSpeaker === true
-    || (speakerId && speakerId === currentClientId)
-    || (speakerNameId && speakerNameId === currentPlayerName);
-  const duration = Number(data.votingDuration || 0);
+
+  const isMyTurn = data.isCurrentSpeaker === true;
 
   if (myTurnBlock) {
     myTurnBlock.style.display = isMyTurn ? "block" : "none";
@@ -162,12 +162,15 @@ function showDiscussionTurnScreen(data) {
     otherSpeakerBlock.style.display = isMyTurn ? "none" : "block";
   }
 
-  if (speakerNameElement && data.currentSpeakerName) {
-    speakerNameElement.innerText = data.currentSpeakerName;
+  if (speakerNameElement) {
+    speakerNameElement.innerText =
+      data.currentSpeakerName || "Unknown player";
   }
 
-  showScreen("discussionScreen");
-  startDiscussionTimer(duration, timerElement);
+  startDiscussionTimer(
+    Number(data.votingDuration || 0),
+    timerElement
+  );
 }
 
 function normalizeId(value) {

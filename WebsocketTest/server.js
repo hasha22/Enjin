@@ -328,7 +328,6 @@ wss.on("connection", (clientSocket) => {
         return;
       }
 
-      //REFACTOR THIS
       if (msg.type === "player_screen_command")
       {
         const roomCode = normalize(msg.room || msg.roomCode);
@@ -919,10 +918,9 @@ function sendCurrentSpeakerID(hostSocket, roomCode, currentSpeakerPlayerID) {
   const speaker = connectedPlayers.find(player => player.clientId === currentSpeakerPlayerID);
 
   for (const player of connectedPlayers) {
-    send(player.socket, "discussion_started", {
+    send(player.socket, "current_speaker_changed", {
       currentSpeakerPlayerID: currentSpeakerPlayerID,
       currentSpeakerName: speaker ? speaker.playerName : "",
-      votingDuration: 0,
       isCurrentSpeaker: player.clientId === currentSpeakerPlayerID
     });
   }
