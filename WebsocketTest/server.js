@@ -324,7 +324,7 @@ wss.on("connection", (clientSocket) => {
           return;
         }
 
-        sendCurrentSpeakerID(clientSocket, roomCode, payload.playerID);
+        sendCurrentSpeakerID(clientSocket, roomCode, payload.playerID, payload.discussionDuration);
         return;
       }
 
@@ -904,7 +904,7 @@ function skipDiscussionTurn(clientSocket, roomCode, clientId) {
   });
 }
 
-function sendCurrentSpeakerID(hostSocket, roomCode, currentSpeakerPlayerID) {
+function sendCurrentSpeakerID(hostSocket, roomCode, currentSpeakerPlayerID, discussionDuration = 0) {
   const room = rooms.get(roomCode);
 
   if (!room || room.host !== hostSocket) {
