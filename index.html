@@ -215,7 +215,12 @@
   <!-- 12. Game over -->
   <section id="gameOverScreen" class="screen">
     <div class="JoinRoom">
-      <h2>The game has ended</h2>
+      <h2>
+        The game has ended, please fill in the survey
+        <a href="https://forms.gle/HccUp9JZ6zvmp4Bx9" target="_blank">
+          here
+        </a>
+      </h2>
       <label data-role="status">Thank you for playing.</label>
       <div data-role="log"></div>
     </div>
@@ -236,6 +241,11 @@
         <label data-role="status">
           Now speaking: <span id="speakerName">another player</span>.
         </label>
+        <div class="skip-discussion-container">
+            <button class="skip-discussion-button" id="skipDiscussionBtn">
+              Skip your discussion turn
+            </button>
+        </div>
       </div>
 
       <p id="discussionTimer">Timer: --</p>
