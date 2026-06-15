@@ -37,6 +37,7 @@ public class NetworkManager : MonoBehaviour
     private const string SHOW_ENJIN_UPDATE_SCREEN = "show_enjin_update_screen";
     private const string SHOW_OUTCOME_SCREEN = "show_outcome_screen";
     private const string SHOW_WAITING_SITUATION_SCREEN = "show_waiting_situation_screen";
+    private const string SEND_CURRENT_SPEAKER_ID = "send_current_speaker_id";
     #region UNITY METHODS
 
     void Awake()
@@ -198,7 +199,7 @@ public class NetworkManager : MonoBehaviour
                     Debug.LogWarning("Failed to parse player_skip envelope");
                     return;
                 }
-                //Call logic here for skipping player turn
+                GameUIManager.instance.SkipDiscussionTurn(playerSkip.playerID);
                 break;
             case "start_game_failed":
                 Debug.LogWarning("Start game failed: " + msg.data);
@@ -321,6 +322,16 @@ public class NetworkManager : MonoBehaviour
             new InformServerPayload
             {
                 hostClientId = this.hostClientId
+            }
+        );
+    }
+    public void SendCurrentSpeakerID(Player currentSpeaker)
+    {
+        SendMessageToServer(
+            SEND_CURRENT_SPEAKER_ID,
+            new CurrnetSpeakerPayload
+            {
+                playerID = currentSpeaker.GetPlayerID()
             }
         );
     }

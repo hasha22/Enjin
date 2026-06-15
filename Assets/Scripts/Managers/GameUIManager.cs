@@ -74,6 +74,11 @@ public class GameUIManager : MonoBehaviour
     [Header("List of player icons")]
     [SerializeField] private List<GameObject> allPlayerIcons = new List<GameObject>();
 
+    [Header("Discussion Coroutine")]
+    private bool skipCurrentSpeaker;
+    private Coroutine discussionRoutine;
+    private Player currentSpeaker;
+
     #region Start & Awake
     private void Awake()
     {
@@ -183,7 +188,7 @@ public class GameUIManager : MonoBehaviour
             timer.SetActive(true);
             continueButton.SetActive(false);
             InstantiatePlayerDiscussionIcons();
-            StartCoroutine(InitiateDiscussion());
+            discussionRoutine = StartCoroutine(InitiateDiscussion());
         }
         else if (currentScreen == GameScreens.EnjinUpdateScreen)
         {
@@ -312,6 +317,7 @@ public class GameUIManager : MonoBehaviour
     {
         iconCircle.SetActive(true);
         yield return null;
+
         List<Player> discussionPlayers = new List<Player>();
 
         if (NetworkManager.instance != null)
@@ -339,16 +345,31 @@ public class GameUIManager : MonoBehaviour
             iconCircle.SetActive(false);
             yield break;
         }
-
         if (allPlayerIcons.Count != 0) iconCircle.transform.position = allPlayerIcons[0].transform.position;
         for (int i = 0; i < discussionPlayers.Count && i < allPlayerIcons.Count; i++)
         {
+            skipCurrentSpeaker = false;
+
             Player currentSpeaker = discussionPlayers[i];
+            this.currentSpeaker = currentSpeaker;
+            NetworkManager.instance.SendCurrentSpeakerID(this.currentSpeaker);
             GameObject speaker = allPlayerIcons[i];
 
             StartCoroutine(MoveCircle(iconCircle.transform, speaker.transform.position, 0.35f));
             TimerScript.instance.StartTimer(GameManager.instance.discussionTime);
-            yield return new WaitForSeconds(GameManager.instance.discussionTime);
+
+            float elapsed = 0f;
+
+            while (elapsed < GameManager.instance.discussionTime)
+            {
+                if (skipCurrentSpeaker)
+                {
+                    break;
+                }
+
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
         }
         TimerDone();
         iconCircle.SetActive(false);
@@ -359,6 +380,13 @@ public class GameUIManager : MonoBehaviour
     {
         timer.SetActive(false);
         continueButton.SetActive(true);
+    }
+    public void SkipDiscussionTurn(string playerID)
+    {
+        if (currentSpeaker == null) return;
+        if (currentSpeaker.GetPlayerID() != playerID) return;
+
+        skipCurrentSpeaker = true;
     }
     private void UpdateCurrentScreenNumber(GameScreens screen)
     {

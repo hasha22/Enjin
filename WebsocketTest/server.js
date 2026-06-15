@@ -295,6 +295,39 @@ wss.on("connection", (clientSocket) => {
         return;
       }
 
+
+      if (msg.type === "skip_discussion")
+      {
+        const roomCode = normalize(msg.room || msg.roomCode);
+        const clientId = msg.clientId;
+
+        if (!roomCode)
+        {
+          send(clientSocket, "skip_discussion_failed", {
+            reason: "Room code is missing"
+          });
+          return;
+        }
+
+        skipDiscussionTurn(clientSocket, roomCode, clientId);
+        return;
+      }
+
+      if (msg.type === "send_current_speaker_id") {
+        const roomCode = normalize(msg.room || msg.roomCode);
+        const payload = parsePayload(msg.data);
+
+        if (!roomCode || !payload.playerID) {
+          send(clientSocket, "send_current_speaker_id_failed", {
+            reason: "Room code and playerID are required"
+          });
+          return;
+        }
+
+        sendCurrentSpeakerID(clientSocket, roomCode, payload.playerID);
+        return;
+      }
+
       //REFACTOR THIS
       if (msg.type === "player_screen_command")
       {
@@ -851,4 +884,46 @@ function showWaitingSituationScreen(clientSocket, roomCode)
   send(room.host, "show_waiting_situation_screen_success", {
     room: roomCode
   });
+}
+
+function skipDiscussionTurn(clientSocket, roomCode, clientId) {
+  const room = rooms.get(roomCode);
+
+  if (!room || !room.host) {
+    send(clientSocket, "skip_discussion_failed", {
+      reason: "Room not found"
+    });
+    return;
+  }
+
+  send(room.host, "player_skip", {
+    playerID: clientId
+  });
+
+  send(clientSocket, "skip_discussion_success", {
+    playerID: clientId
+  });
+}
+
+function sendCurrentSpeakerID(hostSocket, roomCode, currentSpeakerPlayerID) {
+  const room = rooms.get(roomCode);
+
+  if (!room || room.host !== hostSocket) {
+    send(hostSocket, "send_current_speaker_id_failed", {
+      reason: "Room not found or sender is not host"
+    });
+    return;
+  }
+
+  const connectedPlayers = [...room.players].filter(player => player.connected);
+  const speaker = connectedPlayers.find(player => player.clientId === currentSpeakerPlayerID);
+
+  for (const player of connectedPlayers) {
+    send(player.socket, "discussion_started", {
+      currentSpeakerPlayerID: currentSpeakerPlayerID,
+      currentSpeakerName: speaker ? speaker.playerName : "",
+      votingDuration: 0,
+      isCurrentSpeaker: player.clientId === currentSpeakerPlayerID
+    });
+  }
 }
