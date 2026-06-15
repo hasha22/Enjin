@@ -75,9 +75,9 @@ public class GameUIManager : MonoBehaviour
     [SerializeField] private List<GameObject> allPlayerIcons = new List<GameObject>();
 
     [Header("Discussion Coroutine")]
-    private bool skipCurrentSpeaker;
+    public bool skipCurrentSpeaker;
     private Coroutine discussionRoutine;
-    private Player currentSpeaker;
+    public Player currentSpeaker;
 
     #region Start & Awake
     private void Awake()

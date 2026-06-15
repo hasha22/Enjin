@@ -308,7 +308,7 @@ wss.on("connection", (clientSocket) => {
           });
           return;
         }
-
+        console.log("client ID", clientId);
         skipDiscussionTurn(clientSocket, roomCode, clientId);
         return;
       }
