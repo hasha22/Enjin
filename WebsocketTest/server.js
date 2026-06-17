@@ -4,19 +4,22 @@ const wss = new WebSocket.Server({ port: 5085 });
 
 const rooms = new Map();
 
-// Player states
+
+// Player states (not really used yet, but could be useful for future features)
 const PLAYER_STATE = {
   WAITING: "waiting",
   VOTING: "voting",
-  MAKING_CHOICE: "making_choice",
   VIEWING_CHARACTER: "viewing_character",
   VIEWING_SCENARIO: "viewing_scenario",
   DISCUSSING: "discussing"
 };
 
+
 const DISCONNECT_TIMEOUT_MS = 10000;
 
+
 // Core logic
+// Host registration logic
 function registerHost(clientSocket, roomCode) 
 {
   const room = getRoom(roomCode);
@@ -29,6 +32,8 @@ function registerHost(clientSocket, roomCode)
   console.log(`[room:${roomCode}] host registered`);
 }
 
+
+// Player joining logic
 function joinRoom(clientSocket, roomCode, playerName, clientId) 
 {
   const room = rooms.get(roomCode);
@@ -41,6 +46,7 @@ function joinRoom(clientSocket, roomCode, playerName, clientId)
     return;
   }
 
+
   // Duplicate name check
   for (const p of room.players) 
   {
@@ -52,6 +58,7 @@ function joinRoom(clientSocket, roomCode, playerName, clientId)
       return;
     }
   }
+
 
   // Adding players
   const player = 
@@ -67,12 +74,15 @@ function joinRoom(clientSocket, roomCode, playerName, clientId)
   room.players.add(player);
   console.log(`Player joined: ${playerName} (total: ${room.players.size})`);
 
+
+  // Notify the player that they have successfully joined
   send(clientSocket, "join_room_success", {
     room: roomCode,
     playerName,
     clientId,
     playerState: player.playerState,
   });
+
 
   // Notify Unity host
   if (room.host) 
@@ -104,20 +114,17 @@ wss.on("connection", (clientSocket) => {
       return;
     }
 
-    // Host connection - WORKS
+    // Host connection
     if (msg.type === "host_register") 
     {
       const roomCode = normalize(msg.room || msg.roomCode);
-      const payload = msg.data;
-
-      console.log("Host registered with id:", payload.hostClientId);
 
       if (!roomCode) return;
 
       return registerHost(clientSocket, roomCode);
     }
 
-    // Client Connection - WORKS
+    // Client Connection
     if (msg.type === "join_room_request") 
     {
       const roomCode = normalize(msg.room);
@@ -151,11 +158,12 @@ wss.on("connection", (clientSocket) => {
 
       return reconnectPlayer(clientSocket, roomCode, clientId);
     }
-    //ACCOUNTED FOR
+
+    // Start Game Request
     if (msg.type === "start_game_request")
     {
       const roomCode = normalize(msg.room);
-      const payload = msg.data;
+   
       if (!roomCode)
       {
         send(clientSocket, "start_game_failed", {
@@ -163,15 +171,16 @@ wss.on("connection", (clientSocket) => {
         });
         return;
       }
-      console.log("Game started by host:", payload.hostClientId);
+  
 
       return startGame(clientSocket, roomCode);
     }
-    //ACCOUNTED FOR
+
+    // Show Scenario Request
     if (msg.type === "show_scenario_request")
       {
         const roomCode = normalize(msg.room);
-        const payload = msg.data;
+
 
         if (!roomCode)
         {
@@ -180,10 +189,10 @@ wss.on("connection", (clientSocket) => {
           });
           return;
         }
-        console.log("Showing scenario from host:", payload.hostClientId);
         return showScenario(clientSocket, roomCode);
       }
-    //REVISE
+
+    // Start Voting Request
     if (msg.type === "start_voting_request") {
         const roomCode = normalize(msg.room || msg.roomCode);
         const payload = msg.data;
@@ -194,32 +203,32 @@ wss.on("connection", (clientSocket) => {
           });
           return;
         }
-        console.log("Attempting to start voting round on host ", payload.hostClientId);
 
         startVoting(clientSocket, roomCode, payload.votingRound);
         return;
       }
-      //REVIEW THIS
-      if (msg.type === "submit_vote") {
-        const roomCode = normalize(msg.room || msg.roomCode);
-        const clientId = msg.clientId;
-        const voteValue = msg.voteValue;
-        const voteType = msg.voteType;
-        const roundNumber = Number(msg.roundNumber || 0);
 
-        if (!roomCode || !clientId) {
-          send(clientSocket, "vote_failed", {
-            reason: "Room code and clientId are required"
-          });
-          return;
-        }
+    // Submit Vote
+    if (msg.type === "submit_vote") {
+      const roomCode = normalize(msg.room || msg.roomCode);
+      const clientId = msg.clientId;
+      const voteValue = msg.voteValue;
+      const voteType = msg.voteType;
+
+      if (!roomCode || !clientId) {
+        send(clientSocket, "vote_failed", {
+          reason: "Room code and clientId are required"
+        });
+        return;
+      }
 
         submitVote(clientSocket, roomCode, clientId, voteValue, voteType);
         return;
       }
-      //ACCOUNTED FOR
-      if(msg.type === "character_info")
-      {
+
+    // Character Info Assignment
+    if(msg.type === "character_info")
+    {
         console.log("Received character_info on server.");
 
         const roomCode = normalize(msg.room || msg.roomCode);
@@ -234,9 +243,11 @@ wss.on("connection", (clientSocket) => {
           payload.keyword2
         );
         return;
-      }
-      if (msg.type === "start_discussion_request")
-      {
+    }
+
+    // Start Discussion Request
+    if (msg.type === "start_discussion_request")
+    {
         const roomCode = normalize(msg.room || msg.roomCode);
        
         if (!roomCode)        {
@@ -247,25 +258,27 @@ wss.on("connection", (clientSocket) => {
         }
         startDiscussion(clientSocket, roomCode);
         return;
-      }
+    }
 
-      if (msg.type === "show_enjin_update_screen")
-      {
+    // Show Enjin Update Screen Request
+    if (msg.type === "show_enjin_update_screen")
+    {
         const roomCode = normalize(msg.room || msg.roomCode);
      
 
         if (!roomCode)
         {
-          send(clientSocket, "show_enjin_update_failed", {
+          send(clientSocket, "show_enjin_update_screen_failed", {
             reason: "Room code is missing"
           });
           return;
         }
         showEnjinUpdateScreen(clientSocket, roomCode);
         return;
-      }
+    }
 
-      if (msg.type === "show_outcome_screen")
+    // Show Outcome Screen Request
+    if (msg.type === "show_outcome_screen")
       {
         const roomCode = normalize(msg.room || msg.roomCode);
         
@@ -277,9 +290,10 @@ wss.on("connection", (clientSocket) => {
         }
         showOutcomeScreen(clientSocket, roomCode);
         return;
-      }
+    }
 
-      if (msg.type === "show_waiting_situation_screen")
+    // Show Waiting Situation Screen Request
+    if (msg.type === "show_waiting_situation_screen")
       {
         const roomCode = normalize(msg.room || msg.roomCode);
 
@@ -293,10 +307,10 @@ wss.on("connection", (clientSocket) => {
 
         showWaitingSituationScreen(clientSocket, roomCode);
         return;
-      }
+    }
 
-
-      if (msg.type === "skip_discussion")
+// Skip Discussion Turn Request
+    if (msg.type === "skip_discussion")
       {
         const roomCode = normalize(msg.room || msg.roomCode);
         const clientId = msg.clientId;
@@ -311,13 +325,14 @@ wss.on("connection", (clientSocket) => {
         console.log("client ID", clientId);
         skipDiscussionTurn(clientSocket, roomCode, clientId);
         return;
-      }
+    }
 
-      if (msg.type === "send_current_speaker_id") {
+    // Send Current Speaker ID Request
+    if (msg.type === "send_current_speaker_id") {
         const roomCode = normalize(msg.room || msg.roomCode);
         const payload = parsePayload(msg.data);
 
-        if (!roomCode || !payload.playerID) {
+    if (!roomCode || !payload.playerID) {
           send(clientSocket, "send_current_speaker_id_failed", {
             reason: "Room code and playerID are required"
           });
@@ -326,24 +341,8 @@ wss.on("connection", (clientSocket) => {
 
         sendCurrentSpeakerID(clientSocket, roomCode, payload.playerID, payload.discussionDuration);
         return;
-      }
+    }
 
-      if (msg.type === "player_screen_command")
-      {
-        const roomCode = normalize(msg.room || msg.roomCode);
-        const payload = parsePayload(msg.data);
-
-        if (!roomCode)
-        {
-          send(clientSocket, "player_screen_command_failed", {
-            reason: "Room code is missing"
-          });
-          return;
-        }
-
-        sendPlayerScreenCommand(clientSocket, roomCode, payload);
-        return;
-      }
     });
 
 
@@ -390,6 +389,8 @@ wss.on("connection", (clientSocket) => {
     }}
   });
 });
+
+// Assign character info to a player
 function assignCharacterInfo(roomCode, playerID, characterName, characterDescription, keyword1, keyword2)
 {
     const room = rooms.get(roomCode);
@@ -435,79 +436,10 @@ function assignCharacterInfo(roomCode, playerID, characterName, characterDescrip
     );
 
 }
-function sendPlayerScreenCommand(hostSocket, roomCode, payload)
-{
-  const room = rooms.get(roomCode);
 
-  if (!room)
-  {
-    send(hostSocket, "player_screen_command_failed", {
-      reason: "Room not found"
-    });
-    return;
-  }
-
-  if (room.host !== hostSocket)
-  {
-    send(hostSocket, "player_screen_command_failed", {
-      reason: "Only host can control player screens"
-    });
-    return;
-  }
-
-  if (!payload || typeof payload.screenId !== "string" || payload.screenId.trim() === "")
-  {
-    send(hostSocket, "player_screen_command_failed", {
-      reason: "screenId is required"
-    });
-    return;
-  }
-  const connectedPlayers = [...room.players].filter(player => player.connected);
-
-  if (connectedPlayers.length === 0)
-  {
-    send(hostSocket, "player_screen_command_failed", {
-      reason: "No connected players in the room"
-    });
-    return;
-  }
-
-  room.lastPlayerScreen = {
-    screenId: payload.screenId,
-    playerState: payload.playerState || PLAYER_STATE.WAITING,
-    roundNumber: payload.roundNumber || 0,
-    totalRounds: payload.totalRounds || 0,
-    voteType: payload.voteType || "",
-    votingDuration: payload.votingDuration || 0,
-    currentSpeakerPlayerID: payload.currentSpeakerPlayerID || "",
-    currentSpeakerName: payload.currentSpeakerName || ""
-  };
-  for (const player of connectedPlayers)
-  {
-    player.playerState = room.lastPlayerScreen.playerState;
-
-    send(player.socket, "player_screen_changed", {
-      ...room.lastPlayerScreen,
-      room: roomCode,
-      playerName: player.playerName,
-      clientId: player.clientId,
-      isCurrentSpeaker: player.clientId === room.lastPlayerScreen.currentSpeakerPlayerID,
-      character: player.character
-    });
-  }
-
-  send(hostSocket, "player_screen_command_success", {
-    ...room.lastPlayerScreen,
-    room: roomCode,
-    playerCount: connectedPlayers.length
-  });
-
-  console.log(
-    `[Room: ${roomCode}] Sent player screen ${payload.screenId} to ${connectedPlayers.length} players`
-  );
-}
 
 //Helpers
+// General send function
 function send(clientSocket, type, dataObj = {}) 
 {
   if (clientSocket.readyState !== WebSocket.OPEN) return;
@@ -521,6 +453,8 @@ function send(clientSocket, type, dataObj = {})
     data: JSON.stringify(dataObj) 
   }));
 }
+
+// Payload parsing helper
 function parsePayload(payload)
 {
   if (!payload) return {};
@@ -542,6 +476,7 @@ function parsePayload(payload)
   return {};
 }
 
+// Room management
 function getRoom(roomCode) 
 {
   if (!rooms.has(roomCode)) {
@@ -549,17 +484,19 @@ function getRoom(roomCode)
       host: null,
       players: new Set(),
         currentRound: 0,
-        roundVotes: {},
-        lastPlayerScreen: null
     });
   }
   return rooms.get(roomCode);
 }
+
+// Normalization helpers
 function normalize(str) 
 {
   return typeof str === "string" ? str.trim().toUpperCase() : null;
 }
 
+
+// Name normalization 
 function normalizeName(str) 
 {
   return typeof str === "string" ? str.trim().slice(0, 24) : null;
@@ -597,7 +534,6 @@ function reconnectPlayer(clientSocket, roomCode, clientId)
         clientId: player.clientId,
         playerState: player.playerState,
         character: player.character,
-        lastPlayerScreen: room.lastPlayerScreen
       });
 
       if (room.host) 
@@ -662,6 +598,7 @@ function startGame(clientSocket, roomCode)
   console.log(`[Room: ${roomCode}] Game started`);
 };
 
+// Show scenario logic
 function showScenario(clientSocket, roomCode)
 {
   const room = rooms.get(roomCode);
@@ -691,7 +628,7 @@ function showScenario(clientSocket, roomCode)
 }
 
 
-
+// Start voting logic
 function startVoting(hostSocket, roomCode, voteType) {
   const room = rooms.get(roomCode);
 
@@ -721,7 +658,7 @@ function startVoting(hostSocket, roomCode, voteType) {
   console.log(`[Room: ${roomCode}] Voting started`);
 }
 
-
+// Submit vote logic
 function submitVote(clientSocket, roomCode, clientId, voteValue, voteType) {
   const room = rooms.get(roomCode);
   const player = [...room.players].find(player => player.clientId === clientId);
@@ -767,6 +704,8 @@ function submitVote(clientSocket, roomCode, clientId, voteValue, voteType) {
   );
 }
 
+
+// Start discussion logic
 function startDiscussion(clientSocket, roomCode)
 {  const room = rooms.get(roomCode);
 
@@ -792,6 +731,8 @@ function startDiscussion(clientSocket, roomCode)
   console.log(`[Room: ${roomCode}] Discussion started`);
 } 
 
+
+// Show Enjin update screen logic
 function showEnjinUpdateScreen(clientSocket, roomCode)
 {
   const room = rooms.get(roomCode);
@@ -825,6 +766,8 @@ function showEnjinUpdateScreen(clientSocket, roomCode)
   });
 }
 
+
+// Show outcome screen logic
 function showOutcomeScreen(clientSocket, roomCode)
 {  
   const room = rooms.get(roomCode);
@@ -852,6 +795,8 @@ function showOutcomeScreen(clientSocket, roomCode)
   room: roomCode});
 } 
 
+
+// Show waiting situation screen logic
 function showWaitingSituationScreen(clientSocket, roomCode)
 {
   const room = rooms.get(roomCode);
@@ -885,6 +830,8 @@ function showWaitingSituationScreen(clientSocket, roomCode)
   });
 }
 
+
+// Skip discussion turn logic
 function skipDiscussionTurn(clientSocket, roomCode, clientId) {
   const room = rooms.get(roomCode);
 
@@ -904,6 +851,7 @@ function skipDiscussionTurn(clientSocket, roomCode, clientId) {
   });
 }
 
+// Send current speaker ID logic
 function sendCurrentSpeakerID(hostSocket, roomCode, currentSpeakerPlayerID, discussionDuration = 0) {
   const room = rooms.get(roomCode);
 

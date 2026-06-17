@@ -1,8 +1,6 @@
-// PLAYTEST VERSION
-// One HTML page, one WebSocket, no reconnect between screens.
 
-const DEPLOYED_SERVER_URL = "wss://enjin--enjin--qpbmsj2bcc7n.code.run/";
-const SERVER_URL = getServerUrl();
+const SERVER_URL = "wss://enjin--enjin--qpbmsj2bcc7n.code.run/";
+
 
 let ws = null;
 let joinedRoomCode = null;
@@ -26,10 +24,9 @@ setupVotingControls();
 hideCharacterWidgetIfNeeded();
 setupDiscussionControls();
 
-function getServerUrl() {
-  return DEPLOYED_SERVER_URL;
-}
 
+
+// WebSocket connection and message handling
 function connectWebSocket() {
   ws = new WebSocket(SERVER_URL);
 
@@ -296,6 +293,7 @@ function buildCharacterObject(data)
     };
 }
 
+ // 
 function parseServerMessage(event) {
   const msg = JSON.parse(event.data);
 
