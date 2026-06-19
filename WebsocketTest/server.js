@@ -1,4 +1,5 @@
 // Setup
+// i hope it works
 const WebSocket = require("ws");
 const wss = new WebSocket.Server({ port: 5085 });
 
